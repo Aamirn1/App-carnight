@@ -225,9 +225,9 @@ void main() {
         httpClient: MockClient((request) async {
           requests.add(request);
           if (request.url.path == '/auth/v1/token')
-            return http.Response(jsonEncode(sessionJson()), 200);
-          if (request.method == 'GET') return http.Response('[]', 200);
-          return http.Response('', 201);
+            return http.Response(jsonEncode(sessionJson()), 200, request: request, headers: {'content-type': 'application/json'});
+          if (request.method == 'GET') return http.Response('[]', 200, request: request, headers: {'content-type': 'application/json'});
+          return http.Response('', 201, request: request);
         }),
       );
       addTearDown(client.dispose);

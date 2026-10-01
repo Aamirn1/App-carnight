@@ -22,7 +22,10 @@ Uninstalling or exiting the demo loses all local session data.
 - Profile → Saved collection; remove a saved item.
 - Drawer pages and larger system font sizes.
 
-Account services, uploads, bookings, payments and seller enquiries are not connected.
+Account and private text-draft screens require a configured public key and server
+schema; see [Supabase setup](SUPABASE_SETUP.md). This build has not been verified
+against the live project. Uploads, publishing, bookings, payments and seller
+enquiries remain unavailable.
 All sample posts and changes are in memory and reset when the demo is exited.
 Generated photos are illustrative, not actual seller inventory.
 
