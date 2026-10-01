@@ -1,48 +1,21 @@
-# Next functional milestone: connected-services foundation
+# Phase 2: connected services — in progress
 
-The user approved the Home-screen appearance on 1 October 2026. Preserve its
-layout, colors and imagery. The selected bottom-navigation icon now explicitly
-uses cyan, fixing the black-on-purple contrast seen on the phone.
+The approved Home design and cyan selected navigation icons are preserved.
+Version 0.3.0 adds a Flutter Supabase adapter for the user-provided project URL,
+account forms, session tracking, password recovery callback handling and private
+text draft screens for posts, sale listings and rental listings.
 
-The user calls the next milestone “Phase 2”. The original detailed roadmap called
-backend integration Phase 3; these refer to the same next functional work here.
-The visual prototype exists, and Home has been reviewed on one real device.
-Other screens and supported devices still need visual review.
+The app is not connected to the live project yet: the supplied key is still
+`your-anon-key`, and no administrative database connection is available. See
+[SUPABASE_SETUP.md](SUPABASE_SETUP.md) for exact configuration and SQL instructions.
+The new `cn_*` migration isolates mobile tables from the existing website. The
+older migration is retained as historical groundwork, not for shared-project use.
 
-## Implemented in this increment
+The account/draft features have code and automated tests, but require live project
+and device acceptance tests. Existing Home, Buy/Rent, local composer and saved
+collection remain demo features. No videos or media uploads are enabled.
 
-- Explicit selected/unselected navigation icon colors and a regression test.
-- Provider-independent account, post-pagination and image-upload interfaces.
-- Supabase-compatible PostgreSQL migration for profiles, post/listing drafts and
-  private saved collections, with row-level ownership policies and query indexes.
-- Privileged publication boundary: mobile users cannot mark drafts published.
-  The eventual server must validate media and perform moderation before publication.
-- An isolated PostgreSQL CI job checks the migration and ownership rules before
-  the Android build is allowed to run. This is not a deployment to a live project.
-
-## Not connected yet
-
-No backend project has been created or configured. Repository interfaces have no
-production adapters yet. The existing auth forms and demo feed remain explicitly
-in demo mode. The migration does not implement image storage, image processing,
-real sign-in/recovery, account deletion, reports, quotas or live feeds. Those are
-remaining work, not completed features.
-
-Supabase is the proposed backend target for this schema; no plan or purchase has
-been selected. To connect it, a Supabase project URL and public publishable key
-will be needed. Server/service-role keys must never be committed or embedded in
-Flutter. Project setup must also establish region, actual budget and email setup.
-
-## Safe migration workflow
-
-Review supabase/migrations/202610010001_initial_content.sql in a new development
-Supabase project before applying. It creates new tables and does not drop existing
-data. Do not apply it to an unrelated or existing production database. NEVER apply
-supabase/tests/bootstrap.sql to Supabase; it is a disposable CI-only auth fixture.
-
-Publishing requires a future restricted server operation. Do not relax the RLS
-publication policies just to make client posts appear live. Storage buckets and
-media approvals remain closed until the image validation pipeline is implemented.
-
-The PostgreSQL tests validate table constraints and role-scoped authorization;
-they do not verify Supabase auth, token validation, storage or production networking.
+Remaining milestones: connect and validate live auth/drafts; image compression,
+validated storage and quotas; public feed/listing integration and private saves;
+reports/moderation and account deletion; device/performance/accessibility coverage;
+release signing, privacy/store disclosures, monitoring and launch review.

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import 'components.dart';
+import '../backend/session.dart';
+import '../backend/supabase_repositories.dart';
 
-enum AuthMode { signIn, signUp, recovery }
+enum AuthMode { signIn, signUp, recovery, updatePassword }
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key, this.mode = AuthMode.signIn});
@@ -17,6 +19,43 @@ class _AuthPageState extends State<AuthPage> {
   final _password = TextEditingController();
   final _name = TextEditingController();
   bool _obscure = true;
+  bool _busy = false;
+  String? _message;
+
+  Future<void> _submit() async {
+    final backend = BackendScope.of(context);
+    if (_busy || backend == null || !_form.currentState!.validate()) return;
+    setState(() { _busy = true; _message = null; });
+    try {
+      switch (widget.mode) {
+        case AuthMode.signIn:
+          await backend.accounts.signIn(email: _email.text, password: _password.text);
+          if (!mounted) return;
+          Navigator.maybePop(context);
+          break;
+        case AuthMode.signUp:
+          await backend.accounts.signUp(email: _email.text, password: _password.text,
+              displayName: _name.text);
+          _message = 'Request received. Check your email to confirm your account, '
+              'then return here to sign in.';
+          break;
+        case AuthMode.recovery:
+          await backend.accounts.sendPasswordReset(_email.text);
+          _message = 'If an account exists for this email, you will receive a reset link. '
+              'Open it on this phone.';
+          break;
+        case AuthMode.updatePassword:
+          await backend.accounts.updatePassword(_password.text);
+          backend.finishRecovery();
+          break;
+      }
+      if (mounted) _password.clear();
+    } catch (error) {
+      _message = serviceError(error);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
   @override
   void dispose() {
     _email.dispose();
@@ -29,7 +68,9 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     final signup = widget.mode == AuthMode.signUp;
     final recovery = widget.mode == AuthMode.recovery;
-    final title = recovery
+    final update = widget.mode == AuthMode.updatePassword;
+    final backend = BackendScope.of(context);
+    final title = update ? 'Choose a new password' : recovery
         ? 'Reset password'
         : signup
             ? 'Create account'
@@ -44,9 +85,9 @@ class _AuthPageState extends State<AuthPage> {
               ? 'Get back to your car community.'
               : 'Your next connection starts here.',
           style: const TextStyle(color: NightTheme.muted)),
-      const InfoNote(
-          'Form preview only. Use sample details. Authentication is not connected '
-          'and this form does not send or store credentials.'),
+      if (backend == null) const InfoNote(
+          'Online accounts are not enabled in this build. You can explore the sample feed.'),
+      if (_message != null) Semantics(liveRegion: true, child: InfoNote(_message!)),
       Form(
           key: _form,
           child: Column(children: [
@@ -60,7 +101,7 @@ class _AuthPageState extends State<AuthPage> {
                       (v ?? '').trim().isEmpty ? 'Enter your name.' : null),
               const SizedBox(height: 12),
             ],
-            TextFormField(
+            if (!update) TextFormField(
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
@@ -84,12 +125,12 @@ class _AuthPageState extends State<AuthPage> {
                           icon: Icon(_obscure
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined))),
-                  validator: (v) => (v ?? '').length < 8
-                      ? 'Use at least 8 characters for this preview.'
+                  validator: (v) => (v ?? '').length < (signup || update ? 8 : 1)
+                      ? (signup || update ? 'Use at least 8 characters.' : 'Enter your password.')
                       : null),
             ],
           ])),
-      if (!signup && !recovery)
+      if (!signup && !recovery && !update)
         Align(
             alignment: Alignment.centerRight,
             child: TextButton(
@@ -98,22 +139,17 @@ class _AuthPageState extends State<AuthPage> {
                 child: const Text('Forgot password?'))),
       const SizedBox(height: 20),
       GradientButton(
-          label: recovery
+          label: _busy ? 'Please wait…' : update ? 'Save password' : recovery
               ? 'Send reset link'
               : signup
                   ? 'Create account'
                   : 'Sign in',
-          onPressed: () {
-            if (!_form.currentState!.validate()) return;
-            _password.clear();
-            showUnavailable(
-                context,
-                'Authentication is not connected',
-                recovery
-                    ? 'No reset email was sent. This screen is a form preview.'
-                    : 'No account was created or signed in. This screen is a form preview.');
-          }),
-      if (!signup && !recovery)
+          onPressed: backend == null || _busy ? null : _submit),
+      if (update && !_busy) TextButton(onPressed: () async {
+        try { await backend?.accounts.signOut(); }
+        catch (error) { if (mounted) setState(() => _message = serviceError(error)); }
+      }, child: const Text('Cancel and sign out')),
+      if (!signup && !recovery && !update)
         TextButton(
             onPressed: () =>
                 pushPage<void>(context, const AuthPage(mode: AuthMode.signUp)),

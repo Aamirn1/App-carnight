@@ -15,12 +15,36 @@ class PageSlice<T> {
 
 abstract interface class AccountsRepository {
   Stream<AccountSummary?> get accountChanges;
+  Stream<bool> get recoveryChanges;
   Future<AccountSummary?> currentAccount();
   Future<void> signIn({required String email, required String password});
   Future<void> signUp({required String email, required String password,
     required String displayName});
   Future<void> sendPasswordReset(String email);
+  Future<void> updatePassword(String password);
   Future<void> signOut();
+}
+
+enum DraftKind { post, sale, rental }
+
+class ContentDraft {
+  const ContentDraft({required this.id, required this.kind,
+    required this.text, required this.createdAt,
+    this.city = '', this.currency = 'USD', this.priceMinor});
+  final String id;
+  final DraftKind kind;
+  final String text;
+  final DateTime createdAt;
+  final String city;
+  final String currency;
+  final int? priceMinor;
+}
+
+abstract interface class DraftsRepository {
+  Future<List<ContentDraft>> load(DraftKind kind, {int offset = 0});
+  Future<void> save({required DraftKind kind, String? id, required String text,
+    String city = '', String currency = 'USD', int? priceMinor});
+  Future<void> delete(ContentDraft draft);
 }
 
 class PostSummary {

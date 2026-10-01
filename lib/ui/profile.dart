@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../core/session.dart';
 import '../core/theme.dart';
 import '../data/demo_catalog.dart';
-import 'auth.dart';
+import 'account.dart';
+import '../backend/session.dart';
 import 'components.dart';
 import 'feed.dart';
 import 'marketplace.dart';
@@ -28,9 +29,9 @@ class ProfilePage extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 4),
-          const Text('Guest preview',
+          Text(BackendScope.of(context)?.account?.displayName ?? 'Guest preview',
               textAlign: TextAlign.center,
-              style: TextStyle(color: NightTheme.muted)),
+              style: const TextStyle(color: NightTheme.muted)),
           const SizedBox(height: 20),
           NightCard(
               child: Column(children: [
@@ -45,9 +46,9 @@ class ProfilePage extends StatelessWidget {
             const Divider(height: 1),
             ListTile(
                 leading: const Icon(Icons.login),
-                title: const Text('Sign in or join'),
+                title: Text(BackendScope.of(context)?.account == null ? 'Sign in or join' : 'Account and private drafts'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => pushPage<void>(context, const AuthPage())),
+                onTap: () => pushPage<void>(context, const AccountPage())),
           ])),
           const SizedBox(height: 24),
           Text('Your demo posts',

@@ -44,7 +44,7 @@ jobs:
       - name: Bootstrap disposable auth fixture
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/bootstrap.sql
       - name: Apply schema migration
-        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202610010001_initial_content.sql
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202610020001_mobile_content.sql
       - name: Test ownership and publication restrictions
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/ownership.sql
   build:
@@ -79,7 +79,17 @@ jobs:
       - name: Run tests
         run: flutter test --reporter expanded
       - name: Build release-mode preview APK
-        run: flutter build apk --release
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL || 'https://romhqgmsoabzowwvuvvp.supabase.co' }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          python3 - <<'PYCONFIG'
+          import json, os
+          with open('/tmp/cars-night-config.json', 'w') as config:
+              json.dump({name: os.environ.get(name, '') for name in
+                  ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY']}, config)
+          PYCONFIG
+          flutter build apk --release --dart-define-from-file=/tmp/cars-night-config.json
       - name: Prepare download
         run: |
           mkdir -p artifacts
@@ -112,4 +122,4 @@ jobs:
           echo '## Cars Night test APK' >> "$GITHUB_STEP_SUMMARY"
           echo 'Analysis and tests passed; release-mode APK built with a development signing key.' >> "$GITHUB_STEP_SUMMARY"
           echo '[Download APK ZIP](${{ steps.apk.outputs.artifact-url }})' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Extract CarsNight-preview.apk from the ZIP and install it on Android. This is the offline prototype.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Extract CarsNight-preview.apk from the ZIP and install it on Android. Online accounts require the public Supabase key in repository variables; sample content remains available.' >> "$GITHUB_STEP_SUMMARY"

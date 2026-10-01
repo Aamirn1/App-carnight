@@ -10,19 +10,25 @@ import 'ui/feed.dart';
 import 'ui/information.dart';
 import 'ui/marketplace.dart';
 import 'ui/profile.dart';
+import 'backend/session.dart';
 
 class CarsNightApp extends StatelessWidget {
-  const CarsNightApp({super.key});
+  const CarsNightApp({super.key, this.backend, this.startupError});
+  final BackendSession? backend;
+  final String? startupError;
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context) => BackendScope(session: backend, child: MaterialApp(
       title: 'Cars Night',
       debugShowCheckedModeBanner: false,
       theme: NightTheme.data,
-      home: const WelcomePage());
+      builder: (context, child) => BackendScope.of(context)?.recovering == true
+          ? const AuthPage(mode: AuthMode.updatePassword) : child!,
+      home: WelcomePage(startupError: startupError)));
 }
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+  const WelcomePage({super.key, this.startupError});
+  final String? startupError;
   @override
   Widget build(BuildContext context) => Scaffold(
           body: SafeArea(
@@ -65,6 +71,7 @@ class WelcomePage extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 16),
+                  if (startupError != null) InfoNote(startupError!),
                   const Text('Buy. Rent. Connect. Share.',
                       style: TextStyle(color: NightTheme.muted)),
                   const SizedBox(height: 28),
@@ -80,7 +87,7 @@ class WelcomePage extends StatelessWidget {
                           minimumSize: const Size.fromHeight(52)),
                       child: const Text('Sign in')),
                   const SizedBox(height: 16),
-                  const Text('OFFLINE PREVIEW · SAMPLE CONTENT',
+                  const Text('SAMPLE FEED · PREVIEW BUILD',
                       style: TextStyle(
                           color: NightTheme.muted,
                           fontSize: 10,
