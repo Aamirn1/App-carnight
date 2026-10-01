@@ -13,8 +13,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  database:
+    name: Test content ownership rules
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16.6
+        env:
+          POSTGRES_PASSWORD: local-ci-only
+          POSTGRES_DB: cars_night_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: local-ci-only
+      PGDATABASE: cars_night_test
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Bootstrap disposable auth fixture
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/bootstrap.sql
+      - name: Apply schema migration
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202610010001_initial_content.sql
+      - name: Test ownership and publication restrictions
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/ownership.sql
   build:
     name: Analyze, test and build APK
+    needs: database
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:

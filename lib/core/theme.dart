@@ -43,9 +43,11 @@ abstract final class NightTheme {
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: cyan)),
         ),
-        navigationBarTheme: const NavigationBarThemeData(
+        navigationBarTheme: NavigationBarThemeData(
             backgroundColor: background,
-            indicatorColor: Color(0xFF302658),
+            indicatorColor: const Color(0xFF302658),
+            iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) =>
+                IconThemeData(color: states.contains(WidgetState.selected) ? cyan : Colors.white)),
             height: 72),
         outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
