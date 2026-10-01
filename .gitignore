@@ -1,0 +1,13 @@
+.dart_tool/
+.packages
+build/
+coverage/
+artifacts/
+android/.gradle/
+android/local.properties
+android/key.properties
+*.jks
+*.keystore
+.env
+.env.*
+.DS_Store
