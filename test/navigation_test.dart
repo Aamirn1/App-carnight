@@ -26,7 +26,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Find Your Dream Car'), findsOneWidget);
     await tester.enterText(
-        find.byKey(const ValueKey('search-sale')), 'no-such-car');
+      find.byKey(const ValueKey('search-sale')),
+      'no-such-car',
+    );
     await tester.pumpAndSettle();
     expect(find.text('No matching cars'), findsOneWidget);
     await tester.ensureVisible(find.text('Reset filters'));
@@ -36,30 +38,40 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('image composer returns to feed with a local post',
-      (tester) async {
+  testWidgets('image composer returns to feed with a local post', (
+    tester,
+  ) async {
     await openDemo(tester);
     await tester.tap(find.byKey(const ValueKey('nav-create')));
     await tester.pumpAndSettle();
     await tester.enterText(
-        find.byKey(const ValueKey('post-caption')), 'My night drive');
+      find.byKey(const ValueKey('post-caption')),
+      'My night drive',
+    );
     await tester.ensureVisible(find.byKey(const ValueKey('sample-image-0')));
     await tester.tap(find.byKey(const ValueKey('sample-image-0')));
     await tester.ensureVisible(find.text('Add to demo feed'));
     await tester.tap(find.text('Add to demo feed'));
     await tester.pumpAndSettle();
     expect(find.text('My night drive'), findsOneWidget);
-    expect(find.text('Added to the local demo feed. Nothing was uploaded.'),
-        findsOneWidget);
+    expect(
+      find.text('Added to the local demo feed. Nothing was uploaded.'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('removing a saved car immediately updates the collection',
-      (tester) async {
+  testWidgets('removing a saved car immediately updates the collection', (
+    tester,
+  ) async {
     final session = DemoSession()..toggleSaved('sale-1');
     addTearDown(session.dispose);
     await tester.pumpWidget(
-        MaterialApp(theme: NightTheme.data, home: SavedPage(session: session)));
+      MaterialApp(
+        theme: NightTheme.data,
+        home: SavedPage(session: session),
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Unsave car'));
     await tester.pumpAndSettle();
@@ -75,14 +87,17 @@ void main() {
     expect(find.text('Pick-up date'), findsOneWidget);
     expect(find.text('Drop-off date'), findsOneWidget);
     await tester.enterText(
-        find.byKey(const ValueKey('rental-location')), 'London');
+      find.byKey(const ValueKey('rental-location')),
+      'London',
+    );
     await tester.pumpAndSettle();
     expect(find.text('No matching cars'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('narrow screens with large text do not report layout overflow',
-      (tester) async {
+  testWidgets('narrow screens with large text do not report layout overflow', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(320, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -92,15 +107,22 @@ void main() {
     for (final page in <Widget>[
       const WelcomePage(),
       Scaffold(
-          body: MarketplacePage(kind: ListingKind.rental, session: session)),
+        body: MarketplacePage(kind: ListingKind.rental, session: session),
+      ),
       const PlanPage(),
     ]) {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(
+        MaterialApp(
           theme: NightTheme.data,
           home: MediaQuery(
-              data: const MediaQueryData(
-                  size: Size(320, 800), textScaler: TextScaler.linear(1.6)),
-              child: page)));
+            data: const MediaQueryData(
+              size: Size(320, 800),
+              textScaler: TextScaler.linear(1.6),
+            ),
+            child: page,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     }

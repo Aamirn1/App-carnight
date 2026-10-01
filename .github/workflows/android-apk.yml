@@ -84,7 +84,18 @@ jobs:
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
         run: |
           python3 - <<'PYCONFIG'
-          import json, os
+          import base64, json, os
+          key = os.environ.get('SUPABASE_PUBLISHABLE_KEY', '')
+          allowed = not key or (key.startswith('sb_publishable_') and len(key) > 25)
+          if not allowed:
+              try:
+                  parts = key.split('.')
+                  payload = json.loads(base64.urlsafe_b64decode(parts[1] + '=' * (-len(parts[1]) % 4)))
+                  allowed = len(parts) == 3 and payload.get('role') == 'anon'
+              except (ValueError, IndexError, UnicodeDecodeError):
+                  allowed = False
+          if not allowed:
+              raise SystemExit('Use a public publishable/anon key; refusing to embed this value.')
           with open('/tmp/cars-night-config.json', 'w') as config:
               json.dump({name: os.environ.get(name, '') for name in
                   ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY']}, config)

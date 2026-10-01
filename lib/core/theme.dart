@@ -12,48 +12,59 @@ abstract final class NightTheme {
   static const gradient = LinearGradient(colors: [cyan, violet, magenta]);
 
   static ThemeData get data => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: background,
-        colorScheme: const ColorScheme.dark(
-            primary: cyan,
-            secondary: magenta,
-            surface: surface,
-            onSurface: Colors.white),
-        appBarTheme: const AppBarTheme(
-            backgroundColor: background,
-            surfaceTintColor: Colors.transparent,
-            centerTitle: false,
-            titleTextStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w700)),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: surface,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: border)),
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: border)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: cyan)),
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: background,
+    colorScheme: const ColorScheme.dark(
+      primary: cyan,
+      secondary: magenta,
+      surface: surface,
+      onSurface: Colors.white,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: background,
+      surfaceTintColor: Colors.transparent,
+      centerTitle: false,
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: cyan),
+      ),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: background,
+      indicatorColor: const Color(0xFF302658),
+      iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+        (states) => IconThemeData(
+          color: states.contains(WidgetState.selected) ? cyan : Colors.white,
         ),
-        navigationBarTheme: NavigationBarThemeData(
-            backgroundColor: background,
-            indicatorColor: const Color(0xFF302658),
-            iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) =>
-                IconThemeData(color: states.contains(WidgetState.selected) ? cyan : Colors.white)),
-            height: 72),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                minimumSize: const Size(48, 48),
-                side: const BorderSide(color: border))),
-        dividerColor: border,
-      );
+      ),
+      height: 72,
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.white,
+        minimumSize: const Size(48, 48),
+        side: const BorderSide(color: border),
+      ),
+    ),
+    dividerColor: border,
+  );
 }

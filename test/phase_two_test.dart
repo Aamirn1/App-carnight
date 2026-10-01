@@ -6,30 +6,45 @@ import 'package:cars_night/domain/models.dart';
 import 'package:cars_night/ui/marketplace.dart';
 
 void main() {
-  test('calendar-day calculation crosses month boundaries without rounding',
-      () {
-    final period =
-        RentalPeriod(DateTime(2026, 10, 31, 23), DateTime(2026, 11, 2, 1));
-    expect(period.days, 2);
-    expect(period.estimateMinor(45000), 90000);
-  });
+  test(
+    'calendar-day calculation crosses month boundaries without rounding',
+    () {
+      final period = RentalPeriod(
+        DateTime(2026, 10, 31, 23),
+        DateTime(2026, 11, 2, 1),
+      );
+      expect(period.days, 2);
+      expect(period.estimateMinor(45000), 90000);
+    },
+  );
   test('zero-day and reversed rental ranges are rejected', () {
-    expect(() => RentalPeriod(DateTime(2026, 10, 2), DateTime(2026, 10, 2)),
-        throwsArgumentError);
-    expect(() => RentalPeriod(DateTime(2026, 10, 3), DateTime(2026, 10, 2)),
-        throwsArgumentError);
+    expect(
+      () => RentalPeriod(DateTime(2026, 10, 2), DateTime(2026, 10, 2)),
+      throwsArgumentError,
+    );
+    expect(
+      () => RentalPeriod(DateTime(2026, 10, 3), DateTime(2026, 10, 2)),
+      throwsArgumentError,
+    );
   });
   test('rental location filter is independent of model query', () {
     expect(
-        filterListings(DemoCatalog.listings,
-                kind: ListingKind.rental, city: '  DUBAI ', query: 'range')
-            .single
-            .id,
-        'rent-2');
+      filterListings(
+        DemoCatalog.listings,
+        kind: ListingKind.rental,
+        city: '  DUBAI ',
+        query: 'range',
+      ).single.id,
+      'rent-2',
+    );
     expect(
-        filterListings(DemoCatalog.listings,
-            kind: ListingKind.rental, city: 'London'),
-        isEmpty);
+      filterListings(
+        DemoCatalog.listings,
+        kind: ListingKind.rental,
+        city: 'London',
+      ),
+      isEmpty,
+    );
   });
   test('demo money retains cents rather than rounding away value', () {
     expect(formatDemoMoney(123456, 'USD'), 'USD 1,234.56');
@@ -46,19 +61,26 @@ void main() {
     expect(post.imageAssets, [NightAssets.hero]);
     expect(session.posts.first.id, post.id);
   });
-  test('composer rejects empty caption, missing images and non-image inputs',
-      () {
-    final session = DemoSession();
-    addTearDown(session.dispose);
-    expect(() => session.addDemoPost('  ', [NightAssets.hero]),
-        throwsArgumentError);
-    expect(() => session.addDemoPost('A drive', []), throwsArgumentError);
-    expect(() => session.addDemoPost('A drive', ['video.mp4']),
-        throwsArgumentError);
-    expect(
+  test(
+    'composer rejects empty caption, missing images and non-image inputs',
+    () {
+      final session = DemoSession();
+      addTearDown(session.dispose);
+      expect(
+        () => session.addDemoPost('  ', [NightAssets.hero]),
+        throwsArgumentError,
+      );
+      expect(() => session.addDemoPost('A drive', []), throwsArgumentError);
+      expect(
+        () => session.addDemoPost('A drive', ['video.mp4']),
+        throwsArgumentError,
+      );
+      expect(
         () => session.addDemoPost('A drive', List.filled(5, NightAssets.hero)),
-        throwsArgumentError);
-  });
+        throwsArgumentError,
+      );
+    },
+  );
   test('deleting a local post removes its reactions, saves and comments', () {
     final session = DemoSession();
     addTearDown(session.dispose);

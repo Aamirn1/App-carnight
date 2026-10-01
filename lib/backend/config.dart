@@ -3,9 +3,11 @@ import 'dart:convert';
 class BackendConfig {
   const BackendConfig({required this.url, required this.key});
   const BackendConfig.environment()
-      : url = const String.fromEnvironment('SUPABASE_URL',
-            defaultValue: 'https://romhqgmsoabzowwvuvvp.supabase.co'),
-        key = const String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+    : url = const String.fromEnvironment(
+        'SUPABASE_URL',
+        defaultValue: 'https://romhqgmsoabzowwvuvvp.supabase.co',
+      ),
+      key = const String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
   final String url;
   final String key;
 
@@ -14,8 +16,12 @@ class BackendConfig {
   String? get validationError {
     if (!isConfigured) return 'Online accounts are not enabled in this build.';
     final uri = Uri.tryParse(url);
-    if (uri == null || uri.scheme != 'https' || uri.host.isEmpty ||
-        uri.userInfo.isNotEmpty || uri.hasQuery || uri.hasFragment) {
+    if (uri == null ||
+        uri.scheme != 'https' ||
+        uri.host.isEmpty ||
+        uri.userInfo.isNotEmpty ||
+        uri.hasQuery ||
+        uri.hasFragment) {
       return 'The online service address is invalid.';
     }
     if (key.startsWith('sb_publishable_') && key.length > 25) return null;
@@ -23,8 +29,11 @@ class BackendConfig {
     try {
       final parts = key.split('.');
       if (parts.length == 3) {
-        final payload = jsonDecode(utf8.decode(base64Url.decode(
-            base64Url.normalize(parts[1])))) as Map<String, dynamic>;
+        final payload =
+            jsonDecode(
+                  utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+                )
+                as Map<String, dynamic>;
         if (payload['role'] == 'anon') return null;
       }
     } catch (_) {

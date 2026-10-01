@@ -8,7 +8,7 @@ class AccountSummary {
 
 class PageSlice<T> {
   PageSlice({required List<T> items, this.nextCursor})
-      : items = List.unmodifiable(items);
+    : items = List.unmodifiable(items);
   final List<T> items;
   final String? nextCursor;
 }
@@ -18,8 +18,11 @@ abstract interface class AccountsRepository {
   Stream<bool> get recoveryChanges;
   Future<AccountSummary?> currentAccount();
   Future<void> signIn({required String email, required String password});
-  Future<void> signUp({required String email, required String password,
-    required String displayName});
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String displayName,
+  });
   Future<void> sendPasswordReset(String email);
   Future<void> updatePassword(String password);
   Future<void> signOut();
@@ -28,9 +31,15 @@ abstract interface class AccountsRepository {
 enum DraftKind { post, sale, rental }
 
 class ContentDraft {
-  const ContentDraft({required this.id, required this.kind,
-    required this.text, required this.createdAt,
-    this.city = '', this.currency = 'USD', this.priceMinor});
+  const ContentDraft({
+    required this.id,
+    required this.kind,
+    required this.text,
+    required this.createdAt,
+    this.city = '',
+    this.currency = 'USD',
+    this.priceMinor,
+  });
   final String id;
   final DraftKind kind;
   final String text;
@@ -42,14 +51,24 @@ class ContentDraft {
 
 abstract interface class DraftsRepository {
   Future<List<ContentDraft>> load(DraftKind kind, {int offset = 0});
-  Future<void> save({required DraftKind kind, String? id, required String text,
-    String city = '', String currency = 'USD', int? priceMinor});
+  Future<void> save({
+    required DraftKind kind,
+    String? id,
+    required String text,
+    String city = '',
+    String currency = 'USD',
+    int? priceMinor,
+  });
   Future<void> delete(ContentDraft draft);
 }
 
 class PostSummary {
-  const PostSummary({required this.id, required this.ownerId,
-    required this.caption, required this.createdAt});
+  const PostSummary({
+    required this.id,
+    required this.ownerId,
+    required this.caption,
+    required this.createdAt,
+  });
   final String id;
   final String ownerId;
   final String caption;
@@ -57,7 +76,10 @@ class PostSummary {
 }
 
 abstract interface class PostsRepository {
-  Future<PageSlice<PostSummary>> publishedFeed({String? cursor, int limit = 20});
+  Future<PageSlice<PostSummary>> publishedFeed({
+    String? cursor,
+    int limit = 20,
+  });
   Future<PostSummary> createDraft(String caption);
   Future<void> deleteOwnPost(String id);
 }
@@ -65,7 +87,10 @@ abstract interface class PostsRepository {
 /// Actual upload support must decode/re-encode bytes and verify media on the
 /// server. These contracts deliberately do not expose a client approve method.
 abstract interface class ImageUploadsRepository {
-  Future<Uri> requestUpload({required String fileName, required String mimeType,
-    required int byteLength});
+  Future<Uri> requestUpload({
+    required String fileName,
+    required String mimeType,
+    required int byteLength,
+  });
   Future<void> requestValidation(String uploadId);
 }

@@ -16,10 +16,13 @@ Future<void> main() async {
       try {
         await Supabase.initialize(url: config.url, publishableKey: config.key);
         final client = Supabase.instance.client;
-        backend = BackendSession(accounts: SupabaseAccountsRepository(client),
-            drafts: SupabaseDraftsRepository(client));
+        backend = BackendSession(
+          accounts: SupabaseAccountsRepository(client),
+          drafts: SupabaseDraftsRepository(client),
+        );
       } catch (_) {
-        startupError = 'Online accounts could not start. Restart the app to retry. '
+        startupError =
+            'Online accounts could not start. Restart the app to retry. '
             'You can still explore the sample content.';
       }
     }

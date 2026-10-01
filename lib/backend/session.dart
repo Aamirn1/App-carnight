@@ -4,15 +4,18 @@ import 'repositories.dart';
 
 class BackendSession extends ChangeNotifier {
   BackendSession({required this.accounts, required this.drafts}) {
-    _accountSub = accounts.accountChanges.listen((value) {
-      _generation++;
-      account = value;
-      if (value == null) recovering = false;
-      notifyListeners();
-    }, onError: (Object _) {
-      // Do not expose SDK errors or tokens in the UI/logs.
-      notifyListeners();
-    });
+    _accountSub = accounts.accountChanges.listen(
+      (value) {
+        _generation++;
+        account = value;
+        if (value == null) recovering = false;
+        notifyListeners();
+      },
+      onError: (Object _) {
+        // Do not expose SDK errors or tokens in the UI/logs.
+        notifyListeners();
+      },
+    );
     _recoverySub = accounts.recoveryChanges.listen((value) {
       recovering = value;
       notifyListeners();
@@ -34,9 +37,16 @@ class BackendSession extends ChangeNotifier {
       if (_disposed || generation != _generation) return;
       account = restored;
       notifyListeners();
-    } catch (_) { /* A later successful auth event can recover. */ }
+    } catch (_) {
+      /* A later successful auth event can recover. */
+    }
   }
-  void finishRecovery() { recovering = false; notifyListeners(); }
+
+  void finishRecovery() {
+    recovering = false;
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _disposed = true;
@@ -47,8 +57,11 @@ class BackendSession extends ChangeNotifier {
 }
 
 class BackendScope extends InheritedNotifier<BackendSession> {
-  const BackendScope({super.key, required BackendSession? session, required super.child})
-      : super(notifier: session);
+  const BackendScope({
+    super.key,
+    required BackendSession? session,
+    required super.child,
+  }) : super(notifier: session);
   static BackendSession? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<BackendScope>()?.notifier;
 }

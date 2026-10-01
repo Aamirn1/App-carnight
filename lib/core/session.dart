@@ -46,11 +46,12 @@ class DemoSession extends ChangeNotifier {
       throw ArgumentError('Choose 1–4 bundled sample images.');
     }
     final post = SocialPost(
-        id: 'local-${++_nextPost}',
-        author: 'You',
-        city: 'Local demo',
-        caption: text,
-        imageAssets: List.unmodifiable(imageAssets));
+      id: 'local-${++_nextPost}',
+      author: 'You',
+      city: 'Local demo',
+      caption: text,
+      imageAssets: List.unmodifiable(imageAssets),
+    );
     _posts.insert(0, post);
     notifyListeners();
     return post;
@@ -62,7 +63,8 @@ class DemoSession extends ChangeNotifier {
         text.isEmpty ||
         text.length > 500) {
       throw ArgumentError(
-          'Comment requires an existing post and 1–500 characters.');
+        'Comment requires an existing post and 1–500 characters.',
+      );
     }
     (_comments[postId] ??= []).add(text);
     notifyListeners();
