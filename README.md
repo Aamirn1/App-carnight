@@ -24,6 +24,10 @@ The new migration does not alter existing website tables or auth triggers.
 
 ## Test APK
 
+[Download version 0.3.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/36927176905/artifacts/11194860781)
+— 51.6 MB APK; **25 tests passed**, **no analyzer issues**, database checks passed.
+This artifact has no public key configured, so account submission remains disabled.
+
 Open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
 select the latest successful run, and download **CarsNight-test-APK** under Artifacts.
 Extract **CarsNight-preview.apk** and install it on Android. GitHub sign-in may be

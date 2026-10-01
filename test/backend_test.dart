@@ -46,6 +46,7 @@ class FakeAccounts implements AccountsRepository {
     await changes.close();
     await recovery.close();
   }
+
   @override
   Stream<AccountSummary?> get accountChanges => changes.stream;
   @override
@@ -225,8 +226,19 @@ void main() {
         httpClient: MockClient((request) async {
           requests.add(request);
           if (request.url.path == '/auth/v1/token')
-            return http.Response(jsonEncode(sessionJson()), 200, request: request, headers: {'content-type': 'application/json'});
-          if (request.method == 'GET') return http.Response('[]', 200, request: request, headers: {'content-type': 'application/json'});
+            return http.Response(
+              jsonEncode(sessionJson()),
+              200,
+              request: request,
+              headers: {'content-type': 'application/json'},
+            );
+          if (request.method == 'GET')
+            return http.Response(
+              '[]',
+              200,
+              request: request,
+              headers: {'content-type': 'application/json'},
+            );
           return http.Response('', 201, request: request);
         }),
       );

@@ -1,3 +1,43 @@
+# Version 0.3.0 verification — 2 October 2026 (Pakistan time)
+
+Built source commit: `f62ceaf68b2c36d05aeab112350cd5400f1aaa78`.
+
+- [Successful GitHub Actions run](https://github.com/Aamirn1/App-carnight/actions/runs/36927176905).
+- Flutter analysis: **No issues found**.
+- Flutter unit/widget/mocked HTTP tests: **25 passed**.
+- Isolated PostgreSQL ownership checks: **passed**, including protection of generic
+  website table names while the mobile migration creates separate `cn_*` tables.
+- Android release-mode preview APK: **51.6 MB**, development signed.
+- [Download APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/36927176905/artifacts/11194860781).
+  Artifact retention ends 15 October 2026; rerun Actions for another build.
+
+## What changed
+
+Flutter Supabase initialization and public-key validation, email account flows,
+session/recovery event handling, Android callback/internet configuration, private
+paged post/sale/rental text drafts, error/retry states and ownership filters.
+The selected navigation icon remains cyan. Home's approved layout and imagery
+are retained in source. This increment has no new device screenshots; exact
+reference matching across pages/devices and callback behavior are not verified.
+
+## Live connection is blocked on configuration
+
+The supplied key was `your-anon-key`. The build's public key variable was empty.
+No real credentials were submitted; no real email, account or draft was created;
+no migration or auth settings were applied to the website's live Supabase project.
+See [Supabase setup](SUPABASE_SETUP.md) for the public key, isolated SQL migration
+and callback configuration. The SDK code is implemented, but live functionality
+must not be represented as tested until those checks are completed.
+
+Public image uploads, publishing, server validation/moderation and quotas, live
+feed/listing integration, online saved collections/reactions, account deletion,
+production signing and broad device/performance testing remain unfinished.
+The app remains a development preview, not a production release.
+
+---
+
+# Historical reports (superseded by the status above)
+
 # GitHub Actions verification — 1 October 2026
 
 The previous local SDK limitation has been resolved for Android through GitHub
