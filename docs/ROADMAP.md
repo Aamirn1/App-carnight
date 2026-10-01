@@ -29,8 +29,9 @@ video stories or video attachments in launch scope. AI chat is deferred.
 | 9 — Final fidelity report | Screenshots and reference comparisons, feature matrix, measured performance and limitations | Honest per-screen results, real build/test logs, documented launch blockers |
 
 Current progress: Phase 0 initial specification produced; Phase 1 source authored,
-runtime verification blocked. Phase 2 visual prototype source and supporting layouts
-have been added. Phase 1 and Phase 2 acceptance gates remain open. Connected services
+Android compilation, analysis and 17 automated tests now passed in GitHub Actions.
+Phase 2 visual prototype source and supporting layouts have been added. Device
+review and Phase 2 visual acceptance remain open. Connected services
 and Phases 3–9 are not implemented. See STATUS.md for the latest evidence.
 
 ## Architecture and implementation discipline

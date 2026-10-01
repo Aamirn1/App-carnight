@@ -1,3 +1,30 @@
+# GitHub Actions verification — 1 October 2026
+
+The previous local SDK limitation has been resolved for Android through GitHub
+Actions. The offline prototype has now been compiled into an installable APK.
+
+- Tested source commit: `1e02e3ed334cedb8a7675112f6f89d8d7db591c0`.
+- [Successful build and logs](https://github.com/Aamirn1/App-carnight/actions/runs/36845637727).
+- Flutter 3.35.7, Java 17, Ubuntu 24.04.
+- Analyzer: no errors or warnings; two informational `prefer_const_constructors`
+  suggestions. The workflow allows informational suggestions only.
+- Automated tests: **17 passed**.
+- Release-mode APK: **48.4 MB**, development-signed for testing.
+- [APK artifact](https://github.com/Aamirn1/App-carnight/actions/runs/36845637727/artifacts/11153237715).
+- Artifact expiry: 15 October 2026. Use Run workflow to generate a fresh build.
+- Runner-formatted Dart source, resolved pubspec.lock and generated Android host
+  are retained in this repository. Machine-local paths and generated registration
+  files are excluded. The source below has only formatting differences from the
+  tested commit; no functional changes were made after the build.
+
+Device installation, screenshots, performance profiling and exact reference matching
+have NOT been verified. Login, uploads, bookings and seller enquiries are still
+unconnected. This is a testable offline prototype, not a production release.
+
+---
+
+## Historical Phase 2 source-work report (before GitHub Actions)
+
 # Cars Night — Phase 2 development report
 
 ## Status

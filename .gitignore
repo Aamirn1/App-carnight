@@ -11,3 +11,6 @@ android/key.properties
 .env
 .env.*
 .DS_Store
+
+*.iml
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
