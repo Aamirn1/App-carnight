@@ -21,17 +21,20 @@ Future<void> openDemo(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('primary navigation prioritizes community and combines marketplace', (tester) async {
-    await openDemo(tester);
-    expect(find.byKey(const ValueKey('nav-messages')), findsOneWidget);
-    expect(find.byKey(const ValueKey('nav-marketplace')), findsOneWidget);
-    expect(find.byKey(const ValueKey('nav-buy')), findsNothing);
-    expect(find.byKey(const ValueKey('nav-rent')), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('nav-messages')));
-    await tester.pumpAndSettle();
-    expect(find.text('Sign in to message'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'primary navigation prioritizes community and combines marketplace',
+    (tester) async {
+      await openDemo(tester);
+      expect(find.byKey(const ValueKey('nav-messages')), findsOneWidget);
+      expect(find.byKey(const ValueKey('nav-marketplace')), findsOneWidget);
+      expect(find.byKey(const ValueKey('nav-buy')), findsNothing);
+      expect(find.byKey(const ValueKey('nav-rent')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('nav-messages')));
+      await tester.pumpAndSettle();
+      expect(find.text('Sign in to message'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
   testWidgets('buy search has a recoverable empty state', (tester) async {
     await openDemo(tester);
     await tester.tap(find.byKey(const ValueKey('nav-marketplace')));

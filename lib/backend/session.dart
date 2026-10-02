@@ -50,11 +50,16 @@ class BackendSession extends ChangeNotifier {
     final api = social;
     if (value == null || api == null) return;
     // Schedule outside the auth stream callback; auth events must stay synchronous.
-    unawaited(Future<void>(() async {
-      if (_disposed || account?.id != value.id) return;
-      try { await api.ensureProfile(value.displayName); }
-      catch (_) { /* Schema/network recovery is handled by community screens. */ }
-    }));
+    unawaited(
+      Future<void>(() async {
+        if (_disposed || account?.id != value.id) return;
+        try {
+          await api.ensureProfile(value.displayName);
+        } catch (_) {
+          /* Schema/network recovery is handled by community screens. */
+        }
+      }),
+    );
   }
 
   void finishRecovery() {

@@ -158,7 +158,10 @@ class _AppShellState extends State<AppShell> {
         if (account == null) {
           await pushPage<void>(context, const AuthPage());
         } else {
-          await pushPage<bool>(context, DraftEditor(kind: DraftKind.post, ownerId: account.id));
+          await pushPage<bool>(
+            context,
+            DraftEditor(kind: DraftKind.post, ownerId: account.id),
+          );
         }
         return;
       }
@@ -247,10 +250,15 @@ class _AppShellState extends State<AppShell> {
                 child: Icon(Icons.person_outline, color: NightTheme.cyan),
               ),
               title: Text(
-                BackendScope.of(context)?.account?.displayName ?? 'Car enthusiast',
+                BackendScope.of(context)?.account?.displayName ??
+                    'Car enthusiast',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(BackendScope.of(context)?.account == null ? 'Browse as guest' : 'Signed in'),
+              subtitle: Text(
+                BackendScope.of(context)?.account == null
+                    ? 'Browse as guest'
+                    : 'Signed in',
+              ),
             ),
             const SizedBox(height: 12),
             for (final item in const [
@@ -328,7 +336,9 @@ class _AppShellState extends State<AppShell> {
                 Navigator.pop(context);
               },
             ),
-            const InfoNote('Sample marketplace offers and saved items are for preview.'),
+            const InfoNote(
+              'Sample marketplace offers and saved items are for preview.',
+            ),
           ],
         ),
       ),

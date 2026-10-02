@@ -3,6 +3,7 @@ begin;
 create table public.cn_blocks (
  blocker_id uuid not null references auth.users(id) on delete cascade,
  blocked_id uuid not null references auth.users(id) on delete cascade,
+ blocked_label text not null default 'Car enthusiast' check(char_length(blocked_label) between 1 and 80),
  created_at timestamptz not null default now(),
  primary key(blocker_id,blocked_id), check(blocker_id <> blocked_id)
 );
@@ -185,7 +186,7 @@ $$;
 
 revoke all on public.cn_blocks,public.cn_follows,public.cn_likes,public.cn_comments,public.cn_post_media,public.cn_conversations,public.cn_messages,public.cn_reports from anon,authenticated;
 grant select,delete on public.cn_blocks,public.cn_follows,public.cn_likes,public.cn_comments to authenticated;
-grant insert(blocker_id,blocked_id) on public.cn_blocks to authenticated;
+grant insert(blocker_id,blocked_id,blocked_label) on public.cn_blocks to authenticated;
 grant insert(follower_id,followed_id) on public.cn_follows to authenticated;
 grant insert(user_id,post_id) on public.cn_likes to authenticated;
 grant insert(user_id,post_id,body) on public.cn_comments to authenticated;

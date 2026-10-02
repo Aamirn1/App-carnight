@@ -40,6 +40,24 @@ do $$ begin
   raise exception 'FAIL: direct active conversation insert';
  exception when insufficient_privilege then null; end;
 end $$;
+-- Comment rate limits are enforced by the server; direct timestamp spoofing fails.
+do $$ declare limited boolean:=false; begin
+ for i in 1..9 loop
+  insert into public.cn_comments(user_id,post_id,body) values(auth.uid(),'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','Allowed comment ' || i);
+ end loop;
+ begin
+  insert into public.cn_comments(user_id,post_id,body) values(auth.uid(),'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','Over limit');
+ exception when sqlstate 'P0001' then limited:=true; end;
+ if not limited then raise exception 'FAIL: comment rate limit bypassed'; end if;
+ begin
+  insert into public.cn_comments(user_id,post_id,body,created_at) values(auth.uid(),'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','Spoof timestamp',now()-interval '1 year');
+  raise exception 'FAIL: client timestamp spoofing allowed';
+ exception when insufficient_privilege then null; end;
+ begin
+  perform 1 from public.cn_rate_counters;
+  raise exception 'FAIL: private rate counter readable';
+ exception when insufficient_privilege then null; end;
+end $$;
 -- Recipient accepts. The sender retries exactly the same idempotent request.
 select set_config('request.jwt.claim.sub','22222222-2222-2222-2222-222222222222',true);
 select public.cn_respond_conversation(current_setting('test.chat')::uuid,true);
