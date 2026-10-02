@@ -178,10 +178,14 @@ String serviceError(Object error) {
     return 'The account request failed. Check your details and connection, then retry.';
   }
   if (error is PostgrestException) {
-    if (error.code == '42P01' || error.code == 'PGRST205') {
-      return 'Online drafts are not enabled on the server yet.';
+    if (error.code == 'P0001') return 'Too many requests. Please wait and try again.';
+    if (error.code == '42501' || error.code == 'PGRST116') {
+      return 'This content or conversation is no longer available to your account. Refresh and try again.';
     }
-    return 'Could not save or load this draft. Refresh and try again.';
+    if (error.code == '42P01' || error.code == 'PGRST205' || error.code == 'PGRST202') {
+      return 'This feature is awaiting server setup. You can still explore the sample app.';
+    }
+    return 'The request could not be completed. Check your connection or access and retry.';
   }
   return 'Could not connect. Check your internet connection and try again.';
 }

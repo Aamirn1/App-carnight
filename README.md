@@ -1,6 +1,14 @@
 # Cars Night — Flutter mobile app
 
-**Version 0.3.0 — connected-services development preview.**
+**Version 0.4.0 — social community development preview.**
+
+Home / Messages / Create / Marketplace / Profile. Marketplace now combines Buy and
+Rent. The real public Supabase key is configured; mobile/social tables still need
+installation. See [social product and budget decisions](docs/SOCIAL_PRODUCT.md)
+and [database setup](docs/SUPABASE_SETUP.md).
+
+The descriptions below record the preceding milestone; current verification and
+APK links will be updated after the 0.4.0 CI run.
 
 The approved dark/neon Home design and cyan selected navigation icons are retained.
 The feed, marketplace, image composer, likes, comments and saved collection still

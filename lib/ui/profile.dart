@@ -3,6 +3,7 @@ import '../core/session.dart';
 import '../core/theme.dart';
 import '../data/demo_catalog.dart';
 import 'account.dart';
+import 'messages.dart';
 import '../backend/session.dart';
 import 'components.dart';
 import 'feed.dart';
@@ -60,6 +61,8 @@ class ProfilePage extends StatelessWidget {
                       pushPage<void>(context, SavedPage(session: session)),
                 ),
                 const Divider(height: 1),
+            ListTile(leading: const Icon(Icons.people_outline), title: const Text('Find car lovers'),
+              onTap: () => pushPage<void>(context, const PeoplePage())),
                 ListTile(
                   leading: const Icon(Icons.login),
                   title: Text(

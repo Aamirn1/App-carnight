@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'app.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend/config.dart';
+import 'backend/social.dart';
 import 'backend/session.dart';
 import 'backend/supabase_repositories.dart';
 
@@ -19,6 +20,7 @@ Future<void> main() async {
         backend = BackendSession(
           accounts: SupabaseAccountsRepository(client),
           drafts: SupabaseDraftsRepository(client),
+          social: SocialRepository(client),
         );
       } catch (_) {
         startupError =

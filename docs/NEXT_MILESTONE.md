@@ -1,21 +1,19 @@
-# Phase 2: connected services — in progress
+# Phase 2: social community — in progress
 
-The approved Home design and cyan selected navigation icons are preserved.
-Version 0.3.0 adds a Flutter Supabase adapter for the user-provided project URL,
-account forms, session tracking, password recovery callback handling and private
-text draft screens for posts, sale listings and rental listings.
+Version 0.4.0 makes the community the primary app experience. Home has Discover
+and Following, Messages has request consent, and Marketplace combines Buy/Rent.
+The approved palette, wordmark, cards and cyan selected icons are retained.
 
-The app is not connected to the live project yet: the supplied key is still
-`your-anon-key`, and no administrative database connection is available. See
-[SUPABASE_SETUP.md](SUPABASE_SETUP.md) for exact configuration and SQL instructions.
-The new `cn_*` migration isolates mobile tables from the existing website. The
-older migration is retained as historical groundwork, not for shared-project use.
+The public Supabase key has been supplied and verified against Auth and the
+website Listing endpoint. The mobile/social tables still need installing with
+[supabase/SETUP_SOCIAL.sql](../supabase/SETUP_SOCIAL.sql). No administrative
+connection is available; no live database changes have been made.
 
-The account/draft features have code and automated tests, but require live project
-and device acceptance tests. Existing Home, Buy/Rent, local composer and saved
-collection remain demo features. No videos or media uploads are enabled.
+Read [SOCIAL_PRODUCT.md](SOCIAL_PRODUCT.md) for implemented flows, budget rationale,
+new table/RPC design, limits and remaining release gates. Read
+[SUPABASE_SETUP.md](SUPABASE_SETUP.md) for the exact activation steps.
 
-Remaining milestones: connect and validate live auth/drafts; image compression,
-validated storage and quotas; public feed/listing integration and private saves;
-reports/moderation and account deletion; device/performance/accessibility coverage;
-release signing, privacy/store disclosures, monitoring and launch review.
+CI will validate ownership, conversation consent and privacy, Flutter behavior and
+the Android build. Live two-account/device tests remain necessary after SQL setup.
+Public photo uploads, realtime delivery, website inventory mapping and production
+moderation/account-deletion tools are still unfinished. This is a development APK.

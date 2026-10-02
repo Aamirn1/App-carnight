@@ -7,6 +7,7 @@ import 'package:cars_night/domain/models.dart';
 import 'package:cars_night/ui/information.dart';
 import 'package:cars_night/ui/marketplace.dart';
 import 'package:cars_night/ui/profile.dart';
+import 'package:cars_night/ui/messages.dart';
 
 Future<void> openDemo(WidgetTester tester) async {
   tester.view.physicalSize = const Size(390, 844);
@@ -20,9 +21,20 @@ Future<void> openDemo(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('primary navigation prioritizes community and combines marketplace', (tester) async {
+    await openDemo(tester);
+    expect(find.byKey(const ValueKey('nav-messages')), findsOneWidget);
+    expect(find.byKey(const ValueKey('nav-marketplace')), findsOneWidget);
+    expect(find.byKey(const ValueKey('nav-buy')), findsNothing);
+    expect(find.byKey(const ValueKey('nav-rent')), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('nav-messages')));
+    await tester.pumpAndSettle();
+    expect(find.text('Sign in to message'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('buy search has a recoverable empty state', (tester) async {
     await openDemo(tester);
-    await tester.tap(find.byKey(const ValueKey('nav-buy')));
+    await tester.tap(find.byKey(const ValueKey('nav-marketplace')));
     await tester.pumpAndSettle();
     expect(find.text('Find Your Dream Car'), findsOneWidget);
     await tester.enterText(
@@ -81,7 +93,9 @@ void main() {
 
   testWidgets('rental city and date controls are available', (tester) async {
     await openDemo(tester);
-    await tester.tap(find.byKey(const ValueKey('nav-rent')));
+    await tester.tap(find.byKey(const ValueKey('nav-marketplace')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('market-rent')));
     await tester.pumpAndSettle();
     expect(find.text('Rent a Car'), findsOneWidget);
     expect(find.text('Pick-up date'), findsOneWidget);
@@ -106,10 +120,13 @@ void main() {
     addTearDown(session.dispose);
     for (final page in <Widget>[
       const WelcomePage(),
+      const AppShell(),
       Scaffold(
         body: MarketplacePage(kind: ListingKind.rental, session: session),
       ),
       const PlanPage(),
+      Scaffold(body: MarketplaceHub(session: session)),
+      const Scaffold(body: MessagesPage()),
     ]) {
       await tester.pumpWidget(
         MaterialApp(

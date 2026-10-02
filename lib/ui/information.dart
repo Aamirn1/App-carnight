@@ -69,7 +69,7 @@ class SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         const Text(
-          'Cars Night · Visual prototype 0.2.0',
+          'Cars Night · Community preview 0.4.0',
           style: TextStyle(color: NightTheme.muted),
         ),
       ],
@@ -178,8 +178,8 @@ class AboutPage extends StatelessWidget {
         ),
       ),
       const InfoNote(
-        'This is an offline visual prototype. Cars, identities, photographs '
-        'and offers are sample content. Worldwide availability has not been established.',
+        'Development preview. Marketplace offers and the sample feed are illustrative. '
+        'Public photo posting is not enabled yet.',
       ),
     ],
   );

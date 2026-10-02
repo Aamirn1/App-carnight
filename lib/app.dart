@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'core/assets.dart';
 import 'core/session.dart';
 import 'core/theme.dart';
-import 'domain/models.dart';
+import 'backend/repositories.dart';
+import 'ui/account.dart';
+import 'ui/community.dart';
+import 'ui/messages.dart';
 import 'ui/auth.dart';
 import 'ui/components.dart';
 import 'ui/compose.dart';
@@ -79,14 +82,14 @@ class WelcomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'Global Car Marketplace\n& Community',
+                        'The community for\ncar lovers',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 16),
                       if (startupError != null) InfoNote(startupError!),
                       const Text(
-                        'Buy. Rent. Connect. Share.',
+                        'Share. Connect. Discover.',
                         style: TextStyle(color: NightTheme.muted),
                       ),
                       const SizedBox(height: 28),
@@ -138,7 +141,7 @@ class _AppShellState extends State<AppShell> {
   @override
   void initState() {
     super.initState();
-    _pages[0] = FeedPage(session: _session);
+    _pages[0] = CommunityPage(demo: _session);
   }
 
   @override
@@ -149,6 +152,16 @@ class _AppShellState extends State<AppShell> {
 
   Future<void> _select(int index) async {
     if (index == 2) {
+      final backend = BackendScope.of(context);
+      if (backend != null) {
+        final account = backend.account;
+        if (account == null) {
+          await pushPage<void>(context, const AuthPage());
+        } else {
+          await pushPage<bool>(context, DraftEditor(kind: DraftKind.post, ownerId: account.id));
+        }
+        return;
+      }
       final added = await pushPage<bool>(
         context,
         ComposePage(session: _session),
@@ -167,10 +180,10 @@ class _AppShellState extends State<AppShell> {
       _pages.putIfAbsent(
         index,
         () => switch (index) {
-          1 => MarketplacePage(kind: ListingKind.sale, session: _session),
-          3 => MarketplacePage(kind: ListingKind.rental, session: _session),
+          1 => const MessagesPage(),
+          3 => MarketplaceHub(session: _session),
           4 => ProfilePage(session: _session),
-          _ => FeedPage(session: _session),
+          _ => CommunityPage(demo: _session),
         },
       );
     });
@@ -227,23 +240,23 @@ class _AppShellState extends State<AppShell> {
               ],
             ),
             const SizedBox(height: 20),
-            const ListTile(
+            ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
+              leading: const CircleAvatar(
                 backgroundColor: Color(0xFF352650),
                 child: Icon(Icons.person_outline, color: NightTheme.cyan),
               ),
               title: Text(
-                'Car enthusiast',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                BackendScope.of(context)?.account?.displayName ?? 'Car enthusiast',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text('Guest preview'),
+              subtitle: Text(BackendScope.of(context)?.account == null ? 'Browse as guest' : 'Signed in'),
             ),
             const SizedBox(height: 12),
             for (final item in const [
               (0, 'Home', Icons.home_outlined),
-              (1, 'Buy', Icons.shopping_cart_outlined),
-              (3, 'Rent', Icons.car_rental),
+              (1, 'Messages', Icons.forum_outlined),
+              (3, 'Marketplace', Icons.storefront_outlined),
             ])
               Padding(
                 padding: const EdgeInsets.only(bottom: 5),
@@ -309,13 +322,13 @@ class _AppShellState extends State<AppShell> {
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Exit demo'),
+              title: const Text('Back to welcome'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
             ),
-            const InfoNote('Sample content. Changes reset when you exit.'),
+            const InfoNote('Sample marketplace offers and saved items are for preview.'),
           ],
         ),
       ),
@@ -347,10 +360,10 @@ class _AppShellState extends State<AppShell> {
           label: 'Home',
         ),
         NavigationDestination(
-          key: ValueKey('nav-buy'),
-          icon: Icon(Icons.shopping_bag_outlined),
-          selectedIcon: Icon(Icons.shopping_bag),
-          label: 'Buy',
+          key: ValueKey('nav-messages'),
+          icon: Icon(Icons.forum_outlined),
+          selectedIcon: Icon(Icons.forum),
+          label: 'Messages',
         ),
         NavigationDestination(
           key: ValueKey('nav-create'),
@@ -367,10 +380,10 @@ class _AppShellState extends State<AppShell> {
           label: 'Create',
         ),
         NavigationDestination(
-          key: ValueKey('nav-rent'),
-          icon: Icon(Icons.directions_car_outlined),
-          selectedIcon: Icon(Icons.directions_car),
-          label: 'Rent',
+          key: ValueKey('nav-marketplace'),
+          icon: Icon(Icons.storefront_outlined),
+          selectedIcon: Icon(Icons.storefront),
+          label: 'Marketplace',
         ),
         NavigationDestination(
           key: ValueKey('nav-profile'),

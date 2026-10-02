@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'repositories.dart';
+import 'social.dart';
 
 class BackendSession extends ChangeNotifier {
-  BackendSession({required this.accounts, required this.drafts}) {
+  BackendSession({required this.accounts, required this.drafts, this.social}) {
     _accountSub = accounts.accountChanges.listen(
       (value) {
         _generation++;
         account = value;
+        _syncProfile(value);
         if (value == null) recovering = false;
         notifyListeners();
       },
@@ -24,6 +26,7 @@ class BackendSession extends ChangeNotifier {
   }
   final AccountsRepository accounts;
   final DraftsRepository drafts;
+  final SocialRepository? social;
   AccountSummary? account;
   bool recovering = false;
   int _generation = 0;
@@ -36,10 +39,22 @@ class BackendSession extends ChangeNotifier {
       final restored = await accounts.currentAccount();
       if (_disposed || generation != _generation) return;
       account = restored;
+      _syncProfile(restored);
       notifyListeners();
     } catch (_) {
       /* A later successful auth event can recover. */
     }
+  }
+
+  void _syncProfile(AccountSummary? value) {
+    final api = social;
+    if (value == null || api == null) return;
+    // Schedule outside the auth stream callback; auth events must stay synchronous.
+    unawaited(Future<void>(() async {
+      if (_disposed || account?.id != value.id) return;
+      try { await api.ensureProfile(value.displayName); }
+      catch (_) { /* Schema/network recovery is handled by community screens. */ }
+    }));
   }
 
   void finishRecovery() {

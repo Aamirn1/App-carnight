@@ -521,3 +521,24 @@ class ListingDetail extends StatelessWidget {
     ],
   );
 }
+
+
+class MarketplaceHub extends StatelessWidget {
+  const MarketplaceHub({super.key, required this.session});
+  final DemoSession session;
+  @override
+  Widget build(BuildContext context) => DefaultTabController(
+    length: 2,
+    child: Column(children: [
+      Padding(padding: const EdgeInsets.fromLTRB(16, 12, 16, 4), child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text('Marketplace', style: Theme.of(context).textTheme.headlineSmall))),
+      const TabBar(tabs: [Tab(key: ValueKey('market-buy'), text: 'Buy'),
+        Tab(key: ValueKey('market-rent'), text: 'Rent')]),
+      Expanded(child: TabBarView(children: [
+        MarketplacePage(kind: ListingKind.sale, session: session),
+        MarketplacePage(kind: ListingKind.rental, session: session),
+      ])),
+    ]),
+  );
+}
