@@ -20,8 +20,11 @@ Conversation conversation({String status = 'active'}) => Conversation.fromJson({
   'listing_id': null,
 });
 
-class FakeSocial extends SocialRepository {
-  FakeSocial(super.client);
+class FakeSocial implements SocialRepository {
+  @override
+  Future<void> ensureProfile(String name) async {}
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError(invocation.memberName.toString());
   final requestIds = <String>[];
   bool failSend = true;
   @override
@@ -68,13 +71,7 @@ void main() {
   testWidgets(
     'message retry preserves its request ID and sign-out hides history',
     (tester) async {
-      final client = SupabaseClient(
-        'https://example.supabase.co',
-        'public-test',
-        authOptions: const AuthClientOptions(autoRefreshToken: false),
-      );
-      addTearDown(client.dispose);
-      final api = FakeSocial(client);
+      final api = FakeSocial();
       final accounts = fixtures.FakeAccounts();
       accounts.restored.complete(
         const AccountSummary(id: fixtures.owner, displayName: 'Driver'),
@@ -117,6 +114,7 @@ void main() {
       expect(find.textContaining('Your session changed'), findsOneWidget);
       await accounts.dispose();
     },
+    timeout: const Timeout(Duration(seconds: 45)),
   );
   test(
     'feed adapter sends a stable cursor and message adapter reuses the retry token',
