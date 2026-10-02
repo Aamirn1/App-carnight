@@ -715,9 +715,7 @@ class _BlockedPeoplePageState extends State<BlockedPeoplePage> {
       if (_busy) const LinearProgressIndicator(),
       for (final row in _rows)
         ListTile(
-          title: Text(
-            row['blocked_label'] as String? ?? 'Car enthusiast',
-          ),
+          title: Text(row['blocked_label'] as String? ?? 'Car enthusiast'),
           trailing: TextButton(
             onPressed: _busy
                 ? null

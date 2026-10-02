@@ -1,90 +1,83 @@
-# Cars Night — Flutter mobile app
+# Cars Night — Flutter community app
 
-**Version 0.4.0 — social community development preview.**
+**Version 0.4.0 — development preview.** Cars Night is a social app for car lovers,
+with a marketplace as one destination. The approved dark/neon visual style remains.
 
-Home / Messages / Create / Marketplace / Profile. Marketplace now combines Buy and
-Rent. The real public Supabase key is configured; mobile/social tables still need
-installation. See [social product and budget decisions](docs/SOCIAL_PRODUCT.md)
-and [database setup](docs/SUPABASE_SETUP.md).
+Navigation: **Home / Messages / Create / Marketplace / Profile**.
 
-The descriptions below record the preceding milestone; current verification and
-APK links will be updated after the 0.4.0 CI run.
+## Implemented in this increment
 
-The approved dark/neon Home design and cyan selected navigation icons are retained.
-The feed, marketplace, image composer, likes, comments and saved collection still
-use sample content. No videos are supported.
+- Discover and Following feed screens with cursor pagination and bounded image decoding.
+- People search, follow/unfollow, likes and comments backed by Supabase adapters.
+- Community/Marketplace/Requests inboxes, recipient acceptance, text messages with
+  idempotent retry IDs, block/unblock and report submission.
+- Combined Buy/Rent marketplace screen. Website inventory mapping is still pending;
+  the marketplace currently shows explicitly labelled sample offers.
+- Public Supabase client configuration included in the APK build. Auth settings and
+  the existing website Listing endpoint were reachable in the initial API check.
+- Additive social tables, RLS, request/message RPCs and basic write limits, with
+  isolated PostgreSQL privacy/ownership tests.
 
-## Supabase integration
+These database-backed features require the prepared SQL to be installed. No live
+DDL was executed with the anon key. A successful build is not a live account,
+email, message-delivery or media-upload acceptance test.
 
-Flutter account and private text-draft flows are implemented: email signup,
-sign-in, session tracking, password recovery, sign-out and create/edit/delete for
-post, sale and rental drafts. Live verification is pending: the supplied project
-configuration contained `your-anon-key`, and the database migration has not been
-applied to the shared project.
+## Activate your Supabase project
 
-Follow [Supabase setup](docs/SUPABASE_SETUP.md) to provide the **public** key,
-apply the isolated `cn_*` schema and configure the mobile callback. This is a
-Flutter integration, not a Next.js/npm setup. The workflow refuses to embed a
-privileged key. With no public key configured, account submission is disabled.
+Follow [setup instructions](docs/SUPABASE_SETUP.md). The full first-install script is
+[supabase/SETUP_SOCIAL.sql](supabase/SETUP_SOCIAL.sql). It creates only cn_* objects
+and does not change the website's Listing table. If the 0.3.0 mobile schema already
+exists, apply only the new social migration after reviewing migration history.
+Never run the disposable SQL files in `supabase/tests` on your live project.
 
-The website's auth project is shared; its content is not automatically imported.
-The new migration does not alter existing website tables or auth triggers.
+Add `com.carsnight.preview://auth-callback/` to allowed auth redirects while keeping
+the website Site URL and redirects. Verify email delivery with dedicated accounts.
+The supplied anon key is a public client credential; never embed a service-role key.
 
-## Test APK
+## Test APK and source
 
-[Download version 0.3.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/36927176905/artifacts/11194860781)
-— 51.6 MB APK; **25 tests passed**, **no analyzer issues**, database checks passed.
-This artifact has no public key configured, so account submission remains disabled.
+[Download version 0.4.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37035835530/artifacts/11241001708).
+Verified: 29 Flutter tests, clean analysis, database privacy/ownership checks and
+a successful 52.9 MB Android build. Available until 16 October 2026.
 
-Open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
-select the latest successful run, and download **CarsNight-test-APK** under Artifacts.
-Extract **CarsNight-preview.apk** and install it on Android. GitHub sign-in may be
-required. See [installation instructions](docs/ANDROID_TESTING.md).
+For later builds, open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
+select the latest successful run, and download **CarsNight-test-APK**. Extract
+**CarsNight-preview.apk** and install it on Android. GitHub sign-in may be required.
+See [verification status](docs/STATUS.md) and [installation notes](docs/ANDROID_TESTING.md).
 
-The development signing key may change between builds. If Android refuses an
-update, uninstall the old preview before installing; local sample data and the
-stored sign-in session are lost. Server drafts, once connected, are unaffected.
-
-The workflow runs isolated PostgreSQL ownership checks, Flutter analysis, unit/
-widget/mocked-HTTP tests and an Android release-mode build. This does not certify
-live Supabase auth/email, actual device callback handling, production performance
-or worldwide device support. See [verification status](docs/STATUS.md).
+The preview is development signed. If Android refuses to update an older APK,
+uninstall that preview first; local demo data and the stored session are removed.
+Server-side data, once configured, persists.
 
 ## Local development
 
-Use Flutter **3.35.7** and Java 17. The Android host and dependency lock are committed.
+Flutter 3.35.7 and Java 17 are used by CI. The dependency lock and Android host are
+committed. The editing environment has no Flutter SDK; actual Flutter verification
+runs on GitHub Actions.
 
 ```sh
 bash scripts/bootstrap_android.sh
 flutter pub get
 dart format lib test
 bash scripts/check.sh
-flutter run
+flutter run --dart-define-from-file=config/supabase.public.json
 ```
 
-For connected builds, follow the dart-define configuration in the setup guide.
-No service-role credentials belong in the app. There is no local Flutter SDK in
-the editing workspace; actual Flutter checks run in GitHub Actions.
+GitHub repository variables can override the public configuration. The workflow
+rejects privileged keys before packaging. Test fixtures never use the live project.
 
-## Test flows
+## Remaining release work
 
-1. Get Started → Home; scroll and test local comments/likes.
-2. Create → select bundled sample images → add a local demo post.
-3. Buy/Rent → filter, inspect a sample listing and save it.
-4. Profile → Saved collection; remove local saved items.
-5. Once configured: Profile → Sign in or join → account and private drafts.
-6. Create/edit/delete post, sale and rental drafts; test sign-out and restoration.
-7. Follow the live acceptance checks in the Supabase setup guide.
+Create currently saves **private text drafts**, not public photo posts. Validated
+image upload/re-encoding/storage, publication, realtime/push messaging, unread
+counts, public share links, connected saved collections, website inventory bridging,
+moderation tools, account deletion and production signing remain unfinished.
+Threads refresh manually. No videos or chat attachments are supported.
 
-## Remaining work
+Home was previously reviewed on one physical phone. The new pages still need actual
+device screenshot comparison, performance checks and live two-account tests after
+SQL installation. No claim of production readiness or worldwide speed/device
+coverage is made by a successful CI build.
 
-Image picking/compression and validated uploads, quotas, public feed/listings,
-server moderation, connected saves/reactions, account deletion, reporting,
-release signing, privacy/store requirements and broad device testing remain.
-Public publishing is intentionally blocked until server validation exists.
-This is not a production launch build.
-
-Bundled photos are illustrative and the logo is an interpreted asset. Home was
-reviewed by the user on one device; exact original-reference matching across all
-pages and devices has not been verified. See [milestone](docs/NEXT_MILESTONE.md)
-and [roadmap](docs/ROADMAP.md).
+Read [product and budget decisions](docs/SOCIAL_PRODUCT.md) and the
+[current milestone](docs/NEXT_MILESTONE.md) for rationale and remaining phases.

@@ -169,9 +169,9 @@ class SocialRepository {
 
   Future<String> request(String target, {String? listingId}) async =>
       await client.rpc<String>(
-            'cn_request_conversation',
-            params: {'target_id': target, 'for_listing': listingId},
-          );
+        'cn_request_conversation',
+        params: {'target_id': target, 'for_listing': listingId},
+      );
   Future<void> respond(String conversation, bool accept) async {
     await client.rpc<void>(
       'cn_respond_conversation',

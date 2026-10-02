@@ -213,10 +213,12 @@ class _AppShellState extends State<AppShell> {
         IconButton(
           tooltip: 'Search community',
           icon: const Icon(Icons.search),
-          onPressed: () =>
-              pushPage<void>(context, BackendScope.of(context)?.social == null
-                  ? CommunitySearchPage(session: _session)
-                  : const PeoplePage()),
+          onPressed: () => pushPage<void>(
+            context,
+            BackendScope.of(context)?.social == null
+                ? CommunitySearchPage(session: _session)
+                : const PeoplePage(),
+          ),
         ),
         IconButton(
           tooltip: 'Notifications',

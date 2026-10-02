@@ -24,7 +24,8 @@ class FakeSocial implements SocialRepository {
   @override
   Future<void> ensureProfile(String name) async {}
   @override
-  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError(invocation.memberName.toString());
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw UnimplementedError(invocation.memberName.toString());
   final requestIds = <String>[];
   bool failSend = true;
   @override

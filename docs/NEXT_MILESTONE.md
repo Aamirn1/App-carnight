@@ -13,7 +13,7 @@ Read [SOCIAL_PRODUCT.md](SOCIAL_PRODUCT.md) for implemented flows, budget ration
 new table/RPC design, limits and remaining release gates. Read
 [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for the exact activation steps.
 
-CI will validate ownership, conversation consent and privacy, Flutter behavior and
-the Android build. Live two-account/device tests remain necessary after SQL setup.
+CI passed ownership, conversation consent and privacy checks, 29 Flutter tests,
+static analysis and the Android build; see [verification report](STATUS.md). Live two-account/device tests remain necessary after SQL setup.
 Public photo uploads, realtime delivery, website inventory mapping and production
 moderation/account-deletion tools are still unfinished. This is a development APK.

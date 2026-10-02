@@ -1,3 +1,57 @@
+# Version 0.4.0 verification — 2 October 2026 (UTC)
+
+Tested source commit: `5382f918d60427c5ec6b491e68d7ed417dbb7f5a`.
+
+- [GitHub Actions run](https://github.com/Aamirn1/App-carnight/actions/runs/37035835530).
+- Flutter analysis: **No issues found**.
+- Flutter unit/widget/mocked HTTP tests: **29 passed**.
+- Isolated PostgreSQL ownership and social checks: **passed**. Coverage includes
+  conversation consent, private-message isolation, blocking, message retry IDs,
+  draft publication restrictions and basic write limits.
+- Android release-mode preview APK: **52.9 MB**, development signed.
+- [Download APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37035835530/artifacts/11241001708).
+  Available until 16 October 2026; rerun Actions after expiry.
+- The initial Android build hit an invalid NDK download; a fresh runner completed
+  successfully without app-source changes.
+
+## Scope of this increment
+
+Home / Messages / Create / Marketplace / Profile now places the community first.
+Discover/Following, people search, follows, likes, comments, consent-based text
+conversations, block/unblock and reports have Supabase-backed implementations.
+Marketplace combines sample Buy/Rent offers. Create saves private text drafts.
+The supplied public anon key is included in client build configuration.
+
+## Live activation and limits
+
+The last successful read-only API check reached Supabase Auth and the website
+Listing endpoint. The mobile tables were missing at that check. Listing returned
+no anon-visible rows; this does not establish that the website database is empty.
+No live DDL, real account/email creation, message sending or user-data mutation
+was performed. The anon key cannot install SQL. Use [setup instructions](SUPABASE_SETUP.md)
+and the prepared first-install script; existing mobile installations need only
+its new social migration after checking migration history.
+
+Public photo uploads/publication, realtime/push delivery, unread counts, public
+share links, online saved collections, website Listing mapping, moderation tools,
+account deletion and production signing are still open. Threads refresh manually.
+Keep Supabase initially; see [product/budget decisions](SOCIAL_PRODUCT.md).
+
+## Design and device verification
+
+The approved dark background, neon accents, wordmark and card styling remain;
+selected navigation icons are cyan. New social pages and navigation intentionally
+extend the reference. No new physical-device screenshots or performance profiles
+were captured. Pixel matching and broad phone compatibility are unverified.
+The build is a development preview, not a production release.
+
+Runner-formatted Dart and the resolved dependency lock are preserved alongside
+this report. Subsequent documentation/formatting commits do not change app behavior.
+
+---
+
+# Historical reports (superseded by version 0.4.0 above)
+
 # Version 0.3.0 verification — 2 October 2026 (Pakistan time)
 
 Built source commit: `f62ceaf68b2c36d05aeab112350cd5400f1aaa78`.

@@ -139,4 +139,4 @@ jobs:
           echo '## Cars Night test APK' >> "$GITHUB_STEP_SUMMARY"
           echo 'Analysis and tests passed; release-mode APK built with a development signing key.' >> "$GITHUB_STEP_SUMMARY"
           echo '[Download APK ZIP](${{ steps.apk.outputs.artifact-url }})' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Extract CarsNight-preview.apk from the ZIP and install it on Android. Online accounts require the public Supabase key in repository variables; sample content remains available.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Extract CarsNight-preview.apk from the ZIP and install it on Android. Public Supabase configuration is included. Install the social SQL and configure auth redirects before live testing; sample content remains available.' >> "$GITHUB_STEP_SUMMARY"

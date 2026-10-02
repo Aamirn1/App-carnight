@@ -14,11 +14,23 @@ Uninstalling or exiting the demo loses all local session data.
 
 ## What to check
 
+After installing the social SQL and configuring auth redirects:
+
+- Register/confirm/sign in using dedicated test accounts; test password recovery.
+- Open Find car lovers, follow the second account, and request a conversation.
+- Verify messages cannot be sent until the recipient accepts.
+- Refresh the thread after sending; realtime/push delivery is not implemented yet.
+- Retry a failed send, block/unblock, report, and sign out; private history must hide.
+- Home → Discover/Following uses published posts; public photo upload/publishing
+  is not enabled in this increment, so an empty feed is expected without approved data.
+
+Sample-mode review:
+
 - Welcome artwork, logo, Get Started and back navigation.
 - Home scrolling, story images, likes, saves and demo comments.
 - Create a demo post using the bundled sample images.
-- Buy search/category filters and Reset filters after an empty result.
-- Rent city/date controls, listing details and the sample estimate.
+- Marketplace → Buy search/category filters and Reset filters after an empty result.
+- Marketplace → Rent city/date controls, listing details and the sample estimate.
 - Profile → Saved collection; remove a saved item.
 - Drawer pages and larger system font sizes.
 
