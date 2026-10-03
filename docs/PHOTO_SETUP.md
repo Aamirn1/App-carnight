@@ -1,5 +1,17 @@
 # Phase 3: one-photo publishing pilot (0.5.0)
 
+## Verification
+
+Tested source: `d051342c203e86c63132278e667e5dfe481eca80`.
+[Successful Actions run](https://github.com/Aamirn1/App-carnight/actions/runs/37126623765).
+30 Flutter tests, 4 Deno media validation tests, TypeScript checking and the
+PostgreSQL social/ownership/photo quota checks passed. Flutter analysis had no
+errors or warnings; one unnecessary-import informational note was removed in the
+final source cleanup. Runner formatting and the resolved Dart dependency lock are preserved.
+The Deno imports pin their direct package versions; no Deno lock was produced.
+[Download development APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37126623765/artifacts/11274887422) — 53.6 MB, available until 17 October 2026.
+No live Supabase deployment or physical-device gallery/upload test was performed.
+
 ## Welcome-screen fix
 
 The welcome image is anchored to the top rather than vertically centered. The

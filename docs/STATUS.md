@@ -1,3 +1,12 @@
+# Latest: version 0.5.0 — welcome fix and photo publishing pilot
+
+See [PHOTO_SETUP.md](PHOTO_SETUP.md) for verified results, the latest APK,
+new SQL migration and Edge Function deployment instructions. Earlier reports
+below describe historical versions; their photo-publication status is superseded.
+Live deployment, device upload testing and production release gates remain open.
+
+---
+
 # Latest: version 0.4.1
 
 See [the verified launcher and UI update report](UI_UPDATE_0.4.1.md) for the latest APK.

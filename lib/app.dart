@@ -45,94 +45,94 @@ class WelcomePage extends StatelessWidget {
       statusBarBrightness: Brightness.dark,
     ),
     child: Scaffold(
-    body: SafeArea(
-      top: false,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Stack(
-                  children: [
-                    const AssetPhoto(
-                      asset: NightAssets.hero,
-                      ratio: 0.95,
-                      label: 'Blue sports car against a neon city skyline',
-                    ),
-                    const Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.transparent,
-                              NightTheme.background,
-                            ],
-                            stops: [0, 0.62, 1],
+      body: SafeArea(
+        top: false,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Stack(
+                    children: [
+                      const AssetPhoto(
+                        asset: NightAssets.hero,
+                        ratio: 0.95,
+                        label: 'Blue sports car against a neon city skyline',
+                      ),
+                      const Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.transparent,
+                                NightTheme.background,
+                              ],
+                              stops: [0, 0.62, 1],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Center(child: Brand(large: true)),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-                  child: Column(
-                    children: [
-                      Text(
-                        'The community for\ncar lovers',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 16),
-                      if (startupError != null) InfoNote(startupError!),
-                      const Text(
-                        'Share. Connect. Discover.',
-                        style: TextStyle(color: NightTheme.muted),
-                      ),
-                      const SizedBox(height: 28),
-                      GradientButton(
-                        label: 'Get Started',
-                        onPressed: () =>
-                            pushPage<void>(context, const AppShell()),
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton(
-                        onPressed: () =>
-                            pushPage<void>(context, const AuthPage()),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(52),
-                        ),
-                        child: const Text('Sign in'),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'SAMPLE FEED · PREVIEW BUILD',
-                        style: TextStyle(
-                          color: NightTheme.muted,
-                          fontSize: 10,
-                          letterSpacing: 1,
-                        ),
+                      const Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Center(child: Brand(large: true)),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                    child: Column(
+                      children: [
+                        Text(
+                          'The community for\ncar lovers',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 16),
+                        if (startupError != null) InfoNote(startupError!),
+                        const Text(
+                          'Share. Connect. Discover.',
+                          style: TextStyle(color: NightTheme.muted),
+                        ),
+                        const SizedBox(height: 28),
+                        GradientButton(
+                          label: 'Get Started',
+                          onPressed: () =>
+                              pushPage<void>(context, const AppShell()),
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton(
+                          onPressed: () =>
+                              pushPage<void>(context, const AuthPage()),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(52),
+                          ),
+                          child: const Text('Sign in'),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'SAMPLE FEED · PREVIEW BUILD',
+                          style: TextStyle(
+                            color: NightTheme.muted,
+                            fontSize: 10,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
     ),
   );
 }

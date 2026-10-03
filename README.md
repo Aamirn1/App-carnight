@@ -1,13 +1,18 @@
 # Cars Night — Flutter community app
 
-**Version 0.4.1 — development preview.** Cars Night is a social app for car lovers,
+**Version 0.5.0 — photo publishing pilot.** Cars Night is a social app for car lovers,
 with a marketplace as one destination. The approved dark/neon visual style remains.
 
 Navigation: **Home / Messages / Create / Market / Profile**. Market opens Marketplace (Buy/Rent).
 
-[Version 0.4.1 icon and UI update report](docs/UI_UPDATE_0.4.1.md).
+[Photo phase setup and limits](docs/PHOTO_SETUP.md).
+The welcome image now starts at the top, including behind the status bar.
 
 ## Implemented in this increment
+
+- One-photo JPEG composer, caption/preview, bounded upload and duplicate-safe
+  publication through a protected Edge Function. **Deploy the function and apply
+  the photo migration before live use.** See [photo setup](docs/PHOTO_SETUP.md).
 
 - Discover and Following feed screens with cursor pagination and bounded image decoding.
 - People search, follow/unfollow, likes and comments backed by Supabase adapters.
@@ -38,9 +43,10 @@ The supplied anon key is a public client credential; never embed a service-role 
 
 ## Test APK and source
 
-[Download version 0.4.1 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37116568180/artifacts/11272031512).
-Verified: 29 Flutter tests, clean analysis, database privacy/ownership checks and
-a successful 53.1 MB Android build. Available until 17 October 2026.
+[Download version 0.5.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37126623765/artifacts/11274887422).
+Verified: 30 Flutter tests, 4 media tests, database privacy/ownership/quota checks
+and a successful 53.6 MB Android build. Analysis had no errors or warnings; see
+[the full report](docs/PHOTO_SETUP.md) for its informational cleanup. Available until 17 October 2026.
 
 For later builds, open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
 select the latest successful run, and download **CarsNight-test-APK**. Extract
@@ -70,10 +76,15 @@ rejects privileged keys before packaging. Test fixtures never use the live proje
 
 ## Remaining release work
 
-Create currently saves **private text drafts**, not public photo posts. Validated
-image upload/re-encoding/storage, publication, realtime/push messaging, unread
-counts, public share links, connected saved collections, website inventory bridging,
-moderation tools, account deletion and production signing remain unfinished.
+Signed-in Create now supports one public JPEG photo per post after server setup.
+Photos are re-encoded on the server and limited to 512 KiB. The pilot reserves at
+most 100 MiB across 200 uploads, with 5 new reservations per user per 24 hours and
+20 per user overall. This limits stored media, not total project cost.
+
+Live deployment and device gallery/upload acceptance tests remain pending.
+Realtime/push messaging, unread counts, public share links, connected saved
+collections, website inventory bridging, moderation/takedown tools, account
+deletion, multi-photo posts and production signing remain unfinished.
 Threads refresh manually. No videos or chat attachments are supported.
 
 Home was previously reviewed on one physical phone. The new pages still need actual

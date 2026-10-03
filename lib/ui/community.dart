@@ -101,7 +101,9 @@ class _CommunityState extends State<_Community> {
               label: const Text('Discover'),
               showCheckmark: false,
               selectedColor: const Color(0xFF302658),
-              labelStyle: TextStyle(color: !_following ? NightTheme.cyan : Colors.white),
+              labelStyle: TextStyle(
+                color: !_following ? NightTheme.cyan : Colors.white,
+              ),
               selected: !_following,
               onSelected: _busy
                   ? null
@@ -114,7 +116,9 @@ class _CommunityState extends State<_Community> {
               label: const Text('Following'),
               showCheckmark: false,
               selectedColor: const Color(0xFF302658),
-              labelStyle: TextStyle(color: _following ? NightTheme.cyan : Colors.white),
+              labelStyle: TextStyle(
+                color: _following ? NightTheme.cyan : Colors.white,
+              ),
               selected: _following,
               onSelected: _busy
                   ? null
@@ -176,18 +180,34 @@ class _CommunityState extends State<_Community> {
                                 padding: const EdgeInsets.all(24),
                                 child: Column(
                                   children: [
-                                    const Icon(Icons.public_outlined, size: 40, color: NightTheme.cyan),
+                                    const Icon(
+                                      Icons.public_outlined,
+                                      size: 40,
+                                      color: NightTheme.cyan,
+                                    ),
                                     const SizedBox(height: 16),
-                                    Text('The community is getting ready',
+                                    Text(
+                                      'The community is getting ready',
                                       textAlign: TextAlign.center,
-                                      style: Theme.of(context).textTheme.titleLarge),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleLarge,
+                                    ),
                                     const SizedBox(height: 12),
-                                    Text(_error!, textAlign: TextAlign.center,
-                                      style: const TextStyle(color: NightTheme.muted)),
+                                    Text(
+                                      _error!,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: NightTheme.muted,
+                                      ),
+                                    ),
                                     const SizedBox(height: 20),
                                     FilledButton.icon(
-                                      onPressed: () => setState(() => _demo = true),
-                                      icon: const Icon(Icons.photo_library_outlined),
+                                      onPressed: () =>
+                                          setState(() => _demo = true),
+                                      icon: const Icon(
+                                        Icons.photo_library_outlined,
+                                      ),
                                       label: const Text('Explore sample feed'),
                                     ),
                                     TextButton.icon(

@@ -1,19 +1,16 @@
-# Phase 2: social community — in progress
+# Phase 3: photo publishing pilot — 0.5.0
 
-Version 0.4.0 makes the community the primary app experience. Home has Discover
-and Following, Messages has request consent, and Marketplace combines Buy/Rent.
-The approved palette, wordmark, cards and cyan selected icons are retained.
+The welcome artwork now begins at the top of the viewport, including beneath
+the status bar. The approved car image, logo and gradient are retained.
 
-The public Supabase key has been supplied and verified against Auth and the
-website Listing endpoint. The mobile/social tables still need installing with
-[supabase/SETUP_SOCIAL.sql](../supabase/SETUP_SOCIAL.sql). No administrative
-connection is available; no live database changes have been made.
+Signed-in Create offers a single JPEG photo, preview and caption. The protected
+server validates, re-encodes and stores a bounded image, then atomically publishes
+its post. Stable request IDs protect retries within the open composer.
 
-Read [SOCIAL_PRODUCT.md](SOCIAL_PRODUCT.md) for implemented flows, budget rationale,
-new table/RPC design, limits and remaining release gates. Read
-[SUPABASE_SETUP.md](SUPABASE_SETUP.md) for the exact activation steps.
+See [PHOTO_SETUP.md](PHOTO_SETUP.md) for the new SQL migration, Edge Function
+deployment instructions, conservative pilot quotas and acceptance checklist.
+No admin connection was available; live SQL/function deployment is not claimed.
 
-CI passed ownership, conversation consent and privacy checks, 29 Flutter tests,
-static analysis and the Android build; see [verification report](STATUS.md). Live two-account/device tests remain necessary after SQL setup.
-Public photo uploads, realtime delivery, website inventory mapping and production
-moderation/account-deletion tools are still unfinished. This is a development APK.
+Next release gates: live two-account/device media testing, moderation and deletion
+lifecycle, durable local drafts/retries, multiple images, website inventory mapping,
+realtime/push delivery, production signing and measured device performance.

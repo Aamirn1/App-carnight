@@ -21,8 +21,12 @@ After installing the social SQL and configuring auth redirects:
 - Verify messages cannot be sent until the recipient accepts.
 - Refresh the thread after sending; realtime/push delivery is not implemented yet.
 - Retry a failed send, block/unblock, report, and sign out; private history must hide.
-- Home → Discover/Following uses published posts; public photo upload/publishing
-  is not enabled in this increment, so an empty feed is expected without approved data.
+- After [photo setup](PHOTO_SETUP.md), open Create, choose a JPEG and add a caption.
+- Publish and check Discover from a second account. Retry on the same composer
+  after a network failure; verify there is only one post.
+- Try a corrupt/oversized/non-JPEG image; verify rejection without publication.
+- Check the welcome image starts at the top with no black spacer above it.
+- Review button access with large text and the device keyboard open.
 
 Sample-mode review:
 
@@ -36,8 +40,8 @@ Sample-mode review:
 
 Account and private text-draft screens require a configured public key and server
 schema; see [Supabase setup](SUPABASE_SETUP.md). This build has not been verified
-against the live project. Uploads, publishing, bookings, payments and seller
-enquiries remain unavailable.
+against the live project. Photo uploads/publication require the new migration and function deployment.
+Bookings, payments and live seller inventory integration remain unavailable.
 All sample posts and changes are in memory and reset when the demo is exited.
 Generated photos are illustrative, not actual seller inventory.
 
