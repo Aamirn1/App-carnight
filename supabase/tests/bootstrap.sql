@@ -15,3 +15,12 @@ create table public.profiles (website_marker text);
 create table public.posts (website_marker text);
 create table public.listings (website_marker text);
 insert into public.posts values ('website-unchanged');
+
+-- Disposable storage API schema fixture; production Supabase already owns these.
+create schema storage;
+create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text);
+alter table storage.objects enable row level security;
+grant usage on schema storage to anon,authenticated,service_role;
+grant all on storage.objects to anon,authenticated,service_role;
+create policy fixture_website_storage on storage.objects for all to authenticated using(true) with check(true);

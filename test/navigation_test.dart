@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cars_night/app.dart';
+import 'package:cars_night/ui/components.dart';
 import 'package:cars_night/core/session.dart';
 import 'package:cars_night/core/theme.dart';
 import 'package:cars_night/domain/models.dart';
@@ -21,6 +22,24 @@ Future<void> openDemo(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('welcome hero starts at top even with a status-bar inset', (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(MaterialApp(
+      theme: NightTheme.data,
+      home: const MediaQuery(
+        data: MediaQueryData(size: Size(360, 800), padding: EdgeInsets.only(top: 28, bottom: 24)),
+        child: WelcomePage(),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(find.byType(AssetPhoto).first).dy, 0);
+    await tester.ensureVisible(find.text('Get Started'));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'primary navigation prioritizes community and combines marketplace',
     (tester) async {

@@ -47,6 +47,10 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202610020001_mobile_content.sql
       - name: Apply social schema
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202610020002_social.sql
+      - name: Apply photo schema
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202610030001_photo_publish.sql
+      - name: Test photo publishing permissions and quotas
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/photo_publish.sql
       - name: Test social privacy and requests
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/social.sql
       - name: Test ownership and publication restrictions
@@ -72,6 +76,10 @@ jobs:
           flutter-version: '3.35.7'
           channel: stable
           cache: true
+      - name: Check and test media validator
+        run: |
+          npx --yes deno@2.2.12 check supabase/functions/cn-publish-photo/index.ts
+          npx --yes deno@2.2.12 test --allow-read supabase/functions/cn-publish-photo/media_test.ts
       - name: Generate Android host
         run: bash scripts/bootstrap_android.sh
       - name: Resolve dependencies

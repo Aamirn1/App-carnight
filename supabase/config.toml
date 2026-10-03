@@ -1,0 +1,2 @@
+[functions.cn-publish-photo]
+verify_jwt = true

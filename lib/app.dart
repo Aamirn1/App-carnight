@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'ui/photo_compose.dart';
 import 'core/assets.dart';
 import 'core/session.dart';
 import 'core/theme.dart';
-import 'backend/repositories.dart';
-import 'ui/account.dart';
 import 'ui/community.dart';
 import 'ui/messages.dart';
 import 'ui/auth.dart';
@@ -38,9 +38,17 @@ class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key, this.startupError});
   final String? startupError;
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
+    value: const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+    ),
+    child: Scaffold(
     body: SafeArea(
-      child: Center(
+      top: false,
+      child: Align(
+        alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),
           child: SingleChildScrollView(
@@ -125,6 +133,7 @@ class WelcomePage extends StatelessWidget {
         ),
       ),
     ),
+    ),
   );
 }
 
@@ -158,10 +167,16 @@ class _AppShellState extends State<AppShell> {
         if (account == null) {
           await pushPage<void>(context, const AuthPage());
         } else {
-          await pushPage<bool>(
+          final posted = await pushPage<bool>(
             context,
-            DraftEditor(kind: DraftKind.post, ownerId: account.id),
+            PhotoComposePage(ownerId: account.id),
           );
+          if (mounted && posted == true) {
+            setState(() {
+              _pages[0] = CommunityPage(key: UniqueKey(), demo: _session);
+              _selected = 0;
+            });
+          }
         }
         return;
       }
