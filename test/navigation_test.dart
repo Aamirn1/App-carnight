@@ -72,8 +72,10 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('No matching cars'), findsOneWidget);
-    await tester.ensureVisible(find.text('Reset filters'));
-    await tester.tap(find.text('Reset filters'));
+    await Scrollable.ensureVisible(tester.element(find.text('Reset filters')), alignment: 0.5);
+    await tester.pumpAndSettle();
+    expect(find.text('Reset filters').hitTestable(), findsOneWidget);
+    await tester.tap(find.text('Reset filters').hitTestable());
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Lamborghini Huracán'), 200,
       scrollable: find.descendant(of: find.byType(MarketplacePage).first, matching: find.byType(Scrollable)).first);
