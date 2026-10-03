@@ -79,7 +79,7 @@ jobs:
       - name: Check and test media validator
         run: |
           npx --yes deno@2.2.12 check supabase/functions/cn-publish-photo/index.ts
-          npx --yes deno@2.2.12 test --allow-read supabase/functions/cn-publish-photo/media_test.ts
+          npx --yes deno@2.2.12 test --allow-read --allow-net=jsr.io supabase/functions/cn-publish-photo/media_test.ts
       - name: Generate Android host
         run: bash scripts/bootstrap_android.sh
       - name: Resolve dependencies
@@ -140,6 +140,7 @@ jobs:
             lib/
             test/
             pubspec.lock
+            deno.lock
             android/
           retention-days: 14
       - name: Write download instructions

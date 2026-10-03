@@ -105,6 +105,7 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
     } on FunctionException catch (e) {
       final code = e.details is Map ? e.details['code'] : null;
       final message = switch (code) {
+        'setup' => 'Photo publishing is awaiting server setup.',
         'quota' => 'The photo posting limit has been reached. Please try later.',
         'invalid_image' => 'This photo could not be processed. Choose a JPEG photo under 2 MB.',
         'invalid_caption' => 'Add a caption of 1–500 characters.',

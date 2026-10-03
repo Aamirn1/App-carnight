@@ -34,7 +34,11 @@ Deno.serve(async (req: Request) => {
     const {data: reservation,error: reserveError} = await admin.rpc('cn_reserve_photo',{
       actor:user.id,request:request_id,digest,body:caption.trim(),
     });
-    if (reserveError) return reply(reserveError.code==='P0001'?429:409,{code:reserveError.code==='P0001'?'quota':'conflict'});
+    if (reserveError) {
+      if (reserveError.code==='P0001') return reply(429,{code:'quota'});
+      if (reserveError.code==='22023') return reply(409,{code:'conflict'});
+      return reply(503,{code:'setup'});
+    }
     if (reservation.state==='published') return reply(200,{post_id:reservation.post_id});
     let photo;
     try {photo=await sanitizePhoto(bytes);} catch {return reply(400,{code:'invalid_image'});}
