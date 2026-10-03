@@ -1,9 +1,11 @@
 # Cars Night — Flutter community app
 
-**Version 0.4.0 — development preview.** Cars Night is a social app for car lovers,
+**Version 0.4.1 — development preview.** Cars Night is a social app for car lovers,
 with a marketplace as one destination. The approved dark/neon visual style remains.
 
-Navigation: **Home / Messages / Create / Marketplace / Profile**.
+Navigation: **Home / Messages / Create / Market / Profile**. Market opens Marketplace (Buy/Rent).
+
+[Version 0.4.1 icon and UI update report](docs/UI_UPDATE_0.4.1.md).
 
 ## Implemented in this increment
 
@@ -36,9 +38,9 @@ The supplied anon key is a public client credential; never embed a service-role 
 
 ## Test APK and source
 
-[Download version 0.4.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37035835530/artifacts/11241001708).
+[Download version 0.4.1 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37116568180/artifacts/11272031512).
 Verified: 29 Flutter tests, clean analysis, database privacy/ownership checks and
-a successful 52.9 MB Android build. Available until 16 October 2026.
+a successful 53.1 MB Android build. Available until 17 October 2026.
 
 For later builds, open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
 select the latest successful run, and download **CarsNight-test-APK**. Extract

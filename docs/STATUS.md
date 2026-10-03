@@ -1,3 +1,10 @@
+# Latest: version 0.4.1
+
+See [the verified launcher and UI update report](UI_UPDATE_0.4.1.md) for the latest APK.
+The backend scope and remaining work described below are unchanged.
+
+---
+
 # Version 0.4.0 verification — 2 October 2026 (UTC)
 
 Tested source commit: `5382f918d60427c5ec6b491e68d7ed417dbb7f5a`.
