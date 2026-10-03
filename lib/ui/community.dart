@@ -99,6 +99,9 @@ class _CommunityState extends State<_Community> {
           children: [
             ChoiceChip(
               label: const Text('Discover'),
+              showCheckmark: false,
+              selectedColor: const Color(0xFF302658),
+              labelStyle: TextStyle(color: !_following ? NightTheme.cyan : Colors.white),
               selected: !_following,
               onSelected: _busy
                   ? null
@@ -109,6 +112,9 @@ class _CommunityState extends State<_Community> {
             ),
             ChoiceChip(
               label: const Text('Following'),
+              showCheckmark: false,
+              selectedColor: const Color(0xFF302658),
+              labelStyle: TextStyle(color: _following ? NightTheme.cyan : Colors.white),
               selected: _following,
               onSelected: _busy
                   ? null
@@ -165,10 +171,33 @@ class _CommunityState extends State<_Community> {
                       return Column(
                         children: [
                           if (_error != null) ...[
-                            InfoNote(_error!),
-                            TextButton(
-                              onPressed: _busy ? null : () => _load(),
-                              child: const Text('Retry'),
+                            NightCard(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  children: [
+                                    const Icon(Icons.public_outlined, size: 40, color: NightTheme.cyan),
+                                    const SizedBox(height: 16),
+                                    Text('The community is getting ready',
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context).textTheme.titleLarge),
+                                    const SizedBox(height: 12),
+                                    Text(_error!, textAlign: TextAlign.center,
+                                      style: const TextStyle(color: NightTheme.muted)),
+                                    const SizedBox(height: 20),
+                                    FilledButton.icon(
+                                      onPressed: () => setState(() => _demo = true),
+                                      icon: const Icon(Icons.photo_library_outlined),
+                                      label: const Text('Explore sample feed'),
+                                    ),
+                                    TextButton.icon(
+                                      onPressed: _busy ? null : () => _load(),
+                                      icon: const Icon(Icons.refresh),
+                                      label: const Text('Try again'),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                           if (_posts.isEmpty && !_busy && _error == null)
@@ -181,7 +210,7 @@ class _CommunityState extends State<_Community> {
                                   : 'Published photo posts will appear here.',
                               icon: Icons.auto_awesome_outlined,
                             ),
-                          if (_posts.isEmpty)
+                          if (_posts.isEmpty && !_busy && _error == null)
                             TextButton(
                               onPressed: () => setState(() => _demo = true),
                               child: const Text('Explore sample feed'),

@@ -397,7 +397,8 @@ class _AppShellState extends State<AppShell> {
           key: ValueKey('nav-marketplace'),
           icon: Icon(Icons.storefront_outlined),
           selectedIcon: Icon(Icons.storefront),
-          label: 'Marketplace',
+          label: 'Market',
+          tooltip: 'Marketplace — Buy and Rent',
         ),
         NavigationDestination(
           key: ValueKey('nav-profile'),

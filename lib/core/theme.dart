@@ -56,6 +56,13 @@ abstract final class NightTheme {
           color: states.contains(WidgetState.selected) ? cyan : Colors.white,
         ),
       ),
+      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+        (states) => TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: states.contains(WidgetState.selected) ? cyan : Colors.white,
+        ),
+      ),
       height: 72,
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(

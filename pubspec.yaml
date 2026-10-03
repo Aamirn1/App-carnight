@@ -1,7 +1,7 @@
 name: cars_night
 description: Cars Night mobile application — phase two visual prototype.
 publish_to: none
-version: 0.4.0+5
+version: 0.4.1+6
 environment:
   sdk: '>=3.9.0 <4.0.0'
 dependencies:
