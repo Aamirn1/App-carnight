@@ -223,6 +223,7 @@ return Column(
         final p = _posts[index];
         final own = BackendScope.of(context)?.account?.id == p.ownerId;
         return Padding(padding: const EdgeInsets.only(bottom: 8), child: HomePost(
+          key: ValueKey(p.id),
           id: p.id, author: p.name, subtitle: p.createdAt.split('T').first,
           caption: p.caption, likes: p.likes, comments: p.comments, liked: p.liked,
           onLike: _pending.contains(p.id) ? null : () => _action(p.id, () => widget.api.like(p.id, !p.liked)),
@@ -244,7 +245,7 @@ return Column(
               if (value == 'follow') _action(p.id, () => widget.api.follow(p.ownerId, !p.following));
               else if (p.following) _action(p.id, () async {
                 await widget.api.request(p.ownerId);
-                if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request sent. Open Messages.')));
+                if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request sent. Open Messages.')));
               });
               else ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Follow this person before sending a request.')));
             },

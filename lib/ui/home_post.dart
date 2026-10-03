@@ -64,7 +64,7 @@ class _CaptionState extends State<_Caption> {
   bool expanded = false;
   @override
   Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    Text(widget.text, maxLines: expanded ? null : 2, overflow: expanded ? TextOverflow.visible : TextOverflow.ellipsis),
+    Text(widget.text, maxLines: expanded || widget.text.length <= 85 ? null : 2, overflow: expanded || widget.text.length <= 85 ? TextOverflow.visible : TextOverflow.ellipsis),
     if (widget.text.length > 85 || widget.text.contains('\n')) InkWell(
       onTap: () => setState(() => expanded = !expanded),
       child: Padding(padding: const EdgeInsets.symmetric(vertical: 6),

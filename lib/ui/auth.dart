@@ -107,7 +107,7 @@ class _AuthPageState extends State<AuthPage> {
       if (!opened && mounted) setState(() => _message = 'Open your email app manually and look for Cars Night.');
     }),
     const SizedBox(height: 20),
-    TextField(controller: _code, keyboardType: TextInputType.number, maxLength: 10,
+    TextField(enabled: !_busy, controller: _code, keyboardType: TextInputType.number, maxLength: 10,
       decoration: const InputDecoration(labelText: 'Verification code', helperText: 'Available in the new Cars Night confirmation email.')),
     if (_message != null) Semantics(liveRegion: true, child: InfoNote(_message!)),
     const SizedBox(height: 12),
@@ -168,6 +168,7 @@ class _AuthPageState extends State<AuthPage> {
             children: [
               if (signup) ...[
                 TextFormField(
+                  enabled: !_busy,
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
                   maxLength: 80,
@@ -194,6 +195,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
+                  enabled: !_busy,
                   controller: _city, maxLength: 80,
                   textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(labelText: 'City', helperText: 'Used to find cars in your area. You can browse other locations.'),
@@ -203,6 +205,7 @@ class _AuthPageState extends State<AuthPage> {
               ],
               if (!update)
                 TextFormField(
+                  enabled: !_busy,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
@@ -217,6 +220,7 @@ class _AuthPageState extends State<AuthPage> {
               if (!recovery) ...[
                 const SizedBox(height: 16),
                 TextFormField(
+                  enabled: !_busy,
                   controller: _password,
                   obscureText: _obscure,
                   enableSuggestions: false,

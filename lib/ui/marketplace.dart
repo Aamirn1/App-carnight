@@ -84,13 +84,16 @@ class _MarketplacePageState extends State<MarketplacePage> {
     setState(() => _period = RentalPeriod(result.start, result.end));
   }
 
-  void _reset() => setState(() {
+  void _reset() {
+    FocusScope.of(context).unfocus();
+    setState(() {
     _search.clear();
     _location.clear();
     _category = 'All';
     _countryCode = '';
     _period = null;
-  });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

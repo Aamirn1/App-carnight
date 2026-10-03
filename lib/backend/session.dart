@@ -33,7 +33,7 @@ class BackendSession extends ChangeNotifier {
   bool initializing = true;
   bool emailVerifiedNotice = false;
   void showEmailVerified() {
-    if (_disposed || account == null) return;
+    if (_disposed) return;
     emailVerifiedNotice = true;
     notifyListeners();
   }

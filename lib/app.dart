@@ -48,7 +48,7 @@ class _SessionApp extends StatelessWidget {
           const SizedBox(height: 40),
           const Icon(Icons.verified_outlined, color: NightTheme.cyan, size: 64),
           const SizedBox(height: 24),
-          Text('Welcome to Cars Night', style: Theme.of(context).textTheme.headlineSmall),
+          const Text('Welcome to Cars Night', style: TextStyle(fontSize: 24, color: Colors.white)),
           const SizedBox(height: 16),
           const Text('Your email is verified and you are signed in.'),
           const SizedBox(height: 24),

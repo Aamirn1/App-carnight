@@ -25,13 +25,12 @@ class FeedPage extends StatelessWidget {
                 .contains(query.trim().toLowerCase()),
           )
           .toList();
-      if (posts.isEmpty)
-        return const SingleChildScrollView(
-          child: EmptyState(
-            title: 'No posts found',
-            message: 'Try a different person, city or keyword.',
-          ),
-        );
+      if (posts.isEmpty) {
+        return ListView(children: [
+          if (header != null) header!,
+          const EmptyState(title: 'No posts found', message: 'Try a different person, city or keyword.'),
+        ]);
+      }
       return ListView.builder(
         key: const PageStorageKey<String>('feed'),
         padding: EdgeInsets.symmetric(horizontal: homeLayout ? 0 : 16),
@@ -133,6 +132,7 @@ class PostCard extends StatelessWidget {
   final bool homeLayout;
   @override
   Widget build(BuildContext context) => homeLayout ? HomePost(
+    key: ValueKey(post.id),
     id: post.id, author: post.author, subtitle: '${post.city} · Demo', caption: post.caption,
     likes: session.isLiked(post.id) ? 1 : 0, comments: session.commentsFor(post.id).length,
     liked: session.isLiked(post.id), saved: session.isSaved(post.id),
