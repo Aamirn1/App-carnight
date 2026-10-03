@@ -1,0 +1,21 @@
+{
+  "confirmation_source": {
+    "id": "e2fc818d-d306-4744-a360-afd32f626127",
+    "alias": "untitled-template",
+    "status": "published"
+  },
+  "created": [
+    {
+      "id": "194a3159-4878-4088-a67a-98847473e4bb",
+      "alias": "cars-night-reset-password",
+      "status": "published",
+      "subject": "Reset your Cars Night password"
+    },
+    {
+      "id": "f4d8910e-e4d7-4256-821c-531554d8f9e0",
+      "alias": "cars-night-password-changed",
+      "status": "published",
+      "subject": "Your Cars Night password was changed"
+    }
+  ]
+}
