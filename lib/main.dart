@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'app.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend/config.dart';
@@ -8,6 +9,7 @@ import 'backend/supabase_repositories.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   const config = BackendConfig.environment();
   BackendSession? backend;
   String? startupError;

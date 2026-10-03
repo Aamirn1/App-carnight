@@ -1,4 +1,4 @@
-import { Image } from 'npm:imagescript@1.3.0';
+import { Image } from 'jsr:@matmen/imagescript@1.3.1';
 
 export const MAX_INPUT = 2 * 1024 * 1024;
 export const MAX_OUTPUT = 512 * 1024;

@@ -1,4 +1,4 @@
-import { Image } from 'npm:imagescript@1.3.0';
+import { Image } from 'jsr:@matmen/imagescript@1.3.1';
 import { jpegDimensions, readLimitedBody, sanitizePhoto, MAX_OUTPUT } from './media.ts';
 function assert(value: unknown) {if(!value) throw new Error('Assertion failed');}
 Deno.test('valid JPEG is re-encoded within the output budget',async()=>{
