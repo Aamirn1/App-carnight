@@ -4,7 +4,7 @@
 
 - Added 24 px of space between auth introductions and the first field.
 - Signup requires a searchable country selection and city. Country uses an ISO
-  two-letter code. Both are stored privately in the Supabase user's metadata and
+  two-letter code. Both are stored in the Supabase user's account metadata and
   restored with the account; they are not copied into public social profiles.
 - Marketplace defaults to the account country/city. Country selection, city
   search and Reset filters allow browsing elsewhere. The current inventory is
@@ -65,9 +65,30 @@ No live email was sent, SMTP sender changed, template applied, or hosted allowli
 edited by this code update. Those settings require project-admin access. Until
 these steps are applied, the live localhost/email-branding issues remain blocked.
 
+No additional SQL migration is needed for the country/city fields in this release.
+They are account metadata, not an authorization boundary. Existing social/photo
+SQL setup remains necessary for those features.
+
 ## Acceptance and remaining gates
 
-VERIFICATION_PENDING
+Verified on 3 October 2026 with source `70b5dfd8b1fe9c7c41e87ac16aff3e955c793ef0`:
+
+- [Successful Actions run](https://github.com/Aamirn1/App-carnight/actions/runs/37135401543).
+- Dart analysis: **No issues found**.
+- **34 Flutter tests passed**, including restored-session routing, sign-in navigation,
+  signup confirmation/location and Marketplace reset/filter behavior.
+- **4 media validator tests passed** and isolated PostgreSQL ownership, privacy,
+  publication and quota checks passed.
+- Android release-mode preview APK built successfully: **54.0 MB**, development signed.
+- [Download version 0.6.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37135401543/artifacts/11278522898).
+  Extract CarsNight-preview.apk. Available until 17 October 2026.
+- Runner-formatted Dart and the resolved dependency lock are retained in the repo.
+
+No physical-device screenshot, native Gmail launch, real email confirmation or live
+photo upload was performed in this verification. The automated session tests use
+repository fakes; they do not establish live email delivery. Hosted settings above
+must be applied before the localhost issue can be considered resolved.
+
 
 Check: returning-user launch; sign-in → Home; sign-out → Welcome; signup location
 selection and validation; confirmation-only screen after successful submission;

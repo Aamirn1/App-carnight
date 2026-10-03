@@ -51,14 +51,25 @@ class SupabaseAccountsRepository implements AccountsRepository {
     await client.auth.signUp(
       email: email.trim(),
       password: password,
-      data: {'display_name': displayName.trim(), 'country_code': countryCode.toUpperCase(), 'city': city.trim()},
+      data: {
+        'display_name': displayName.trim(),
+        'country_code': countryCode.toUpperCase(),
+        'city': city.trim(),
+      },
       emailRedirectTo: authCallback,
     );
   }
 
   @override
-  Future<void> verifyEmailCode({required String email, required String code}) async {
-    await client.auth.verifyOTP(email: email.trim(), token: code.trim(), type: OtpType.signup);
+  Future<void> verifyEmailCode({
+    required String email,
+    required String code,
+  }) async {
+    await client.auth.verifyOTP(
+      email: email.trim(),
+      token: code.trim(),
+      type: OtpType.signup,
+    );
   }
 
   @override

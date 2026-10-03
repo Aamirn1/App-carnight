@@ -1,6 +1,6 @@
 # Cars Night — Flutter community app
 
-**Version 0.5.0 — photo publishing pilot.** Cars Night is a social app for car lovers,
+**Version 0.6.0 — account and Home feed preview.** Cars Night is a social app for car lovers,
 with a marketplace as one destination. The approved dark/neon visual style remains.
 
 Navigation: **Home / Messages / Create / Market / Profile**. Market opens Marketplace (Buy/Rent).
@@ -9,6 +9,16 @@ Navigation: **Home / Messages / Create / Market / Profile**. Market opens Market
 The welcome image now starts at the top, including behind the status bar.
 
 ## Implemented in this increment
+
+- Persistent session routing: signed-in users open Home; signed-out users see Welcome.
+- Country/city signup fields with location defaults for Marketplace browsing.
+- Dedicated email confirmation screen, Open Gmail and verified-code fallback.
+- Home-only post structure, full uncropped media, stories above refined feed tabs.
+- Branded confirmation email template and exact hosted Auth configuration guide.
+
+[Account/email setup and verification report](docs/AUTH_AND_HOME_0.6.md).
+Live hosted Auth template/redirect/SMTP settings have not been changed by this APK.
+
 
 - One-photo JPEG composer, caption/preview, bounded upload and duplicate-safe
   publication through a protected Edge Function. **Deploy the function and apply
@@ -43,10 +53,10 @@ The supplied anon key is a public client credential; never embed a service-role 
 
 ## Test APK and source
 
-[Download version 0.5.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37126623765/artifacts/11274887422).
-Verified: 30 Flutter tests, 4 media tests, database privacy/ownership/quota checks
-and a successful 53.6 MB Android build. Analysis had no errors or warnings; see
-[the full report](docs/PHOTO_SETUP.md) for its informational cleanup. Available until 17 October 2026.
+[Download version 0.6.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37135401543/artifacts/11278522898).
+Verified: 34 Flutter tests, 4 media tests, database privacy/ownership/quota checks,
+no Dart analysis issues and a successful 54.0 MB Android build. See
+[the full report](docs/AUTH_AND_HOME_0.6.md). Available until 17 October 2026.
 
 For later builds, open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
 select the latest successful run, and download **CarsNight-test-APK**. Extract

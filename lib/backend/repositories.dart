@@ -1,7 +1,12 @@
 /// Provider-independent boundaries for the connected-services milestone.
 /// No implementation here authenticates users or publishes demo content.
 class AccountSummary {
-  const AccountSummary({required this.id, required this.displayName, this.countryCode = '', this.city = ''});
+  const AccountSummary({
+    required this.id,
+    required this.displayName,
+    this.countryCode = '',
+    this.city = '',
+  });
   final String id;
   final String displayName;
   final String countryCode, city;

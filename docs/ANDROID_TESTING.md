@@ -12,6 +12,16 @@ only for testing. It is not Play Store signed. The application ID is
 key; if Android refuses an update, uninstall this preview before installing it.
 Uninstalling or exiting the demo loses all local session data.
 
+## Account and Home checks for 0.6.0
+
+- Cold launch after sign-in goes to Home; sign-out returns to Welcome and clears private routes.
+- Signup requires a country and city. Submission opens Check your email and hides the form.
+- Open Gmail works, with browser fallback when Gmail is not installed.
+- After [hosted Auth setup](AUTH_AND_HOME_0.6.md), verify a fresh link/code; reject a wrong/expired code.
+- Stories scroll above the compact Discover/Following/add-person controls.
+- Scroll through complete photos and their separate count/action rows; review large text.
+- Marketplace defaults to the signup location; Reset filters restores all locations.
+
 ## What to check
 
 After installing the social SQL and configuring auth redirects:

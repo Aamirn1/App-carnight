@@ -1,3 +1,14 @@
+# Latest: version 0.6.0 — account and Home feed update
+
+See [AUTH_AND_HOME_0.6.md](AUTH_AND_HOME_0.6.md) for the APK, verified results and
+required hosted email configuration. All 34 Flutter tests, 4 media tests and
+isolated database checks passed; analysis found no issues. The 54.0 MB preview
+APK built successfully. Native Gmail, live confirmation and physical-device
+visual acceptance remain unverified. No hosted Auth/SMTP settings were changed.
+Country/city use account metadata; website inventory remains a separate bridge.
+
+---
+
 # Latest: version 0.5.0 — welcome fix and photo publishing pilot
 
 See [PHOTO_SETUP.md](PHOTO_SETUP.md) for verified results, the latest APK,

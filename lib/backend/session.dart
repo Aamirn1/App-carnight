@@ -11,7 +11,10 @@ class BackendSession extends ChangeNotifier {
         account = value;
         initializing = false;
         _syncProfile(value);
-        if (value == null) { recovering = false; emailVerifiedNotice = false; }
+        if (value == null) {
+          recovering = false;
+          emailVerifiedNotice = false;
+        }
         notifyListeners();
       },
       onError: (Object _) {
@@ -37,7 +40,12 @@ class BackendSession extends ChangeNotifier {
     emailVerifiedNotice = true;
     notifyListeners();
   }
-  void dismissEmailVerified() { emailVerifiedNotice = false; notifyListeners(); }
+
+  void dismissEmailVerified() {
+    emailVerifiedNotice = false;
+    notifyListeners();
+  }
+
   int _generation = 0;
   bool _disposed = false;
   late final StreamSubscription<AccountSummary?> _accountSub;
@@ -53,7 +61,10 @@ class BackendSession extends ChangeNotifier {
     } catch (_) {
       /* A later successful auth event can recover. */
     } finally {
-      if (!_disposed) {initializing = false; notifyListeners();}
+      if (!_disposed) {
+        initializing = false;
+        notifyListeners();
+      }
     }
   }
 

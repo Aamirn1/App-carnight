@@ -9,7 +9,13 @@ import 'home_post.dart';
 import '../core/platform_actions.dart';
 
 class FeedPage extends StatelessWidget {
-  const FeedPage({super.key, required this.session, this.query = '', this.homeLayout = false, this.header});
+  const FeedPage({
+    super.key,
+    required this.session,
+    this.query = '',
+    this.homeLayout = false,
+    this.header,
+  });
   final DemoSession session;
   final String query;
   final bool homeLayout;
@@ -26,10 +32,15 @@ class FeedPage extends StatelessWidget {
           )
           .toList();
       if (posts.isEmpty) {
-        return ListView(children: [
-          if (header != null) header!,
-          const EmptyState(title: 'No posts found', message: 'Try a different person, city or keyword.'),
-        ]);
+        return ListView(
+          children: [
+            if (header != null) header!,
+            const EmptyState(
+              title: 'No posts found',
+              message: 'Try a different person, city or keyword.',
+            ),
+          ],
+        );
       }
       return ListView.builder(
         key: const PageStorageKey<String>('feed'),
@@ -37,12 +48,17 @@ class FeedPage extends StatelessWidget {
         itemCount: posts.length + 1,
         itemBuilder: (context, index) {
           if (index == 0)
-            return header ?? (query.isEmpty
-                ? const StoryRail()
-                : const SizedBox(height: 12));
+            return header ??
+                (query.isEmpty
+                    ? const StoryRail()
+                    : const SizedBox(height: 12));
           return Padding(
             padding: EdgeInsets.only(bottom: homeLayout ? 8 : 18),
-            child: PostCard(post: posts[index - 1], session: session, homeLayout: homeLayout),
+            child: PostCard(
+              post: posts[index - 1],
+              session: session,
+              homeLayout: homeLayout,
+            ),
           );
         },
       );
@@ -131,176 +147,224 @@ class PostCard extends StatelessWidget {
   final bool openOnComment;
   final bool homeLayout;
   @override
-  Widget build(BuildContext context) => homeLayout ? HomePost(
-    key: ValueKey(post.id),
-    id: post.id, author: post.author, subtitle: '${post.city} · Demo', caption: post.caption,
-    likes: session.isLiked(post.id) ? 1 : 0, comments: session.commentsFor(post.id).length,
-    liked: session.isLiked(post.id), saved: session.isSaved(post.id),
-    onLike: () => session.toggleLiked(post.id), onSave: () => session.toggleSaved(post.id),
-    onComment: () => pushPage<void>(context, PostDetail(post: post, session: session)),
-    onShare: () async {
-      if (!await PlatformActions.shareText('Cars Night · ${post.author}\n${post.caption}')) {
-        await Clipboard.setData(ClipboardData(text: post.caption));
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Caption copied.')));
-      }
-    },
-    trailing: IconButton(tooltip: 'Post options', icon: const Icon(Icons.more_horiz),
-      onPressed: () => pushPage<void>(context, PostDetail(post: post, session: session))),
-    media: AspectRatio(aspectRatio: 4 / 5, child: PageView(children: [
-      for (final asset in post.imageAssets) Image.asset(asset, fit: BoxFit.contain,
-        cacheWidth: session.dataSaver ? 480 : 1000, semanticLabel: 'Full photo by ${post.author}'),
-    ])),
-  ) : NightCard(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          leading: CircleAvatar(
-            backgroundColor: const Color(0xFF352650),
-            child: Text(
-              post.author[0],
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-          title: Text(
-            post.author,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-          ),
-          subtitle: Text(
-            '${post.city} · Demo',
-            style: const TextStyle(fontSize: 11),
-          ),
-          trailing: PopupMenuButton<String>(
+  Widget build(BuildContext context) => homeLayout
+      ? HomePost(
+          key: ValueKey(post.id),
+          id: post.id,
+          author: post.author,
+          subtitle: '${post.city} · Demo',
+          caption: post.caption,
+          likes: session.isLiked(post.id) ? 1 : 0,
+          comments: session.commentsFor(post.id).length,
+          liked: session.isLiked(post.id),
+          saved: session.isSaved(post.id),
+          onLike: () => session.toggleLiked(post.id),
+          onSave: () => session.toggleSaved(post.id),
+          onComment: () =>
+              pushPage<void>(context, PostDetail(post: post, session: session)),
+          onShare: () async {
+            if (!await PlatformActions.shareText(
+              'Cars Night · ${post.author}\n${post.caption}',
+            )) {
+              await Clipboard.setData(ClipboardData(text: post.caption));
+              if (context.mounted)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Caption copied.')),
+                );
+            }
+          },
+          trailing: IconButton(
             tooltip: 'Post options',
-            onSelected: (value) async {
-              if (value == 'delete') {
-                final confirmed = await showDialog<bool>(
-                  context: context,
-                  builder: (dialogContext) => AlertDialog(
-                    title: const Text('Delete demo post?'),
-                    content: const Text(
-                      'This removes it from this local session.',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        child: const Text('Delete'),
-                      ),
-                    ],
+            icon: const Icon(Icons.more_horiz),
+            onPressed: () => pushPage<void>(
+              context,
+              PostDetail(post: post, session: session),
+            ),
+          ),
+          media: AspectRatio(
+            aspectRatio: 4 / 5,
+            child: PageView(
+              children: [
+                for (final asset in post.imageAssets)
+                  Image.asset(
+                    asset,
+                    fit: BoxFit.contain,
+                    cacheWidth: session.dataSaver ? 480 : 1000,
+                    semanticLabel: 'Full photo by ${post.author}',
                   ),
-                );
-                if (confirmed == true) {
-                  session.removeDemoPost(post.id);
-                  if (!openOnComment && context.mounted) Navigator.pop(context);
-                }
-              } else {
-                await showUnavailable(
-                  context,
-                  'Report post',
-                  'Moderation will be connected before real posts are accepted. '
-                      'No report has been sent.',
-                );
-              }
-            },
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: 'report', child: Text('Report post')),
-              if (post.id.startsWith('local-'))
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Text('Delete demo post'),
-                ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-          child: Text(post.caption),
-        ),
-        if (post.imageAssets.length == 1)
-          AssetPhoto(
-            asset: post.imageAssets.first,
-            dataSaver: session.dataSaver,
-          )
-        else
-          SizedBox(
-            height: 220,
-            child: PageView.builder(
-              itemCount: post.imageAssets.length,
-              itemBuilder: (_, index) => AssetPhoto(
-                asset: post.imageAssets[index],
-                dataSaver: session.dataSaver,
-                label: 'Photo ${index + 1} of ${post.imageAssets.length}',
-              ),
+              ],
             ),
           ),
-        if (post.imageAssets.length > 1)
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              '${post.imageAssets.length} photos · swipe to view',
-              style: const TextStyle(color: NightTheme.muted, fontSize: 11),
-            ),
-          ),
-        ListenableBuilder(
-          listenable: session,
-          builder: (context, _) => Row(
+        )
+      : NightCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                key: ValueKey('like-${post.id}'),
-                tooltip: session.isLiked(post.id) ? 'Unlike post' : 'Like post',
-                onPressed: () => session.toggleLiked(post.id),
-                icon: Icon(
-                  session.isLiked(post.id)
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: NightTheme.magenta,
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF352650),
+                  child: Text(
+                    post.author[0],
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                title: Text(
+                  post.author,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Text(
+                  '${post.city} · Demo',
+                  style: const TextStyle(fontSize: 11),
+                ),
+                trailing: PopupMenuButton<String>(
+                  tooltip: 'Post options',
+                  onSelected: (value) async {
+                    if (value == 'delete') {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('Delete demo post?'),
+                          content: const Text(
+                            'This removes it from this local session.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, true),
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirmed == true) {
+                        session.removeDemoPost(post.id);
+                        if (!openOnComment && context.mounted)
+                          Navigator.pop(context);
+                      }
+                    } else {
+                      await showUnavailable(
+                        context,
+                        'Report post',
+                        'Moderation will be connected before real posts are accepted. '
+                            'No report has been sent.',
+                      );
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    const PopupMenuItem(
+                      value: 'report',
+                      child: Text('Report post'),
+                    ),
+                    if (post.id.startsWith('local-'))
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Text('Delete demo post'),
+                      ),
+                  ],
                 ),
               ),
-              Text(session.isLiked(post.id) ? '1' : '0'),
-              IconButton(
-                tooltip: 'Comments',
-                onPressed: openOnComment
-                    ? () => pushPage<void>(
-                        context,
-                        PostDetail(post: post, session: session),
-                      )
-                    : null,
-                icon: const Icon(Icons.chat_bubble_outline, size: 20),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                child: Text(post.caption),
               ),
-              Text('${session.commentsFor(post.id).length}'),
-              IconButton(
-                tooltip: 'Copy caption',
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: post.caption));
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Caption copied.')),
-                  );
-                },
-                icon: const Icon(Icons.copy_outlined, size: 20),
-              ),
-              const Spacer(),
-              IconButton(
-                key: ValueKey('save-${post.id}'),
-                tooltip: session.isSaved(post.id) ? 'Unsave post' : 'Save post',
-                onPressed: () => session.toggleSaved(post.id),
-                icon: Icon(
-                  session.isSaved(post.id)
-                      ? Icons.bookmark
-                      : Icons.bookmark_border,
+              if (post.imageAssets.length == 1)
+                AssetPhoto(
+                  asset: post.imageAssets.first,
+                  dataSaver: session.dataSaver,
+                )
+              else
+                SizedBox(
+                  height: 220,
+                  child: PageView.builder(
+                    itemCount: post.imageAssets.length,
+                    itemBuilder: (_, index) => AssetPhoto(
+                      asset: post.imageAssets[index],
+                      dataSaver: session.dataSaver,
+                      label: 'Photo ${index + 1} of ${post.imageAssets.length}',
+                    ),
+                  ),
+                ),
+              if (post.imageAssets.length > 1)
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    '${post.imageAssets.length} photos · swipe to view',
+                    style: const TextStyle(
+                      color: NightTheme.muted,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ListenableBuilder(
+                listenable: session,
+                builder: (context, _) => Row(
+                  children: [
+                    IconButton(
+                      key: ValueKey('like-${post.id}'),
+                      tooltip: session.isLiked(post.id)
+                          ? 'Unlike post'
+                          : 'Like post',
+                      onPressed: () => session.toggleLiked(post.id),
+                      icon: Icon(
+                        session.isLiked(post.id)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: NightTheme.magenta,
+                      ),
+                    ),
+                    Text(session.isLiked(post.id) ? '1' : '0'),
+                    IconButton(
+                      tooltip: 'Comments',
+                      onPressed: openOnComment
+                          ? () => pushPage<void>(
+                              context,
+                              PostDetail(post: post, session: session),
+                            )
+                          : null,
+                      icon: const Icon(Icons.chat_bubble_outline, size: 20),
+                    ),
+                    Text('${session.commentsFor(post.id).length}'),
+                    IconButton(
+                      tooltip: 'Copy caption',
+                      onPressed: () async {
+                        await Clipboard.setData(
+                          ClipboardData(text: post.caption),
+                        );
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Caption copied.')),
+                        );
+                      },
+                      icon: const Icon(Icons.copy_outlined, size: 20),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      key: ValueKey('save-${post.id}'),
+                      tooltip: session.isSaved(post.id)
+                          ? 'Unsave post'
+                          : 'Save post',
+                      onPressed: () => session.toggleSaved(post.id),
+                      icon: Icon(
+                        session.isSaved(post.id)
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
-      ],
-    ),
-  );
+        );
 }
 
 class PostDetail extends StatefulWidget {

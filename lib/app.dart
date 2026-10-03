@@ -40,21 +40,40 @@ class _SessionApp extends StatelessWidget {
       // Recreate the navigation stack only on identity/recovery transitions.
       // Token refreshes keep the same key and do not reset pages.
       key: ValueKey('session:$restoring:$recovery:$verified:${id ?? 'guest'}'),
-      title: 'Cars Night', debugShowCheckedModeBanner: false, theme: NightTheme.data,
+      title: 'Cars Night',
+      debugShowCheckedModeBanner: false,
+      theme: NightTheme.data,
       home: restoring
-        ? const Scaffold(body: Center(child: CircularProgressIndicator()))
-        : recovery ? const AuthPage(mode: AuthMode.updatePassword)
-        : id != null && verified ? PageFrame(title: 'Account verified', children: [
-          const SizedBox(height: 40),
-          const Icon(Icons.verified_outlined, color: NightTheme.cyan, size: 64),
-          const SizedBox(height: 24),
-          const Text('Welcome to Cars Night', style: TextStyle(fontSize: 24, color: Colors.white)),
-          const SizedBox(height: 16),
-          const Text('Your email is verified and you are signed in.'),
-          const SizedBox(height: 24),
-          GradientButton(label: 'Continue to Home', onPressed: backend!.dismissEmailVerified),
-        ])
-        : id != null ? const AppShell() : WelcomePage(startupError: startupError),
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          : recovery
+          ? const AuthPage(mode: AuthMode.updatePassword)
+          : id != null && verified
+          ? PageFrame(
+              title: 'Account verified',
+              children: [
+                const SizedBox(height: 40),
+                const Icon(
+                  Icons.verified_outlined,
+                  color: NightTheme.cyan,
+                  size: 64,
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Welcome to Cars Night',
+                  style: TextStyle(fontSize: 24, color: Colors.white),
+                ),
+                const SizedBox(height: 16),
+                const Text('Your email is verified and you are signed in.'),
+                const SizedBox(height: 24),
+                GradientButton(
+                  label: 'Continue to Home',
+                  onPressed: backend!.dismissEmailVerified,
+                ),
+              ],
+            )
+          : id != null
+          ? const AppShell()
+          : WelcomePage(startupError: startupError),
     );
   }
 }
@@ -133,7 +152,8 @@ class WelcomePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         GradientOutlineButton(
-                          onPressed: () => pushPage<void>(context, const AuthPage()),
+                          onPressed: () =>
+                              pushPage<void>(context, const AuthPage()),
                           label: 'Sign in',
                         ),
                         const SizedBox(height: 16),

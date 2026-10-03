@@ -90,7 +90,8 @@ List<CarListing> filterListings(
       .where(
         (car) =>
             car.kind == kind &&
-            (countryCode.isEmpty || car.countryCode == countryCode.toUpperCase()) &&
+            (countryCode.isEmpty ||
+                car.countryCode == countryCode.toUpperCase()) &&
             (category == 'All' || car.category == category) &&
             car.city.toLowerCase().contains(location) &&
             '${car.title} ${car.city} ${car.year}'.toLowerCase().contains(

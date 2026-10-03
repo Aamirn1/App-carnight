@@ -43,10 +43,13 @@ class _MarketplacePageState extends State<MarketplacePage> {
       _locationInitialized = true;
       final account = BackendScope.of(context)?.account;
       _countryCode = account?.countryCode ?? '';
-      if (account != null) _location.text = account.city;
-      else if (widget.kind == ListingKind.sale) _location.clear();
+      if (account != null)
+        _location.text = account.city;
+      else if (widget.kind == ListingKind.sale)
+        _location.clear();
     }
   }
+
   RentalPeriod? _period;
   @override
   void dispose() {
@@ -87,11 +90,11 @@ class _MarketplacePageState extends State<MarketplacePage> {
   void _reset() {
     FocusScope.of(context).unfocus();
     setState(() {
-    _search.clear();
-    _location.clear();
-    _category = 'All';
-    _countryCode = '';
-    _period = null;
+      _search.clear();
+      _location.clear();
+      _category = 'All';
+      _countryCode = '';
+      _period = null;
     });
   }
 
@@ -132,22 +135,32 @@ class _MarketplacePageState extends State<MarketplacePage> {
                 ),
                 const SizedBox(height: 18),
                 OutlinedButton.icon(
-                  onPressed: () => showCountryPicker(context: context, showPhoneCode: false,
-                    onSelect: (country) => setState(() { _countryCode = country.countryCode; _location.clear(); })),
+                  onPressed: () => showCountryPicker(
+                    context: context,
+                    showPhoneCode: false,
+                    onSelect: (country) => setState(() {
+                      _countryCode = country.countryCode;
+                      _location.clear();
+                    }),
+                  ),
                   icon: const Icon(Icons.public),
-                  label: Text(_countryCode.isEmpty ? 'All countries' : 'Country · $_countryCode'),
+                  label: Text(
+                    _countryCode.isEmpty
+                        ? 'All countries'
+                        : 'Country · $_countryCode',
+                  ),
                 ),
                 const SizedBox(height: 10),
-                  TextField(
-                    key: ValueKey(rent ? 'rental-location' : 'sale-location'),
-                    controller: _location,
-                    onChanged: (_) => setState(() {}),
-                    decoration: const InputDecoration(
-                      labelText: 'City',
-                      prefixIcon: Icon(Icons.location_on_outlined),
-                    ),
+                TextField(
+                  key: ValueKey(rent ? 'rental-location' : 'sale-location'),
+                  controller: _location,
+                  onChanged: (_) => setState(() {}),
+                  decoration: const InputDecoration(
+                    labelText: 'City',
+                    prefixIcon: Icon(Icons.location_on_outlined),
                   ),
-                  const SizedBox(height: 10),
+                ),
+                const SizedBox(height: 10),
                 if (rent) ...[
                   LayoutBuilder(
                     builder: (context, constraints) {

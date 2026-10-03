@@ -32,7 +32,8 @@ class _AuthPageState extends State<AuthPage> {
     final backend = BackendScope.of(context);
     if (_busy || backend == null || !_form.currentState!.validate()) return;
     if (widget.mode == AuthMode.signUp && _country == null) {
-      setState(() => _message = 'Choose your country.'); return;
+      setState(() => _message = 'Choose your country.');
+      return;
     }
     setState(() {
       _busy = true;
@@ -81,42 +82,100 @@ class _AuthPageState extends State<AuthPage> {
     final backend = BackendScope.of(context);
     if (_busy || backend == null) return;
     if (!RegExp(r'^\d{6,10}$').hasMatch(_code.text.trim())) {
-      setState(() => _message = 'Enter the verification code from your email.'); return;
+      setState(() => _message = 'Enter the verification code from your email.');
+      return;
     }
-    setState(() { _busy = true; _message = null; });
+    setState(() {
+      _busy = true;
+      _message = null;
+    });
     try {
-      await backend.accounts.verifyEmailCode(email: _email.text, code: _code.text);
+      await backend.accounts.verifyEmailCode(
+        email: _email.text,
+        code: _code.text,
+      );
       backend.showEmailVerified();
     } catch (_) {
-      if (mounted) setState(() => _message = 'This code is invalid or expired. Check your latest email and try again.');
-    } finally { if (mounted) setState(() => _busy = false); }
+      if (mounted)
+        setState(
+          () => _message =
+              'This code is invalid or expired. Check your latest email and try again.',
+        );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
-  Widget _confirmation() => PageFrame(title: 'Check your email', children: [
-    const Center(child: Brand(large: true)),
-    const SizedBox(height: 24),
-    const Icon(Icons.mark_email_unread_outlined, size: 52, color: NightTheme.cyan),
-    const SizedBox(height: 20),
-    Text('One last step', style: Theme.of(context).textTheme.headlineMedium),
-    const SizedBox(height: 12),
-    Text('If this address is eligible, a confirmation email has been sent to ${_email.text.trim()}. '
-      'Tap Confirm account in the email, or enter its code below.'),
-    const SizedBox(height: 24),
-    GradientButton(label: 'Open Gmail', onPressed: () async {
-      final opened = await PlatformActions.openEmail();
-      if (!opened && mounted) setState(() => _message = 'Open your email app manually and look for Cars Night.');
-    }),
-    const SizedBox(height: 20),
-    TextField(enabled: !_busy, controller: _code, keyboardType: TextInputType.number, maxLength: 10,
-      decoration: const InputDecoration(labelText: 'Verification code', helperText: 'Available in the new Cars Night confirmation email.')),
-    if (_message != null) Semantics(liveRegion: true, child: InfoNote(_message!)),
-    const SizedBox(height: 12),
-    OutlinedButton(onPressed: _busy ? null : _verifyCode, child: Text(_busy ? 'Verifying…' : 'Verify account')),
-    TextButton(onPressed: _busy ? null : () => Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const AuthPage())), child: const Text('Already confirmed? Sign in')),
-    TextButton(onPressed: _busy ? null : () => setState(() { _sent = false; _message = null; }), child: const Text('Use a different email')),
-    const Text('Check Spam if the email is missing. Existing accounts can sign in or reset their password.', style: TextStyle(color: NightTheme.muted)),
-  ]);
+  Widget _confirmation() => PageFrame(
+    title: 'Check your email',
+    children: [
+      const Center(child: Brand(large: true)),
+      const SizedBox(height: 24),
+      const Icon(
+        Icons.mark_email_unread_outlined,
+        size: 52,
+        color: NightTheme.cyan,
+      ),
+      const SizedBox(height: 20),
+      Text('One last step', style: Theme.of(context).textTheme.headlineMedium),
+      const SizedBox(height: 12),
+      Text(
+        'If this address is eligible, a confirmation email has been sent to ${_email.text.trim()}. '
+        'Tap Confirm account in the email, or enter its code below.',
+      ),
+      const SizedBox(height: 24),
+      GradientButton(
+        label: 'Open Gmail',
+        onPressed: () async {
+          final opened = await PlatformActions.openEmail();
+          if (!opened && mounted)
+            setState(
+              () => _message =
+                  'Open your email app manually and look for Cars Night.',
+            );
+        },
+      ),
+      const SizedBox(height: 20),
+      TextField(
+        enabled: !_busy,
+        controller: _code,
+        keyboardType: TextInputType.number,
+        maxLength: 10,
+        decoration: const InputDecoration(
+          labelText: 'Verification code',
+          helperText: 'Available in the new Cars Night confirmation email.',
+        ),
+      ),
+      if (_message != null)
+        Semantics(liveRegion: true, child: InfoNote(_message!)),
+      const SizedBox(height: 12),
+      OutlinedButton(
+        onPressed: _busy ? null : _verifyCode,
+        child: Text(_busy ? 'Verifying…' : 'Verify account'),
+      ),
+      TextButton(
+        onPressed: _busy
+            ? null
+            : () => Navigator.of(context).pushReplacement(
+                MaterialPageRoute<void>(builder: (_) => const AuthPage()),
+              ),
+        child: const Text('Already confirmed? Sign in'),
+      ),
+      TextButton(
+        onPressed: _busy
+            ? null
+            : () => setState(() {
+                _sent = false;
+                _message = null;
+              }),
+        child: const Text('Use a different email'),
+      ),
+      const Text(
+        'Check Spam if the email is missing. Existing accounts can sign in or reset their password.',
+        style: TextStyle(color: NightTheme.muted),
+      ),
+    ],
+  );
 
   @override
   void dispose() {
@@ -178,28 +237,52 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 const SizedBox(height: 12),
                 FormField<Country>(
-                  validator: (_) => _country == null ? 'Choose your country.' : null,
-                  builder: (field) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    OutlinedButton.icon(
-                      key: const ValueKey('signup-country'),
-                      style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(56)),
-                      onPressed: _busy ? null : () => showCountryPicker(
-                        context: context, showPhoneCode: false,
-                        onSelect: (country) {setState(() => _country = country); field.didChange(country);},
+                  validator: (_) =>
+                      _country == null ? 'Choose your country.' : null,
+                  builder: (field) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      OutlinedButton.icon(
+                        key: const ValueKey('signup-country'),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(56),
+                        ),
+                        onPressed: _busy
+                            ? null
+                            : () => showCountryPicker(
+                                context: context,
+                                showPhoneCode: false,
+                                onSelect: (country) {
+                                  setState(() => _country = country);
+                                  field.didChange(country);
+                                },
+                              ),
+                        icon: const Icon(Icons.public),
+                        label: Text(_country?.name ?? 'Choose country'),
                       ),
-                      icon: const Icon(Icons.public),
-                      label: Text(_country?.name ?? 'Choose country'),
-                    ),
-                    if (field.hasError) Text(field.errorText!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                  ]),
+                      if (field.hasError)
+                        Text(
+                          field.errorText!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   enabled: !_busy,
-                  controller: _city, maxLength: 80,
+                  controller: _city,
+                  maxLength: 80,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(labelText: 'City', helperText: 'Used to find cars in your area. You can browse other locations.'),
-                  validator: (v) => (v ?? '').trim().length < 2 ? 'Enter your city.' : null,
+                  decoration: const InputDecoration(
+                    labelText: 'City',
+                    helperText:
+                        'Used to find cars in your area. You can browse other locations.',
+                  ),
+                  validator: (v) =>
+                      (v ?? '').trim().length < 2 ? 'Enter your city.' : null,
                 ),
                 const SizedBox(height: 12),
               ],
