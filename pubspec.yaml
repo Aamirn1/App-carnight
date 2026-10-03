@@ -1,10 +1,11 @@
 name: cars_night
 description: Cars Night mobile application — phase two visual prototype.
 publish_to: none
-version: 0.5.0+7
+version: 0.6.0+8
 environment:
   sdk: '>=3.9.0 <4.0.0'
 dependencies:
+  country_picker: 2.0.27
   image_picker: 1.2.1
   uuid: 4.6.0
   supabase_flutter: 2.18.0

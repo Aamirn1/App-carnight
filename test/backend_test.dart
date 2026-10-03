@@ -64,7 +64,11 @@ class FakeAccounts implements AccountsRepository {
     required String email,
     required String password,
     required String displayName,
+    String countryCode = '',
+    String city = '',
   }) async {}
+  @override
+  Future<void> verifyEmailCode({required String email, required String code}) async {}
   @override
   Future<void> sendPasswordReset(String email) async {}
   @override

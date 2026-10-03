@@ -22,16 +22,41 @@ class CarsNightApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BackendScope(
     session: backend,
-    child: MaterialApp(
-      title: 'Cars Night',
-      debugShowCheckedModeBanner: false,
-      theme: NightTheme.data,
-      builder: (context, child) => BackendScope.of(context)?.recovering == true
-          ? const AuthPage(mode: AuthMode.updatePassword)
-          : child!,
-      home: WelcomePage(startupError: startupError),
-    ),
+    child: _SessionApp(startupError: startupError),
   );
+}
+
+class _SessionApp extends StatelessWidget {
+  const _SessionApp({this.startupError});
+  final String? startupError;
+  @override
+  Widget build(BuildContext context) {
+    final backend = BackendScope.of(context);
+    final restoring = backend?.initializing == true;
+    final recovery = backend?.recovering == true;
+    final id = backend?.account?.id;
+    final verified = backend?.emailVerifiedNotice == true;
+    return MaterialApp(
+      // Recreate the navigation stack only on identity/recovery transitions.
+      // Token refreshes keep the same key and do not reset pages.
+      key: ValueKey('session:$restoring:$recovery:$verified:${id ?? 'guest'}'),
+      title: 'Cars Night', debugShowCheckedModeBanner: false, theme: NightTheme.data,
+      home: restoring
+        ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+        : recovery ? const AuthPage(mode: AuthMode.updatePassword)
+        : id != null && verified ? PageFrame(title: 'Account verified', children: [
+          const SizedBox(height: 40),
+          const Icon(Icons.verified_outlined, color: NightTheme.cyan, size: 64),
+          const SizedBox(height: 24),
+          Text('Welcome to Cars Night', style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 16),
+          const Text('Your email is verified and you are signed in.'),
+          const SizedBox(height: 24),
+          GradientButton(label: 'Continue to Home', onPressed: backend!.dismissEmailVerified),
+        ])
+        : id != null ? const AppShell() : WelcomePage(startupError: startupError),
+    );
+  }
 }
 
 class WelcomePage extends StatelessWidget {
@@ -107,13 +132,9 @@ class WelcomePage extends StatelessWidget {
                               pushPage<void>(context, const AppShell()),
                         ),
                         const SizedBox(height: 12),
-                        OutlinedButton(
-                          onPressed: () =>
-                              pushPage<void>(context, const AuthPage()),
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(52),
-                          ),
-                          child: const Text('Sign in'),
+                        GradientOutlineButton(
+                          onPressed: () => pushPage<void>(context, const AuthPage()),
+                          label: 'Sign in',
                         ),
                         const SizedBox(height: 16),
                         const Text(

@@ -9,8 +9,9 @@ class BackendSession extends ChangeNotifier {
       (value) {
         _generation++;
         account = value;
+        initializing = false;
         _syncProfile(value);
-        if (value == null) recovering = false;
+        if (value == null) { recovering = false; emailVerifiedNotice = false; }
         notifyListeners();
       },
       onError: (Object _) {
@@ -29,6 +30,14 @@ class BackendSession extends ChangeNotifier {
   final SocialRepository? social;
   AccountSummary? account;
   bool recovering = false;
+  bool initializing = true;
+  bool emailVerifiedNotice = false;
+  void showEmailVerified() {
+    if (_disposed || account == null) return;
+    emailVerifiedNotice = true;
+    notifyListeners();
+  }
+  void dismissEmailVerified() { emailVerifiedNotice = false; notifyListeners(); }
   int _generation = 0;
   bool _disposed = false;
   late final StreamSubscription<AccountSummary?> _accountSub;
@@ -43,6 +52,8 @@ class BackendSession extends ChangeNotifier {
       notifyListeners();
     } catch (_) {
       /* A later successful auth event can recover. */
+    } finally {
+      if (!_disposed) {initializing = false; notifyListeners();}
     }
   }
 

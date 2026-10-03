@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:country_picker/country_picker.dart';
+import '../backend/session.dart';
 import '../core/session.dart';
 import '../core/theme.dart';
 import '../data/demo_catalog.dart';
@@ -32,6 +34,19 @@ class _MarketplacePageState extends State<MarketplacePage> {
   final _search = TextEditingController();
   final _location = TextEditingController(text: 'Dubai');
   String _category = 'All';
+  String _countryCode = '';
+  bool _locationInitialized = false;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_locationInitialized) {
+      _locationInitialized = true;
+      final account = BackendScope.of(context)?.account;
+      _countryCode = account?.countryCode ?? '';
+      if (account != null) _location.text = account.city;
+      else if (widget.kind == ListingKind.sale) _location.clear();
+    }
+  }
   RentalPeriod? _period;
   @override
   void dispose() {
@@ -73,6 +88,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
     _search.clear();
     _location.clear();
     _category = 'All';
+    _countryCode = '';
     _period = null;
   });
 
@@ -84,7 +100,8 @@ class _MarketplacePageState extends State<MarketplacePage> {
       kind: widget.kind,
       query: _search.text,
       category: _category,
-      city: rent ? _location.text : '',
+      city: _location.text,
+      countryCode: _countryCode,
     );
     final localizations = MaterialLocalizations.of(context);
     return CustomScrollView(
@@ -111,9 +128,15 @@ class _MarketplacePageState extends State<MarketplacePage> {
                   style: const TextStyle(color: NightTheme.muted),
                 ),
                 const SizedBox(height: 18),
-                if (rent) ...[
+                OutlinedButton.icon(
+                  onPressed: () => showCountryPicker(context: context, showPhoneCode: false,
+                    onSelect: (country) => setState(() { _countryCode = country.countryCode; _location.clear(); })),
+                  icon: const Icon(Icons.public),
+                  label: Text(_countryCode.isEmpty ? 'All countries' : 'Country · $_countryCode'),
+                ),
+                const SizedBox(height: 10),
                   TextField(
-                    key: const ValueKey('rental-location'),
+                    key: ValueKey(rent ? 'rental-location' : 'sale-location'),
                     controller: _location,
                     onChanged: (_) => setState(() {}),
                     decoration: const InputDecoration(
@@ -122,6 +145,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
+                if (rent) ...[
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final fields = [

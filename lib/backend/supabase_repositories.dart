@@ -11,6 +11,8 @@ class SupabaseAccountsRepository implements AccountsRepository {
       ? null
       : AccountSummary(
           id: user.id,
+          countryCode: (user.userMetadata?['country_code'] as String?) ?? '',
+          city: (user.userMetadata?['city'] as String?) ?? '',
           displayName:
               (user.userMetadata?['display_name'] as String?) ??
               'Car enthusiast',
@@ -43,13 +45,20 @@ class SupabaseAccountsRepository implements AccountsRepository {
     required String email,
     required String password,
     required String displayName,
+    String countryCode = '',
+    String city = '',
   }) async {
     await client.auth.signUp(
       email: email.trim(),
       password: password,
-      data: {'display_name': displayName.trim()},
+      data: {'display_name': displayName.trim(), 'country_code': countryCode.toUpperCase(), 'city': city.trim()},
       emailRedirectTo: authCallback,
     );
+  }
+
+  @override
+  Future<void> verifyEmailCode({required String email, required String code}) async {
+    await client.auth.verifyOTP(email: email.trim(), token: code.trim(), type: OtpType.signup);
   }
 
   @override

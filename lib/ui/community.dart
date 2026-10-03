@@ -9,6 +9,8 @@ import 'auth.dart';
 import 'components.dart';
 import 'feed.dart';
 import 'messages.dart';
+import 'home_post.dart';
+import '../core/platform_actions.dart';
 
 class CommunityPage extends StatelessWidget {
   const CommunityPage({super.key, required this.demo});
@@ -16,7 +18,7 @@ class CommunityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final backend = BackendScope.of(context);
-    if (backend?.social == null) return FeedPage(session: demo);
+    if (backend?.social == null) return FeedPage(session: demo, homeLayout: true);
     return _Community(
       key: ValueKey(backend?.account?.id ?? 'guest'),
       api: backend!.social!,
@@ -88,91 +90,67 @@ class _CommunityState extends State<_Community> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        child: Wrap(
-          spacing: 8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            ChoiceChip(
-              label: const Text('Discover'),
-              showCheckmark: false,
-              selectedColor: const Color(0xFF302658),
-              labelStyle: TextStyle(
-                color: !_following ? NightTheme.cyan : Colors.white,
+  Widget _header() => Column(children: [
+    const StoryRail(),
+    Padding(padding: const EdgeInsets.fromLTRB(16, 4, 16, 12), child: Row(children: [
+      Expanded(child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(color: NightTheme.surface, borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: NightTheme.border)),
+        child: Row(children: [
+          for (final entry in [(false, 'Discover'), (true, 'Following')]) Expanded(
+            child: TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: _following == entry.$1 ? const Color(0xFF302658) : Colors.transparent,
+                foregroundColor: _following == entry.$1 ? NightTheme.cyan : NightTheme.muted,
+                minimumSize: const Size(48, 44), padding: const EdgeInsets.symmetric(horizontal: 8),
               ),
-              selected: !_following,
-              onSelected: _busy
-                  ? null
-                  : (_) {
-                      setState(() => _following = false);
-                      _load();
-                    },
+              onPressed: _busy ? null : () async {
+                if (entry.$1 && BackendScope.of(context)?.account == null) {
+                  await pushPage<void>(context, const AuthPage()); return;
+                }
+                setState(() { _following = entry.$1; _demo = false; });
+                _load();
+              },
+              child: Text(entry.$2, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
             ),
-            ChoiceChip(
-              label: const Text('Following'),
-              showCheckmark: false,
-              selectedColor: const Color(0xFF302658),
-              labelStyle: TextStyle(
-                color: _following ? NightTheme.cyan : Colors.white,
-              ),
-              selected: _following,
-              onSelected: _busy
-                  ? null
-                  : (_) async {
-                      if (BackendScope.of(context)?.account == null) {
-                        await pushPage<void>(context, const AuthPage());
-                        return;
-                      }
-                      setState(() => _following = true);
-                      _load();
-                    },
-            ),
-            IconButton(
-              tooltip: 'Find car lovers',
-              onPressed: () => pushPage<void>(context, const PeoplePage()),
-              icon: const Icon(Icons.person_add_alt),
-            ),
-          ],
-        ),
-      ),
-      if (_demo)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'Sample feed',
-                  style: TextStyle(color: NightTheme.muted),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() => _demo = false);
-                  _load();
-                },
-                child: const Text('Return online'),
-              ),
-            ],
           ),
-        ),
-      if (_busy && !_demo) const LinearProgressIndicator(),
-      Expanded(
-        child: _demo
-            ? FeedPage(session: widget.demo)
-            : RefreshIndicator(
-                onRefresh: () => _load(),
-                child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _posts.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == _posts.length)
-                      return Column(
+        ]),
+      )),
+      const SizedBox(width: 10),
+      DecoratedBox(decoration: BoxDecoration(gradient: NightTheme.gradient, borderRadius: BorderRadius.circular(18)),
+        child: IconButton(tooltip: 'Find car lovers', color: Colors.white,
+          onPressed: () => pushPage<void>(context, const PeoplePage()), icon: const Icon(Icons.person_add_alt_1_outlined))),
+    ])),
+    if (_demo) Padding(padding: const EdgeInsets.fromLTRB(16, 0, 12, 6), child: Row(children: [
+      const Icon(Icons.info_outline, size: 14, color: NightTheme.muted),
+      const SizedBox(width: 6), const Expanded(child: Text('Sample feed', style: TextStyle(fontSize: 11, color: NightTheme.muted))),
+      TextButton(onPressed: () {setState(() => _demo = false); _load();},
+        child: const Text('Return online', style: TextStyle(fontSize: 11))),
+    ])),
+    if (_busy && !_demo) const LinearProgressIndicator(),
+  ]);
+
+  Future<void> _comments(CommunityPost p) async {
+    if (BackendScope.of(context)?.account == null) {
+      await pushPage<void>(context, const AuthPage()); return;
+    }
+    await pushPage<void>(context, CommentsPage(post: p));
+    if (mounted) _load();
+  }
+
+  @override
+  Widget build(BuildContext context) => _demo
+    ? FeedPage(session: widget.demo, homeLayout: true, header: _header())
+    : RefreshIndicator(onRefresh: () => _load(), child: ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(bottom: 16),
+      itemCount: _posts.length + 2,
+      itemBuilder: (context, index) {
+        if (index == 0) return _header();
+        index--;
+        if (index == _posts.length)
+return Column(
                         children: [
                           if (_error != null) ...[
                             NightCard(
@@ -242,187 +220,48 @@ class _CommunityState extends State<_Community> {
                             ),
                         ],
                       );
-                    final p = _posts[index];
-                    final own =
-                        BackendScope.of(context)?.account?.id == p.ownerId;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 18),
-                      child: NightCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              leading: const CircleAvatar(
-                                child: Icon(Icons.person_outline),
-                              ),
-                              title: Text(
-                                p.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Text(p.createdAt.split('T').first),
-                              trailing: own
-                                  ? null
-                                  : TextButton(
-                                      onPressed: _pending.contains(p.id)
-                                          ? null
-                                          : () => _action(
-                                              p.id,
-                                              () => widget.api.follow(
-                                                p.ownerId,
-                                                !p.following,
-                                              ),
-                                            ),
-                                      child: Text(
-                                        p.following ? 'Following' : 'Follow',
-                                      ),
-                                    ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                              child: Text(p.caption),
-                            ),
-                            if (p.images.isNotEmpty)
-                              AspectRatio(
-                                aspectRatio: 1.65,
-                                child: PageView(
-                                  children: [
-                                    for (final path in p.images)
-                                      Image.network(
-                                        widget.api.imageUrl(path),
-                                        fit: BoxFit.cover,
-                                        cacheWidth: widget.demo.dataSaver
-                                            ? 480
-                                            : 1000,
-                                        loadingBuilder:
-                                            (
-                                              context,
-                                              child,
-                                              progress,
-                                            ) => progress == null
-                                            ? child
-                                            : const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                        errorBuilder: (_, error, stack) =>
-                                            const Center(
-                                              child: Icon(
-                                                Icons.broken_image_outlined,
-                                              ),
-                                            ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            if (p.images.length > 1)
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Text(
-                                  'Swipe · ${p.images.length} photos',
-                                  style: const TextStyle(
-                                    color: NightTheme.muted,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                IconButton(
-                                  tooltip: p.liked ? 'Unlike' : 'Like',
-                                  onPressed: _pending.contains(p.id)
-                                      ? null
-                                      : () => _action(
-                                          p.id,
-                                          () => widget.api.like(p.id, !p.liked),
-                                        ),
-                                  icon: Icon(
-                                    p.liked
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: NightTheme.magenta,
-                                  ),
-                                ),
-                                Text('${p.likes}'),
-                                IconButton(
-                                  tooltip: 'Comments',
-                                  onPressed: () async {
-                                    if (BackendScope.of(context)?.account ==
-                                        null) {
-                                      await pushPage<void>(
-                                        context,
-                                        const AuthPage(),
-                                      );
-                                      return;
-                                    }
-                                    await pushPage<void>(
-                                      context,
-                                      CommentsPage(post: p),
-                                    );
-                                    if (mounted) _load();
-                                  },
-                                  icon: const Icon(Icons.chat_bubble_outline),
-                                ),
-                                Text('${p.comments}'),
-                                IconButton(
-                                  tooltip: 'Copy post reference',
-                                  onPressed: () async {
-                                    await Clipboard.setData(
-                                      ClipboardData(
-                                        text:
-                                            'Cars Night · ${p.name}\n${p.caption}\nPost: ${p.id}',
-                                      ),
-                                    );
-                                    if (context.mounted)
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Post reference copied. Public share links are coming later.',
-                                          ),
-                                        ),
-                                      );
-                                  },
-                                  icon: const Icon(Icons.share_outlined),
-                                ),
-                                if (!own)
-                                  IconButton(
-                                    tooltip: p.following
-                                        ? 'Request conversation'
-                                        : 'Follow before messaging',
-                                    onPressed:
-                                        _pending.contains(p.id) || !p.following
-                                        ? null
-                                        : () => _action(p.id, () async {
-                                            await widget.api.request(p.ownerId);
-                                            if (context.mounted)
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    'Request sent. Open Messages → Requests.',
-                                                  ),
-                                                ),
-                                              );
-                                          }),
-                                    icon: const Icon(Icons.mail_outline),
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-      ),
-    ],
-  );
+        final p = _posts[index];
+        final own = BackendScope.of(context)?.account?.id == p.ownerId;
+        return Padding(padding: const EdgeInsets.only(bottom: 8), child: HomePost(
+          id: p.id, author: p.name, subtitle: p.createdAt.split('T').first,
+          caption: p.caption, likes: p.likes, comments: p.comments, liked: p.liked,
+          onLike: _pending.contains(p.id) ? null : () => _action(p.id, () => widget.api.like(p.id, !p.liked)),
+          onComment: () => _comments(p),
+          onShare: () async {
+            final text = 'Cars Night · ${p.name}\n${p.caption}';
+            if (!await PlatformActions.shareText(text)) {
+              await Clipboard.setData(ClipboardData(text: text));
+              if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post text copied.')));
+            }
+          },
+          trailing: own ? null : PopupMenuButton<String>(
+            tooltip: 'Post options', icon: const Icon(Icons.more_horiz),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: 'follow', child: Text(p.following ? 'Unfollow' : 'Follow')),
+              const PopupMenuItem(value: 'message', child: Text('Message request')),
+            ],
+            onSelected: (value) {
+              if (value == 'follow') _action(p.id, () => widget.api.follow(p.ownerId, !p.following));
+              else if (p.following) _action(p.id, () async {
+                await widget.api.request(p.ownerId);
+                if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request sent. Open Messages.')));
+              });
+              else ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Follow this person before sending a request.')));
+            },
+          ),
+          media: p.images.isEmpty ? const SizedBox.shrink() : AspectRatio(
+            aspectRatio: 4 / 5,
+            child: PageView(children: [
+              for (final path in p.images) Image.network(widget.api.imageUrl(path),
+                fit: BoxFit.contain, cacheWidth: widget.demo.dataSaver ? 480 : 1000,
+                semanticLabel: 'Full photo by ${p.name}',
+                loadingBuilder: (context, child, progress) => progress == null ? child : const Center(child: CircularProgressIndicator()),
+                errorBuilder: (_, error, stack) => const Center(child: Icon(Icons.broken_image_outlined))),
+            ]),
+          ),
+        ));
+      },
+    ));
 }
 
 class CommentsPage extends StatefulWidget {

@@ -234,3 +234,18 @@ Future<void> showUnavailable(
     ),
   ),
 );
+
+class GradientOutlineButton extends StatelessWidget {
+  const GradientOutlineButton({super.key, required this.label, required this.onPressed});
+  final String label;
+  final VoidCallback onPressed;
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(gradient: NightTheme.gradient, borderRadius: BorderRadius.circular(28)),
+    child: Padding(padding: const EdgeInsets.all(1.5), child: FilledButton(
+      style: FilledButton.styleFrom(backgroundColor: NightTheme.background,
+        foregroundColor: Colors.white, minimumSize: const Size.fromHeight(52)),
+      onPressed: onPressed, child: Text(label),
+    )),
+  );
+}

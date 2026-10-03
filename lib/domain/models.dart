@@ -12,6 +12,7 @@ class CarListing {
     required this.currency,
     required this.city,
     required this.imageAsset,
+    this.countryCode = '',
   });
   final String id;
   final String title;
@@ -23,6 +24,7 @@ class CarListing {
   final String currency;
   final String city;
   final String imageAsset;
+  final String countryCode;
 }
 
 class SocialPost {

@@ -14,6 +14,7 @@ abstract final class DemoCatalog {
       priceMinor: 28500000,
       currency: 'USD',
       city: 'Dubai',
+      countryCode: 'AE',
       imageAsset: NightAssets.violet,
     ),
     CarListing(
@@ -26,6 +27,7 @@ abstract final class DemoCatalog {
       priceMinor: 7200000,
       currency: 'USD',
       city: 'London',
+      countryCode: 'GB',
       imageAsset: NightAssets.hero,
     ),
     CarListing(
@@ -38,6 +40,7 @@ abstract final class DemoCatalog {
       priceMinor: 129900,
       currency: 'USD',
       city: 'Dubai',
+      countryCode: 'AE',
       imageAsset: NightAssets.red,
     ),
     CarListing(
@@ -50,6 +53,7 @@ abstract final class DemoCatalog {
       priceMinor: 45000,
       currency: 'USD',
       city: 'Dubai',
+      countryCode: 'AE',
       imageAsset: NightAssets.suv,
     ),
   ];
@@ -78,6 +82,7 @@ List<CarListing> filterListings(
   String query = '',
   String category = 'All',
   String city = '',
+  String countryCode = '',
 }) {
   final normalized = query.trim().toLowerCase();
   final location = city.trim().toLowerCase();
@@ -85,6 +90,7 @@ List<CarListing> filterListings(
       .where(
         (car) =>
             car.kind == kind &&
+            (countryCode.isEmpty || car.countryCode == countryCode.toUpperCase()) &&
             (category == 'All' || car.category == category) &&
             car.city.toLowerCase().contains(location) &&
             '${car.title} ${car.city} ${car.year}'.toLowerCase().contains(

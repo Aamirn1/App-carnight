@@ -5,11 +5,15 @@ import '../core/session.dart';
 import '../core/theme.dart';
 import '../domain/models.dart';
 import 'components.dart';
+import 'home_post.dart';
+import '../core/platform_actions.dart';
 
 class FeedPage extends StatelessWidget {
-  const FeedPage({super.key, required this.session, this.query = ''});
+  const FeedPage({super.key, required this.session, this.query = '', this.homeLayout = false, this.header});
   final DemoSession session;
   final String query;
+  final bool homeLayout;
+  final Widget? header;
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: session,
@@ -30,16 +34,16 @@ class FeedPage extends StatelessWidget {
         );
       return ListView.builder(
         key: const PageStorageKey<String>('feed'),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: homeLayout ? 0 : 16),
         itemCount: posts.length + 1,
         itemBuilder: (context, index) {
           if (index == 0)
-            return query.isEmpty
-                ? const _StoryRail()
-                : const SizedBox(height: 12);
+            return header ?? (query.isEmpty
+                ? const StoryRail()
+                : const SizedBox(height: 12));
           return Padding(
-            padding: const EdgeInsets.only(bottom: 18),
-            child: PostCard(post: posts[index - 1], session: session),
+            padding: EdgeInsets.only(bottom: homeLayout ? 8 : 18),
+            child: PostCard(post: posts[index - 1], session: session, homeLayout: homeLayout),
           );
         },
       );
@@ -47,11 +51,11 @@ class FeedPage extends StatelessWidget {
   );
 }
 
-class _StoryRail extends StatelessWidget {
-  const _StoryRail();
+class StoryRail extends StatelessWidget {
+  const StoryRail();
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 18),
+    padding: const EdgeInsets.fromLTRB(16, 2, 0, 4),
     child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -121,12 +125,32 @@ class PostCard extends StatelessWidget {
     required this.post,
     required this.session,
     this.openOnComment = true,
+    this.homeLayout = false,
   });
   final SocialPost post;
   final DemoSession session;
   final bool openOnComment;
+  final bool homeLayout;
   @override
-  Widget build(BuildContext context) => NightCard(
+  Widget build(BuildContext context) => homeLayout ? HomePost(
+    id: post.id, author: post.author, subtitle: '${post.city} · Demo', caption: post.caption,
+    likes: session.isLiked(post.id) ? 1 : 0, comments: session.commentsFor(post.id).length,
+    liked: session.isLiked(post.id), saved: session.isSaved(post.id),
+    onLike: () => session.toggleLiked(post.id), onSave: () => session.toggleSaved(post.id),
+    onComment: () => pushPage<void>(context, PostDetail(post: post, session: session)),
+    onShare: () async {
+      if (!await PlatformActions.shareText('Cars Night · ${post.author}\n${post.caption}')) {
+        await Clipboard.setData(ClipboardData(text: post.caption));
+        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Caption copied.')));
+      }
+    },
+    trailing: IconButton(tooltip: 'Post options', icon: const Icon(Icons.more_horiz),
+      onPressed: () => pushPage<void>(context, PostDetail(post: post, session: session))),
+    media: AspectRatio(aspectRatio: 4 / 5, child: PageView(children: [
+      for (final asset in post.imageAssets) Image.asset(asset, fit: BoxFit.contain,
+        cacheWidth: session.dataSaver ? 480 : 1000, semanticLabel: 'Full photo by ${post.author}'),
+    ])),
+  ) : NightCard(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -1,9 +1,10 @@
 /// Provider-independent boundaries for the connected-services milestone.
 /// No implementation here authenticates users or publishes demo content.
 class AccountSummary {
-  const AccountSummary({required this.id, required this.displayName});
+  const AccountSummary({required this.id, required this.displayName, this.countryCode = '', this.city = ''});
   final String id;
   final String displayName;
+  final String countryCode, city;
 }
 
 class PageSlice<T> {
@@ -22,7 +23,10 @@ abstract interface class AccountsRepository {
     required String email,
     required String password,
     required String displayName,
+    String countryCode = '',
+    String city = '',
   });
+  Future<void> verifyEmailCode({required String email, required String code});
   Future<void> sendPasswordReset(String email);
   Future<void> updatePassword(String password);
   Future<void> signOut();
