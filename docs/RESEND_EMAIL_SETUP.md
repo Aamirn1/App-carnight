@@ -7,15 +7,28 @@ Resend's API. Its sender is `Cars Night<cars@carsnight.com>` and its HTML uses
 Supabase's `{{ .ConfirmationURL }}` and `{{ .Token }}` placeholders. Its variables
 list is empty. An exact export is saved as
 [confirmation template](../supabase/templates/confirm_signup_resend_export.html).
-The sender address is configured in that template; domain verification and live
-Supabase SMTP settings have not been verified here.
+The sender address is configured in that template. Live Supabase SMTP is enabled
+with sender name Cars Night, host `smtp.resend.com`, and port `465`. The dashboard
+redacts its sender address and username; domain verification was not checked.
 
 Resend SMTP is a delivery service. It does not automatically select a template
 saved in Resend. For the current integration, use Supabase to render the HTML and
 Resend SMTP to deliver it. This avoids a new server function and preserves all
 existing website and app authentication email types.
 
-## Activate the existing SMTP integration
+## Live activation — 2026-10-04
+
+Saved and reopened all three branded Supabase templates: Confirm signup, Reset
+password, and Password changed. The password-changed notification is enabled.
+The existing Resend SMTP credentials were preserved. Supabase renders the
+templates and Resend delivers the emails; no Send Email Hook was added.
+
+Saved the explicitly approved redirect `com.carsnight.preview://auth-callback/`
+and verified it appears in the redirect list (one URL). The existing Site URL
+remains `https://www.carsnight.com/`. No live email delivery or phone callback
+test has been performed.
+
+## Configuration reference
 
 In Supabase Authentication → Email:
 
@@ -39,10 +52,8 @@ In Supabase Authentication → Email:
    Preserve the website's redirects and correct production Site URL. SMTP changes
    alone do not fix a localhost fallback.
 
-These project settings have NOT been applied by this commit. The Resend API key
-cannot administer Supabase. Connect authorized Supabase access to complete and
-inspect the hosted configuration. No new APK or SQL table is needed for template
-changes; the current app already requests password recovery with the app callback
+These settings have been applied through the authorized Supabase dashboard.
+No new APK or SQL table is needed for template changes; the current app already requests password recovery with the app callback
 and handles the password recovery event.
 
 ## Templates stored in Resend
