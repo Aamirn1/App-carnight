@@ -1,3 +1,9 @@
+# Live pilot activation — 4 October 2026 UTC
+
+The existing photo migration and `cn-publish-photo` v1 are now deployed.
+See PHOTO_ACTIVATION.md for verification, limits and remaining device checks.
+The older report below describes the original source delivery.
+
 # Phase 3: one-photo publishing pilot (0.5.0)
 
 ## Verification
