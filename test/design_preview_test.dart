@@ -15,8 +15,8 @@ void main() {
     for(final page in ['profile','buy','rent']) {
       testWidgets('$page ${dark?'dark':'light'} preview', (tester) async {
         final font=File('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf');
-        if(await font.exists()) {
-          final loader=FontLoader('Roboto')..addFont(Future.value(ByteData.sublistView(await font.readAsBytes())));
+        if(font.existsSync()) {
+          final loader=FontLoader('Roboto')..addFont(Future.value(ByteData.sublistView(font.readAsBytesSync())));
           await loader.load();
         }
         tester.view.physicalSize=const Size(390,1000);tester.view.devicePixelRatio=1;

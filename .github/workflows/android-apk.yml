@@ -85,7 +85,9 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
       - name: Format source on runner
-        run: dart format lib test
+        run: |
+          dart fix --apply --code=prefer_const_constructors --code=prefer_const_literals_to_create_immutables
+          dart format lib test
       - name: Analyze Dart
         run: flutter analyze --no-fatal-infos
       - name: Run tests
