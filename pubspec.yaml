@@ -1,10 +1,11 @@
 name: cars_night
 description: Cars Night image-first car community preview.
 publish_to: none
-version: 0.7.0+9
+version: 0.8.0+10
 environment:
   sdk: '>=3.9.0 <4.0.0'
 dependencies:
+  shared_preferences: 2.5.5
   path_provider: 2.1.5
   country_picker: 2.0.27
   image_picker: 1.2.1

@@ -109,21 +109,21 @@ class _AuthPageState extends State<AuthPage> {
   Widget _confirmation() => PageFrame(
     title: 'Check your email',
     children: [
-      const Center(child: Brand(large: true)),
-      const SizedBox(height: 24),
-      const Icon(
+      Center(child: Brand(large: true)),
+      SizedBox(height: 24),
+      Icon(
         Icons.mark_email_unread_outlined,
         size: 52,
-        color: NightTheme.cyan,
+        color: Theme.of(context).colorScheme.primary,
       ),
-      const SizedBox(height: 20),
+      SizedBox(height: 20),
       Text('One last step', style: Theme.of(context).textTheme.headlineMedium),
-      const SizedBox(height: 12),
+      SizedBox(height: 12),
       Text(
         'If this address is eligible, a confirmation email has been sent to ${_email.text.trim()}. '
         'Tap Confirm account in the email, or enter its code below.',
       ),
-      const SizedBox(height: 24),
+      SizedBox(height: 24),
       GradientButton(
         label: 'Open Gmail',
         onPressed: () async {
@@ -135,20 +135,20 @@ class _AuthPageState extends State<AuthPage> {
             );
         },
       ),
-      const SizedBox(height: 20),
+      SizedBox(height: 20),
       TextField(
         enabled: !_busy,
         controller: _code,
         keyboardType: TextInputType.number,
         maxLength: 10,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           labelText: 'Verification code',
           helperText: 'Available in the new Cars Night confirmation email.',
         ),
       ),
       if (_message != null)
         Semantics(liveRegion: true, child: InfoNote(_message!)),
-      const SizedBox(height: 12),
+      SizedBox(height: 12),
       OutlinedButton(
         onPressed: _busy ? null : _verifyCode,
         child: Text(_busy ? 'Verifying…' : 'Verify account'),
@@ -157,9 +157,9 @@ class _AuthPageState extends State<AuthPage> {
         onPressed: _busy
             ? null
             : () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute<void>(builder: (_) => const AuthPage()),
+                MaterialPageRoute<void>(builder: (_) => AuthPage()),
               ),
-        child: const Text('Already confirmed? Sign in'),
+        child: Text('Already confirmed? Sign in'),
       ),
       TextButton(
         onPressed: _busy
@@ -168,11 +168,11 @@ class _AuthPageState extends State<AuthPage> {
                 _sent = false;
                 _message = null;
               }),
-        child: const Text('Use a different email'),
+        child: Text('Use a different email'),
       ),
-      const Text(
+      Text(
         'Check Spam if the email is missing. Existing accounts can sign in or reset their password.',
-        style: TextStyle(color: NightTheme.muted),
+        style: TextStyle(color: NightTheme.secondaryText(context)),
       ),
     ],
   );
@@ -204,19 +204,19 @@ class _AuthPageState extends State<AuthPage> {
     return PageFrame(
       title: title,
       children: [
-        const Center(child: Brand(large: true)),
-        const SizedBox(height: 20),
+        Center(child: Brand(large: true)),
+        SizedBox(height: 20),
         Text(title, style: Theme.of(context).textTheme.headlineMedium),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           recovery
               ? 'Get back to your car community.'
               : 'Your next connection starts here.',
-          style: const TextStyle(color: NightTheme.muted),
+          style: TextStyle(color: NightTheme.secondaryText(context)),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         if (backend == null)
-          const InfoNote(
+          InfoNote(
             'Online accounts are not enabled in this build. You can explore the sample feed.',
           ),
         if (_message != null)
@@ -231,11 +231,11 @@ class _AuthPageState extends State<AuthPage> {
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
                   maxLength: 80,
-                  decoration: const InputDecoration(labelText: 'Display name'),
+                  decoration: InputDecoration(labelText: 'Display name'),
                   validator: (v) =>
                       (v ?? '').trim().isEmpty ? 'Enter your name.' : null,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 FormField<Country>(
                   validator: (_) =>
                       _country == null ? 'Choose your country.' : null,
@@ -243,9 +243,9 @@ class _AuthPageState extends State<AuthPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       OutlinedButton.icon(
-                        key: const ValueKey('signup-country'),
+                        key: ValueKey('signup-country'),
                         style: OutlinedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(56),
+                          minimumSize: Size.fromHeight(56),
                         ),
                         onPressed: _busy
                             ? null
@@ -257,7 +257,7 @@ class _AuthPageState extends State<AuthPage> {
                                   field.didChange(country);
                                 },
                               ),
-                        icon: const Icon(Icons.public),
+                        icon: Icon(Icons.public),
                         label: Text(_country?.name ?? 'Choose country'),
                       ),
                       if (field.hasError)
@@ -270,13 +270,13 @@ class _AuthPageState extends State<AuthPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 TextFormField(
                   enabled: !_busy,
                   controller: _city,
                   maxLength: 80,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'City',
                     helperText:
                         'Used to find cars in your area. You can browse other locations.',
@@ -284,7 +284,7 @@ class _AuthPageState extends State<AuthPage> {
                   validator: (v) =>
                       (v ?? '').trim().length < 2 ? 'Enter your city.' : null,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
               ],
               if (!update)
                 TextFormField(
@@ -292,7 +292,7 @@ class _AuthPageState extends State<AuthPage> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: 'Email'),
                   validator: (v) =>
                       RegExp(
                         r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
@@ -301,7 +301,7 @@ class _AuthPageState extends State<AuthPage> {
                       : 'Enter a valid email address.',
                 ),
               if (!recovery) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 TextFormField(
                   enabled: !_busy,
                   controller: _password,
@@ -339,10 +339,10 @@ class _AuthPageState extends State<AuthPage> {
                 context,
                 const AuthPage(mode: AuthMode.recovery),
               ),
-              child: const Text('Forgot password?'),
+              child: Text('Forgot password?'),
             ),
           ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         GradientButton(
           label: _busy
               ? 'Please wait…'
@@ -364,13 +364,13 @@ class _AuthPageState extends State<AuthPage> {
                 if (mounted) setState(() => _message = serviceError(error));
               }
             },
-            child: const Text('Cancel and sign out'),
+            child: Text('Cancel and sign out'),
           ),
         if (!signup && !recovery && !update)
           TextButton(
             onPressed: () =>
-                pushPage<void>(context, const AuthPage(mode: AuthMode.signUp)),
-            child: const Text('New here? Create an account'),
+                pushPage<void>(context, AuthPage(mode: AuthMode.signUp)),
+            child: Text('New here? Create an account'),
           ),
       ],
     );

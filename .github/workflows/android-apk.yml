@@ -91,6 +91,14 @@ jobs:
       - name: Run tests
         timeout-minutes: 5
         run: flutter test --reporter expanded
+      - name: Render design previews
+        run: flutter test test/design_preview_test.dart --dart-define=GENERATE_PREVIEWS=true --update-goldens
+      - name: Upload design previews
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: CarsNight-design-previews
+          path: test/previews/
+          retention-days: 14
       - name: Build release-mode preview APK
         env:
           SUPABASE_URL: ${{ vars.SUPABASE_URL || 'https://romhqgmsoabzowwvuvvp.supabase.co' }}

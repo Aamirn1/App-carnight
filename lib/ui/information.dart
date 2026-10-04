@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/assets.dart';
 import '../core/session.dart';
 import '../core/theme.dart';
+import '../core/appearance.dart';
 import 'components.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -13,39 +14,55 @@ class SettingsPage extends StatelessWidget {
     builder: (context, _) => PageFrame(
       title: 'Settings',
       children: [
+        NightCard(child: Padding(padding: EdgeInsets.all(16), child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
+          SizedBox(height: 12),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            for (final mode in ThemeMode.values) ChoiceChip(
+              label: Text(switch(mode) { ThemeMode.light => 'Light', ThemeMode.dark => 'Dark', _ => 'System' }),
+              selected: (AppearanceScope.of(context)?.mode ?? ThemeMode.dark) == mode,
+              onSelected: (_) async {
+                try { await AppearanceScope.of(context)?.select(mode); }
+                catch (_) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not save appearance. Please retry.'))); }
+              },
+            ),
+          ]),
+        ]))),
+        SizedBox(height: 12),
         NightCard(
           child: SwitchListTile(
             value: session.dataSaver,
             onChanged: session.setDataSaver,
-            title: const Text('Lower-detail images'),
-            subtitle: const Text(
+            title: Text('Lower-detail images'),
+            subtitle: Text(
               'Reduce image decoding memory in this preview.',
             ),
           ),
         ),
-        const InfoNote(
+        InfoNote(
           'Images are bundled locally. This switch does not change network usage '
           'or file size. The preference lasts for this demo session.',
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         NightCard(
           child: Column(
             children: [
-              const ListTile(
+              ListTile(
                 leading: Icon(Icons.language),
                 title: Text('Language'),
                 subtitle: Text('English · additional languages planned'),
               ),
               ListTile(
-                leading: const Icon(Icons.notifications_outlined),
-                title: const Text('Notifications'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => pushPage<void>(context, const NotificationsPage()),
+                leading: Icon(Icons.notifications_outlined),
+                title: Text('Notifications'),
+                trailing: Icon(Icons.chevron_right),
+                onTap: () => pushPage<void>(context, NotificationsPage()),
               ),
               ListTile(
-                leading: const Icon(Icons.privacy_tip_outlined),
-                title: const Text('Privacy'),
-                trailing: const Icon(Icons.chevron_right),
+                leading: Icon(Icons.privacy_tip_outlined),
+                title: Text('Privacy'),
+                trailing: Icon(Icons.chevron_right),
                 onTap: () => showUnavailable(
                   context,
                   'Privacy in this preview',
@@ -54,9 +71,9 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.person_remove_outlined),
-                title: const Text('Delete account'),
-                trailing: const Icon(Icons.chevron_right),
+                leading: Icon(Icons.person_remove_outlined),
+                title: Text('Delete account'),
+                trailing: Icon(Icons.chevron_right),
                 onTap: () => showUnavailable(
                   context,
                   'No account to delete',
@@ -67,10 +84,10 @@ class SettingsPage extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        const Text(
+        SizedBox(height: 24),
+        Text(
           'Cars Night · Community preview 0.4.0',
-          style: TextStyle(color: NightTheme.muted),
+          style: TextStyle(color: NightTheme.secondaryText(context)),
         ),
       ],
     ),
@@ -80,7 +97,7 @@ class SettingsPage extends StatelessWidget {
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage({super.key});
   @override
-  Widget build(BuildContext context) => const PageFrame(
+  Widget build(BuildContext context) => PageFrame(
     title: 'Notifications',
     children: [
       EmptyState(
@@ -101,9 +118,9 @@ class PlanPage extends StatelessWidget {
     title: 'Your plan',
     children: [
       Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             colors: [Color(0xFF243566), Color(0xFF47224E)],
           ),
           borderRadius: BorderRadius.circular(20),
@@ -111,25 +128,25 @@ class PlanPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
+            Icon(
               Icons.workspace_premium_outlined,
               size: 40,
-              color: NightTheme.magenta,
+              color: Theme.of(context).colorScheme.secondary,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               'A bigger garage.\nMore possibilities.',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            const SizedBox(height: 12),
-            const Text(
+            SizedBox(height: 12),
+            Text(
               'Premium is planned. Pricing and benefits are not yet available.',
             ),
           ],
         ),
       ),
-      const SizedBox(height: 24),
-      const NightCard(
+      SizedBox(height: 24),
+      NightCard(
         padding: EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +162,7 @@ class PlanPage extends StatelessWidget {
           ],
         ),
       ),
-      const InfoNote(
+      InfoNote(
         'No paid plan is active in this demo. No payment will be requested or collected.',
       ),
     ],
@@ -158,26 +175,26 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) => PageFrame(
     title: 'About Cars Night',
     children: [
-      const Center(child: Brand(large: true)),
-      const SizedBox(height: 16),
+      Center(child: Brand(large: true)),
+      SizedBox(height: 16),
       Text(
         'Car lovers. Real connections.',
         style: Theme.of(context).textTheme.headlineSmall,
       ),
-      const SizedBox(height: 12),
-      const Text(
+      SizedBox(height: 12),
+      Text(
         'A place to share your car stories and discover your next drive. '
         'Cars Night brings community, buying and renting into one experience.',
       ),
-      const SizedBox(height: 24),
-      const NightCard(
+      SizedBox(height: 24),
+      NightCard(
         padding: EdgeInsets.all(18),
         child: Text(
           'Built around images\n\nThe first release focuses on photo posts and car listings. '
           'Video, reels and livestreaming are outside the launch scope.',
         ),
       ),
-      const InfoNote(
+      InfoNote(
         'Development preview. Marketplace offers and the sample feed are illustrative. '
         'Public photo posting is not enabled yet.',
       ),
@@ -208,10 +225,10 @@ class BlogPage extends StatelessWidget {
   Widget build(BuildContext context) => PageFrame(
     title: 'The night journal',
     children: [
-      const InfoNote('Sample editorial content for reviewing article layouts.'),
+      InfoNote('Sample editorial content for reviewing article layouts.'),
       for (var index = 0; index < _articles.length; index++)
         Padding(
-          padding: const EdgeInsets.only(bottom: 18),
+          padding: EdgeInsets.only(bottom: 18),
           child: NightCard(
             child: Material(
               color: Colors.transparent,
@@ -226,15 +243,15 @@ class BlogPage extends StatelessWidget {
                             ? NightAssets.hero
                             : NightAssets.violet,
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
                       Text(
                         _articles[index].$1,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       Text(
                         _articles[index].$2,
-                        style: const TextStyle(height: 1.7),
+                        style: TextStyle(height: 1.7),
                       ),
                     ],
                   ),
@@ -247,10 +264,10 @@ class BlogPage extends StatelessWidget {
                       ratio: 2,
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       child: Text(
                         _articles[index].$1,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -289,11 +306,11 @@ class _ContactPageState extends State<ContactPage> {
         'Let’s talk cars.',
         style: Theme.of(context).textTheme.headlineMedium,
       ),
-      const SizedBox(height: 12),
-      const Text(
+      SizedBox(height: 12),
+      Text(
         'Questions, ideas or feedback? This is where you’ll reach our team.',
       ),
-      const InfoNote(
+      InfoNote(
         'Contact delivery is not connected. Do not enter private information '
         'in this sample form. No message will be sent.',
       ),
@@ -304,12 +321,12 @@ class _ContactPageState extends State<ContactPage> {
           minLines: 4,
           maxLines: 8,
           maxLength: 1000,
-          decoration: const InputDecoration(labelText: 'Your message'),
+          decoration: InputDecoration(labelText: 'Your message'),
           validator: (v) =>
               (v ?? '').trim().isEmpty ? 'Write a message first.' : null,
         ),
       ),
-      const SizedBox(height: 16),
+      SizedBox(height: 16),
       GradientButton(
         label: 'Send message',
         onPressed: () {

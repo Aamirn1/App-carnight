@@ -31,39 +31,39 @@ class _ComposePageState extends State<ComposePage> {
         'Share your car story',
         style: Theme.of(context).textTheme.headlineSmall,
       ),
-      const SizedBox(height: 8),
-      const Text(
+      SizedBox(height: 8),
+      Text(
         'A great drive deserves a great photo.',
-        style: TextStyle(color: NightTheme.muted),
+        style: TextStyle(color: NightTheme.secondaryText(context)),
       ),
-      const InfoNote(
+      InfoNote(
         'Offline preview: select bundled sample photos. Device photo selection '
         'and online publishing will be connected in the media phase. No videos.',
       ),
       Form(
         key: _form,
         child: TextFormField(
-          key: const ValueKey('post-caption'),
+          key: ValueKey('post-caption'),
           controller: _caption,
           maxLength: 500,
           minLines: 3,
           maxLines: 6,
-          decoration: const InputDecoration(labelText: 'What’s the story?'),
+          decoration: InputDecoration(labelText: 'What’s the story?'),
           validator: (value) =>
               (value ?? '').trim().isEmpty ? 'Add a caption.' : null,
         ),
       ),
-      const SizedBox(height: 12),
+      SizedBox(height: 12),
       Text(
         '${_selected.length} / ${UploadPolicy.maxImages} images selected',
-        style: const TextStyle(fontWeight: FontWeight.w600),
+        style: TextStyle(fontWeight: FontWeight.w600),
       ),
-      const SizedBox(height: 12),
+      SizedBox(height: 12),
       GridView.builder(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         itemCount: NightAssets.photos.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
@@ -87,7 +87,7 @@ class _ComposePageState extends State<ComposePage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: selected ? NightTheme.cyan : NightTheme.border,
+                    color: selected ? Theme.of(context).colorScheme.primary : NightTheme.line(context),
                     width: selected ? 3 : 1,
                   ),
                 ),
@@ -102,7 +102,7 @@ class _ComposePageState extends State<ComposePage> {
                         selected
                             ? Icons.check_circle
                             : Icons.radio_button_unchecked,
-                        color: selected ? NightTheme.cyan : Colors.white,
+                        color: selected ? Theme.of(context).colorScheme.primary : Colors.white,
                       ),
                     ),
                   ],
@@ -114,13 +114,13 @@ class _ComposePageState extends State<ComposePage> {
       ),
       if (_imageError != null)
         Padding(
-          padding: const EdgeInsets.only(top: 8),
+          padding: EdgeInsets.only(top: 8),
           child: Text(
             _imageError!,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         ),
-      const SizedBox(height: 24),
+      SizedBox(height: 24),
       GradientButton(
         label: 'Add to demo feed',
         onPressed: () {
@@ -132,15 +132,15 @@ class _ComposePageState extends State<ComposePage> {
           Navigator.pop(context, true);
         },
       ),
-      const InfoNote(
+      InfoNote(
         'This adds a local sample post only. It disappears when you exit the demo.',
       ),
-      const Divider(),
+      Divider(),
       ListTile(
         contentPadding: EdgeInsets.zero,
-        leading: const Icon(Icons.sell_outlined),
-        title: const Text('Sell a car'),
-        trailing: const Icon(Icons.chevron_right),
+        leading: Icon(Icons.sell_outlined),
+        title: Text('Sell a car'),
+        trailing: Icon(Icons.chevron_right),
         onTap: () => pushPage<void>(
           context,
           const ListingDraftPage(kind: ListingKind.sale),
@@ -148,9 +148,9 @@ class _ComposePageState extends State<ComposePage> {
       ),
       ListTile(
         contentPadding: EdgeInsets.zero,
-        leading: const Icon(Icons.car_rental),
-        title: const Text('List a rental'),
-        trailing: const Icon(Icons.chevron_right),
+        leading: Icon(Icons.car_rental),
+        title: Text('List a rental'),
+        trailing: Icon(Icons.chevron_right),
         onTap: () => pushPage<void>(
           context,
           const ListingDraftPage(kind: ListingKind.rental),
@@ -184,7 +184,7 @@ class _ListingDraftPageState extends State<ListingDraftPage> {
   Widget build(BuildContext context) => PageFrame(
     title: widget.kind == ListingKind.sale ? 'Sell a car' : 'List a rental',
     children: [
-      const InfoNote(
+      InfoNote(
         'Form preview only. Your listing will not be published or saved.',
       ),
       Form(
@@ -194,22 +194,22 @@ class _ListingDraftPageState extends State<ListingDraftPage> {
             TextFormField(
               controller: _title,
               maxLength: 80,
-              decoration: const InputDecoration(labelText: 'Make and model'),
+              decoration: InputDecoration(labelText: 'Make and model'),
               validator: (v) =>
                   (v ?? '').trim().isEmpty ? 'Enter the make and model.' : null,
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             TextFormField(
               controller: _city,
               maxLength: 80,
-              decoration: const InputDecoration(labelText: 'City'),
+              decoration: InputDecoration(labelText: 'City'),
               validator: (v) =>
                   (v ?? '').trim().isEmpty ? 'Enter a city.' : null,
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             TextFormField(
               controller: _price,
-              keyboardType: const TextInputType.numberWithOptions(
+              keyboardType: TextInputType.numberWithOptions(
                 decimal: true,
               ),
               decoration: InputDecoration(
@@ -228,7 +228,7 @@ class _ListingDraftPageState extends State<ListingDraftPage> {
           ],
         ),
       ),
-      const SizedBox(height: 24),
+      SizedBox(height: 24),
       GradientButton(
         label: 'Preview details',
         onPressed: () {
@@ -242,12 +242,12 @@ class _ListingDraftPageState extends State<ListingDraftPage> {
                   _title.text.trim(),
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(_city.text.trim()),
                 Text(
                   'USD ${_price.text.trim()}${widget.kind == ListingKind.rental ? ' / day' : ''}',
                 ),
-                const InfoNote(
+                InfoNote(
                   'Not published. Photos, specifications, ownership verification '
                   'and a connected seller account are required before launch.',
                 ),

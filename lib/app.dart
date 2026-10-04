@@ -4,6 +4,7 @@ import 'ui/photo_compose.dart';
 import 'core/assets.dart';
 import 'core/session.dart';
 import 'core/theme.dart';
+import 'core/appearance.dart';
 import 'ui/community.dart';
 import 'ui/messages.dart';
 import 'ui/auth.dart';
@@ -16,13 +17,14 @@ import 'ui/profile.dart';
 import 'backend/session.dart';
 
 class CarsNightApp extends StatelessWidget {
-  const CarsNightApp({super.key, this.backend, this.startupError});
+  const CarsNightApp({super.key, this.backend, this.startupError, this.appearance});
+  final Appearance? appearance;
   final BackendSession? backend;
   final String? startupError;
   @override
   Widget build(BuildContext context) => BackendScope(
     session: backend,
-    child: _SessionApp(startupError: startupError),
+    child: appearance == null ? _SessionApp(startupError: startupError) : AppearanceScope(controller: appearance!, child: _SessionApp(startupError: startupError)),
   );
 }
 
@@ -42,29 +44,31 @@ class _SessionApp extends StatelessWidget {
       key: ValueKey('session:$restoring:$recovery:$verified:${id ?? 'guest'}'),
       title: 'Cars Night',
       debugShowCheckedModeBanner: false,
-      theme: NightTheme.data,
+      theme: NightTheme.light,
+      darkTheme: NightTheme.data,
+      themeMode: AppearanceScope.of(context)?.mode ?? ThemeMode.dark,
       home: restoring
-          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          ? Scaffold(body: Center(child: CircularProgressIndicator()))
           : recovery
-          ? const AuthPage(mode: AuthMode.updatePassword)
+          ? AuthPage(mode: AuthMode.updatePassword)
           : id != null && verified
           ? PageFrame(
               title: 'Account verified',
               children: [
-                const SizedBox(height: 40),
-                const Icon(
+                SizedBox(height: 40),
+                Icon(
                   Icons.verified_outlined,
-                  color: NightTheme.cyan,
+                  color: Theme.of(context).colorScheme.primary,
                   size: 64,
                 ),
-                const SizedBox(height: 24),
-                const Text(
+                SizedBox(height: 24),
+                Text(
                   'Welcome to Cars Night',
-                  style: TextStyle(fontSize: 24, color: Colors.white),
+                  style: TextStyle(fontSize: 24, color: NightTheme.ink(context)),
                 ),
-                const SizedBox(height: 16),
-                const Text('Your email is verified and you are signed in.'),
-                const SizedBox(height: 24),
+                SizedBox(height: 16),
+                Text('Your email is verified and you are signed in.'),
+                SizedBox(height: 24),
                 GradientButton(
                   label: 'Continue to Home',
                   onPressed: backend!.dismissEmailVerified,
@@ -72,7 +76,7 @@ class _SessionApp extends StatelessWidget {
               ],
             )
           : id != null
-          ? const AppShell()
+          ? AppShell()
           : WelcomePage(startupError: startupError),
     );
   }
@@ -83,7 +87,7 @@ class WelcomePage extends StatelessWidget {
   final String? startupError;
   @override
   Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
-    value: const SystemUiOverlayStyle(
+    value: SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.dark,
@@ -94,18 +98,18 @@ class WelcomePage extends StatelessWidget {
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
+            constraints: BoxConstraints(maxWidth: 480),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  const Stack(
+                  Stack(
                     children: [
-                      const AssetPhoto(
+                      AssetPhoto(
                         asset: NightAssets.hero,
                         ratio: 0.95,
                         label: 'Blue sports car against a neon city skyline',
                       ),
-                      const Positioned.fill(
+                      Positioned.fill(
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -114,14 +118,14 @@ class WelcomePage extends StatelessWidget {
                               colors: [
                                 Colors.transparent,
                                 Colors.transparent,
-                                NightTheme.background,
+                                NightTheme.canvas(context),
                               ],
                               stops: [0, 0.62, 1],
                             ),
                           ),
                         ),
                       ),
-                      const Positioned(
+                      Positioned(
                         bottom: 0,
                         left: 0,
                         right: 0,
@@ -130,7 +134,7 @@ class WelcomePage extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                    padding: EdgeInsets.fromLTRB(24, 12, 24, 24),
                     child: Column(
                       children: [
                         Text(
@@ -138,29 +142,29 @@ class WelcomePage extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         if (startupError != null) InfoNote(startupError!),
-                        const Text(
+                        Text(
                           'Share. Connect. Discover.',
-                          style: TextStyle(color: NightTheme.muted),
+                          style: TextStyle(color: NightTheme.secondaryText(context)),
                         ),
-                        const SizedBox(height: 28),
+                        SizedBox(height: 28),
                         GradientButton(
                           label: 'Get Started',
                           onPressed: () =>
-                              pushPage<void>(context, const AppShell()),
+                              pushPage<void>(context, AppShell()),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         GradientOutlineButton(
                           onPressed: () =>
-                              pushPage<void>(context, const AuthPage()),
+                              pushPage<void>(context, AuthPage()),
                           label: 'Sign in',
                         ),
-                        const SizedBox(height: 16),
-                        const Text(
+                        SizedBox(height: 16),
+                        Text(
                           'SAMPLE FEED · PREVIEW BUILD',
                           style: TextStyle(
-                            color: NightTheme.muted,
+                            color: NightTheme.secondaryText(context),
                             fontSize: 10,
                             letterSpacing: 1,
                           ),
@@ -206,7 +210,7 @@ class _AppShellState extends State<AppShell> {
       if (backend != null) {
         final account = backend.account;
         if (account == null) {
-          await pushPage<void>(context, const AuthPage());
+          await pushPage<void>(context, AuthPage());
         } else {
           final posted = await pushPage<bool>(
             context,
@@ -228,7 +232,7 @@ class _AppShellState extends State<AppShell> {
       if (!mounted || added != true) return;
       setState(() => _selected = 0);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Added to the local demo feed. Nothing was uploaded.'),
         ),
       );
@@ -239,7 +243,7 @@ class _AppShellState extends State<AppShell> {
       _pages.putIfAbsent(
         index,
         () => switch (index) {
-          1 => const MessagesPage(),
+          1 => MessagesPage(),
           3 => MarketplaceHub(session: _session),
           4 => ProfilePage(session: _session),
           _ => CommunityPage(demo: _session),
@@ -256,63 +260,63 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Brand(),
+      title: Brand(),
       toolbarHeight: 64,
       leading: Builder(
         builder: (context) => IconButton(
           tooltip: 'Open menu',
           onPressed: () => Scaffold.of(context).openDrawer(),
-          icon: const Icon(Icons.menu),
+          icon: Icon(Icons.menu),
         ),
       ),
       actions: [
         IconButton(
           tooltip: 'Search community',
-          icon: const Icon(Icons.search),
+          icon: Icon(Icons.search),
           onPressed: () => pushPage<void>(
             context,
             BackendScope.of(context)?.social == null
                 ? CommunitySearchPage(session: _session)
-                : const PeoplePage(),
+                : PeoplePage(),
           ),
         ),
         IconButton(
           tooltip: 'Notifications',
-          icon: const Icon(Icons.notifications_outlined),
-          onPressed: () => pushPage<void>(context, const NotificationsPage()),
+          icon: Icon(Icons.notifications_outlined),
+          onPressed: () => pushPage<void>(context, NotificationsPage()),
         ),
       ],
     ),
     drawer: Drawer(
-      backgroundColor: NightTheme.background,
+      backgroundColor: NightTheme.canvas(context),
       width: MediaQuery.sizeOf(context).width.clamp(280, 350).toDouble() * 0.92,
       child: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Align(alignment: Alignment.centerLeft, child: Brand()),
                 ),
                 IconButton(
                   tooltip: 'Close menu',
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const CircleAvatar(
+              leading: CircleAvatar(
                 backgroundColor: Color(0xFF352650),
-                child: Icon(Icons.person_outline, color: NightTheme.cyan),
+                child: Icon(Icons.person_outline, color: Theme.of(context).colorScheme.primary),
               ),
               title: Text(
                 BackendScope.of(context)?.account?.displayName ??
                     'Car enthusiast',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 BackendScope.of(context)?.account == null
@@ -320,19 +324,19 @@ class _AppShellState extends State<AppShell> {
                     : 'Signed in',
               ),
             ),
-            const SizedBox(height: 12),
-            for (final item in const [
+            SizedBox(height: 12),
+            for (final item in [
               (0, 'Home', Icons.home_outlined),
               (1, 'Messages', Icons.forum_outlined),
               (3, 'Marketplace', Icons.storefront_outlined),
             ])
               Padding(
-                padding: const EdgeInsets.only(bottom: 5),
+                padding: EdgeInsets.only(bottom: 5),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     gradient: _selected == item.$1
-                        ? const LinearGradient(
+                        ? LinearGradient(
                             colors: [Color(0xFF243B89), Color(0xFF43204C)],
                           )
                         : null,
@@ -341,8 +345,8 @@ class _AppShellState extends State<AppShell> {
                     leading: Icon(
                       item.$3,
                       color: _selected == item.$1
-                          ? NightTheme.cyan
-                          : NightTheme.muted,
+                          ? Theme.of(context).colorScheme.primary
+                          : NightTheme.secondaryText(context),
                     ),
                     title: Text(item.$2),
                     selected: _selected == item.$1,
@@ -355,48 +359,48 @@ class _AppShellState extends State<AppShell> {
                 ),
               ),
             ListTile(
-              leading: const Icon(Icons.bookmark_border),
-              title: const Text('Saved'),
+              leading: Icon(Icons.bookmark_border),
+              title: Text('Saved'),
               onTap: () => _openDrawerPage(SavedPage(session: _session)),
             ),
             ListTile(
-              leading: const Icon(Icons.workspace_premium_outlined),
-              title: const Text('Plan'),
-              onTap: () => _openDrawerPage(const PlanPage()),
+              leading: Icon(Icons.workspace_premium_outlined),
+              title: Text('Plan'),
+              onTap: () => _openDrawerPage(PlanPage()),
             ),
             ListTile(
-              leading: const Icon(Icons.article_outlined),
-              title: const Text('Blog'),
-              onTap: () => _openDrawerPage(const BlogPage()),
+              leading: Icon(Icons.article_outlined),
+              title: Text('Blog'),
+              onTap: () => _openDrawerPage(BlogPage()),
             ),
             ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('About'),
-              onTap: () => _openDrawerPage(const AboutPage()),
+              leading: Icon(Icons.info_outline),
+              title: Text('About'),
+              onTap: () => _openDrawerPage(AboutPage()),
             ),
             ListTile(
-              leading: const Icon(Icons.mail_outline),
-              title: const Text('Contact'),
-              onTap: () => _openDrawerPage(const ContactPage()),
+              leading: Icon(Icons.mail_outline),
+              title: Text('Contact'),
+              onTap: () => _openDrawerPage(ContactPage()),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
               child: Divider(),
             ),
             ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: const Text('Settings'),
+              leading: Icon(Icons.settings_outlined),
+              title: Text('Settings'),
               onTap: () => _openDrawerPage(SettingsPage(session: _session)),
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Back to welcome'),
+              leading: Icon(Icons.logout),
+              title: Text('Back to welcome'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
             ),
-            const InfoNote(
+            InfoNote(
               'Sample marketplace offers and saved items are for preview.',
             ),
           ],
@@ -407,13 +411,13 @@ class _AppShellState extends State<AppShell> {
       top: false,
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 640),
+          constraints: BoxConstraints(maxWidth: 640),
           // A tab is constructed only on first visit, then retains scroll/form state.
           child: IndexedStack(
             index: _selected,
             children: List.generate(
               5,
-              (index) => _pages[index] ?? const SizedBox.shrink(),
+              (index) => _pages[index] ?? SizedBox.shrink(),
             ),
           ),
         ),
@@ -422,7 +426,7 @@ class _AppShellState extends State<AppShell> {
     bottomNavigationBar: NavigationBar(
       selectedIndex: _selected,
       onDestinationSelected: _select,
-      destinations: const [
+      destinations: [
         NavigationDestination(
           key: ValueKey('nav-home'),
           icon: Icon(Icons.home_outlined),

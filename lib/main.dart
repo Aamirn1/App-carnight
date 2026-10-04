@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app.dart';
+import 'core/appearance.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend/config.dart';
 import 'backend/social.dart';
@@ -31,5 +32,7 @@ Future<void> main() async {
       }
     }
   }
-  runApp(CarsNightApp(backend: backend, startupError: startupError));
+  final appearance = Appearance();
+  await appearance.restore();
+  runApp(CarsNightApp(backend: backend, startupError: startupError, appearance: appearance));
 }

@@ -35,7 +35,7 @@ class FeedPage extends StatelessWidget {
         return ListView(
           children: [
             if (header != null) header!,
-            const EmptyState(
+            EmptyState(
               title: 'No posts found',
               message: 'Try a different person, city or keyword.',
             ),
@@ -43,15 +43,15 @@ class FeedPage extends StatelessWidget {
         );
       }
       return ListView.builder(
-        key: const PageStorageKey<String>('feed'),
+        key: PageStorageKey<String>('feed'),
         padding: EdgeInsets.symmetric(horizontal: homeLayout ? 0 : 16),
         itemCount: posts.length + 1,
         itemBuilder: (context, index) {
           if (index == 0)
             return header ??
                 (query.isEmpty
-                    ? const StoryRail()
-                    : const SizedBox(height: 12));
+                    ? StoryRail()
+                    : SizedBox(height: 12));
           return Padding(
             padding: EdgeInsets.only(bottom: homeLayout ? 8 : 18),
             child: PostCard(
@@ -70,12 +70,12 @@ class StoryRail extends StatelessWidget {
   const StoryRail();
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 2, 0, 4),
+    padding: EdgeInsets.fromLTRB(16, 2, 0, 4),
     child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children:
-            const [
+            [
                   ('Night drives', NightAssets.hero),
                   ('Supercars', NightAssets.violet),
                   ('Open roads', NightAssets.red),
@@ -83,7 +83,7 @@ class StoryRail extends StatelessWidget {
                 ]
                 .map(
                   (story) => Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 14),
+                    padding: EdgeInsetsDirectional.only(end: 14),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
                       onTap: () => pushPage<void>(
@@ -95,21 +95,21 @@ class StoryRail extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                               child: AssetPhoto(asset: story.$2, ratio: 0.8),
                             ),
-                            const InfoNote(
+                            InfoNote(
                               'Sample photo story. No video or automatic playback.',
                             ),
                           ],
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: EdgeInsets.symmetric(vertical: 8),
                         child: Column(
                           children: [
                             Container(
                               width: 60,
                               height: 60,
-                              padding: const EdgeInsets.all(2),
-                              decoration: const BoxDecoration(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: NightTheme.gradient,
                               ),
@@ -117,10 +117,10 @@ class StoryRail extends StatelessWidget {
                                 child: AssetPhoto(asset: story.$2, ratio: 1),
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            SizedBox(height: 6),
                             Text(
                               story.$1,
-                              style: const TextStyle(fontSize: 11),
+                              style: TextStyle(fontSize: 11),
                             ),
                           ],
                         ),
@@ -169,13 +169,13 @@ class PostCard extends StatelessWidget {
               await Clipboard.setData(ClipboardData(text: post.caption));
               if (context.mounted)
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Caption copied.')),
+                  SnackBar(content: Text('Caption copied.')),
                 );
             }
           },
           trailing: IconButton(
             tooltip: 'Post options',
-            icon: const Icon(Icons.more_horiz),
+            icon: Icon(Icons.more_horiz),
             onPressed: () => pushPage<void>(
               context,
               PostDetail(post: post, session: session),
@@ -201,24 +201,24 @@ class PostCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
                 leading: CircleAvatar(
-                  backgroundColor: const Color(0xFF352650),
+                  backgroundColor: Color(0xFF352650),
                   child: Text(
                     post.author[0],
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
                 title: Text(
                   post.author,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
                   ),
                 ),
                 subtitle: Text(
                   '${post.city} · Demo',
-                  style: const TextStyle(fontSize: 11),
+                  style: TextStyle(fontSize: 11),
                 ),
                 trailing: PopupMenuButton<String>(
                   tooltip: 'Post options',
@@ -227,20 +227,20 @@ class PostCard extends StatelessWidget {
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder: (dialogContext) => AlertDialog(
-                          title: const Text('Delete demo post?'),
-                          content: const Text(
+                          title: Text('Delete demo post?'),
+                          content: Text(
                             'This removes it from this local session.',
                           ),
                           actions: [
                             TextButton(
                               onPressed: () =>
                                   Navigator.pop(dialogContext, false),
-                              child: const Text('Cancel'),
+                              child: Text('Cancel'),
                             ),
                             TextButton(
                               onPressed: () =>
                                   Navigator.pop(dialogContext, true),
-                              child: const Text('Delete'),
+                              child: Text('Delete'),
                             ),
                           ],
                         ),
@@ -260,12 +260,12 @@ class PostCard extends StatelessWidget {
                     }
                   },
                   itemBuilder: (_) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'report',
                       child: Text('Report post'),
                     ),
                     if (post.id.startsWith('local-'))
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
                         child: Text('Delete demo post'),
                       ),
@@ -273,7 +273,7 @@ class PostCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
                 child: Text(post.caption),
               ),
               if (post.imageAssets.length == 1)
@@ -295,11 +295,11 @@ class PostCard extends StatelessWidget {
                 ),
               if (post.imageAssets.length > 1)
                 Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
                   child: Text(
                     '${post.imageAssets.length} photos · swipe to view',
-                    style: const TextStyle(
-                      color: NightTheme.muted,
+                    style: TextStyle(
+                      color: NightTheme.secondaryText(context),
                       fontSize: 11,
                     ),
                   ),
@@ -318,7 +318,7 @@ class PostCard extends StatelessWidget {
                         session.isLiked(post.id)
                             ? Icons.favorite
                             : Icons.favorite_border,
-                        color: NightTheme.magenta,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     Text(session.isLiked(post.id) ? '1' : '0'),
@@ -330,7 +330,7 @@ class PostCard extends StatelessWidget {
                               PostDetail(post: post, session: session),
                             )
                           : null,
-                      icon: const Icon(Icons.chat_bubble_outline, size: 20),
+                      icon: Icon(Icons.chat_bubble_outline, size: 20),
                     ),
                     Text('${session.commentsFor(post.id).length}'),
                     IconButton(
@@ -341,12 +341,12 @@ class PostCard extends StatelessWidget {
                         );
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Caption copied.')),
+                          SnackBar(content: Text('Caption copied.')),
                         );
                       },
-                      icon: const Icon(Icons.copy_outlined, size: 20),
+                      icon: Icon(Icons.copy_outlined, size: 20),
                     ),
-                    const Spacer(),
+                    Spacer(),
                     IconButton(
                       key: ValueKey('save-${post.id}'),
                       tooltip: session.isSaved(post.id)
@@ -395,20 +395,20 @@ class _PostDetailState extends State<PostDetail> {
           session: widget.session,
           openOnComment: false,
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         Text('Comments', style: Theme.of(context).textTheme.titleLarge),
         if (widget.session.commentsFor(widget.post.id).isEmpty)
-          const InfoNote(
+          InfoNote(
             'Start the conversation. Demo comments stay on this device until you exit.',
           ),
         for (final comment in widget.session.commentsFor(widget.post.id))
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const CircleAvatar(child: Text('Y')),
-            title: const Text('You · Demo'),
+            leading: CircleAvatar(child: Text('Y')),
+            title: Text('You · Demo'),
             subtitle: Text(comment),
           ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Form(
           key: _form,
           child: TextFormField(
@@ -416,7 +416,7 @@ class _PostDetailState extends State<PostDetail> {
             maxLength: 500,
             minLines: 1,
             maxLines: 4,
-            decoration: const InputDecoration(labelText: 'Write a comment'),
+            decoration: InputDecoration(labelText: 'Write a comment'),
             validator: (value) =>
                 (value ?? '').trim().isEmpty ? 'Write a comment first.' : null,
           ),
@@ -446,14 +446,14 @@ class _CommunitySearchPageState extends State<CommunitySearchPage> {
   String _query = '';
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Search community')),
+    appBar: AppBar(title: Text('Search community')),
     body: SafeArea(
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: TextField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'People, places or captions',
                 prefixIcon: Icon(Icons.search),
               ),

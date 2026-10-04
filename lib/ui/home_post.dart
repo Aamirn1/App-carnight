@@ -29,51 +29,51 @@ class HomePost extends StatelessWidget {
   final Widget? trailing;
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: NightTheme.surface,
+    color: NightTheme.panel(context),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(
+          contentPadding: EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 4,
           ),
           leading: CircleAvatar(
             radius: 20,
-            backgroundColor: const Color(0xFF352650),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             child: Text(author.isEmpty ? 'C' : author.characters.first),
           ),
           title: Text(
             author,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
           ),
           subtitle: Text(
             subtitle,
-            style: const TextStyle(color: NightTheme.muted, fontSize: 11),
+            style: TextStyle(color: NightTheme.secondaryText(context), fontSize: 11),
           ),
           trailing: trailing,
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+          padding: EdgeInsets.fromLTRB(14, 0, 14, 12),
           child: _Caption(caption),
         ),
         media,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             children: [
-              const Icon(Icons.favorite, color: NightTheme.magenta, size: 15),
-              const SizedBox(width: 6),
+              Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary, size: 15),
+              SizedBox(width: 6),
               Text(
                 '$likes',
-                style: const TextStyle(color: NightTheme.muted, fontSize: 12),
+                style: TextStyle(color: NightTheme.secondaryText(context), fontSize: 12),
               ),
-              const Spacer(),
+              Spacer(),
               Text(
                 '$comments comments',
-                style: const TextStyle(color: NightTheme.muted, fontSize: 12),
+                style: TextStyle(color: NightTheme.secondaryText(context), fontSize: 12),
               ),
               if (onSave != null)
                 IconButton(
@@ -85,11 +85,11 @@ class HomePost extends StatelessWidget {
                     size: 21,
                   ),
                 ),
-              if (onSave == null) const SizedBox(height: 42),
+              if (onSave == null) SizedBox(height: 42),
             ],
           ),
         ),
-        const Divider(height: 1, indent: 14, endIndent: 14),
+        Divider(height: 1, indent: 14, endIndent: 14),
         Row(
           children: [
             Expanded(
@@ -98,30 +98,30 @@ class HomePost extends StatelessWidget {
                 onPressed: onLike,
                 style: TextButton.styleFrom(
                   foregroundColor: liked
-                      ? NightTheme.magenta
-                      : NightTheme.muted,
+                      ? Theme.of(context).colorScheme.secondary
+                      : NightTheme.secondaryText(context),
                 ),
                 icon: Icon(
                   liked ? Icons.favorite : Icons.favorite_border,
                   size: 20,
                 ),
-                label: const Text('Like', style: TextStyle(fontSize: 11)),
+                label: Text('Like', style: TextStyle(fontSize: 11)),
               ),
             ),
             Expanded(
               child: TextButton.icon(
                 onPressed: onComment,
-                style: TextButton.styleFrom(foregroundColor: NightTheme.muted),
-                icon: const Icon(Icons.chat_bubble_outline, size: 19),
-                label: const Text('Comment', style: TextStyle(fontSize: 11)),
+                style: TextButton.styleFrom(foregroundColor: NightTheme.secondaryText(context)),
+                icon: Icon(Icons.chat_bubble_outline, size: 19),
+                label: Text('Comment', style: TextStyle(fontSize: 11)),
               ),
             ),
             Expanded(
               child: TextButton.icon(
                 onPressed: onShare,
-                style: TextButton.styleFrom(foregroundColor: NightTheme.muted),
-                icon: const Icon(Icons.share_outlined, size: 20),
-                label: const Text('Share', style: TextStyle(fontSize: 11)),
+                style: TextButton.styleFrom(foregroundColor: NightTheme.secondaryText(context)),
+                icon: Icon(Icons.share_outlined, size: 20),
+                label: Text('Share', style: TextStyle(fontSize: 11)),
               ),
             ),
           ],
@@ -155,10 +155,10 @@ class _CaptionState extends State<_Caption> {
         InkWell(
           onTap: () => setState(() => expanded = !expanded),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
+            padding: EdgeInsets.symmetric(vertical: 6),
             child: Text(
               expanded ? 'Show less' : 'See more',
-              style: const TextStyle(color: NightTheme.cyan, fontSize: 12),
+              style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12),
             ),
           ),
         ),

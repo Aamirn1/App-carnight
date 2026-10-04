@@ -1,3 +1,10 @@
+# Latest: 0.8.0 — profile, light mode and compact marketplace
+
+See [PROFILE_THEME_0.8.md](PROFILE_THEME_0.8.md) for reference analysis, implementation
+and verification. CI pending; live profile metadata/counts and device review remain open.
+
+---
+
 # Latest: version 0.7.0 — launcher icon and durable photo drafts
 
 User-supplied gradient C launcher artwork replaces the old icon at all Android

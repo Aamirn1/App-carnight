@@ -73,7 +73,7 @@ class _CommunityState extends State<_Community> {
 
   Future<void> _action(String id, Future<void> Function() action) async {
     if (BackendScope.of(context)?.account == null) {
-      await pushPage<void>(context, const AuthPage());
+      await pushPage<void>(context, AuthPage());
       return;
     }
     if (_pending.contains(id)) return;
@@ -93,18 +93,18 @@ class _CommunityState extends State<_Community> {
 
   Widget _header() => Column(
     children: [
-      const StoryRail(),
+      StoryRail(),
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+        padding: EdgeInsets.fromLTRB(16, 4, 16, 12),
         child: Row(
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.all(4),
+                padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: NightTheme.surface,
+                  color: NightTheme.panel(context),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: NightTheme.border),
+                  border: Border.all(color: NightTheme.line(context)),
                 ),
                 child: Row(
                   children: [
@@ -116,13 +116,13 @@ class _CommunityState extends State<_Community> {
                         child: TextButton(
                           style: TextButton.styleFrom(
                             backgroundColor: _following == entry.$1
-                                ? const Color(0xFF302658)
+                                ? Theme.of(context).colorScheme.secondaryContainer
                                 : Colors.transparent,
                             foregroundColor: _following == entry.$1
-                                ? NightTheme.cyan
-                                : NightTheme.muted,
-                            minimumSize: const Size(48, 44),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                ? Theme.of(context).colorScheme.primary
+                                : NightTheme.secondaryText(context),
+                            minimumSize: Size(48, 44),
+                            padding: EdgeInsets.symmetric(horizontal: 8),
                           ),
                           onPressed: _busy
                               ? null
@@ -132,7 +132,7 @@ class _CommunityState extends State<_Community> {
                                           null) {
                                     await pushPage<void>(
                                       context,
-                                      const AuthPage(),
+                                      AuthPage(),
                                     );
                                     return;
                                   }
@@ -144,7 +144,7 @@ class _CommunityState extends State<_Community> {
                                 },
                           child: Text(
                             entry.$2,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
                             ),
@@ -155,7 +155,7 @@ class _CommunityState extends State<_Community> {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: NightTheme.gradient,
@@ -164,8 +164,8 @@ class _CommunityState extends State<_Community> {
               child: IconButton(
                 tooltip: 'Find car lovers',
                 color: Colors.white,
-                onPressed: () => pushPage<void>(context, const PeoplePage()),
-                icon: const Icon(Icons.person_add_alt_1_outlined),
+                onPressed: () => pushPage<void>(context, PeoplePage()),
+                icon: Icon(Icons.person_add_alt_1_outlined),
               ),
             ),
           ],
@@ -173,15 +173,15 @@ class _CommunityState extends State<_Community> {
       ),
       if (_demo)
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 12, 6),
+          padding: EdgeInsets.fromLTRB(16, 0, 12, 6),
           child: Row(
             children: [
-              const Icon(Icons.info_outline, size: 14, color: NightTheme.muted),
-              const SizedBox(width: 6),
-              const Expanded(
+              Icon(Icons.info_outline, size: 14, color: NightTheme.secondaryText(context)),
+              SizedBox(width: 6),
+              Expanded(
                 child: Text(
                   'Sample feed',
-                  style: TextStyle(fontSize: 11, color: NightTheme.muted),
+                  style: TextStyle(fontSize: 11, color: NightTheme.secondaryText(context)),
                 ),
               ),
               TextButton(
@@ -189,7 +189,7 @@ class _CommunityState extends State<_Community> {
                   setState(() => _demo = false);
                   _load();
                 },
-                child: const Text(
+                child: Text(
                   'Return online',
                   style: TextStyle(fontSize: 11),
                 ),
@@ -197,13 +197,13 @@ class _CommunityState extends State<_Community> {
             ],
           ),
         ),
-      if (_busy && !_demo) const LinearProgressIndicator(),
+      if (_busy && !_demo) LinearProgressIndicator(),
     ],
   );
 
   Future<void> _comments(CommunityPost p) async {
     if (BackendScope.of(context)?.account == null) {
-      await pushPage<void>(context, const AuthPage());
+      await pushPage<void>(context, AuthPage());
       return;
     }
     await pushPage<void>(context, CommentsPage(post: p));
@@ -216,8 +216,8 @@ class _CommunityState extends State<_Community> {
       : RefreshIndicator(
           onRefresh: () => _load(),
           child: ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: 16),
+            physics: AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.only(bottom: 16),
             itemCount: _posts.length + 2,
             itemBuilder: (context, index) {
               if (index == 0) return _header();
@@ -228,36 +228,36 @@ class _CommunityState extends State<_Community> {
                     if (_error != null) ...[
                       NightCard(
                         child: Padding(
-                          padding: const EdgeInsets.all(24),
+                          padding: EdgeInsets.all(24),
                           child: Column(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.public_outlined,
                                 size: 40,
-                                color: NightTheme.cyan,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               Text(
                                 'The community is getting ready',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12),
                               Text(
                                 _error!,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(color: NightTheme.muted),
+                                style: TextStyle(color: NightTheme.secondaryText(context)),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20),
                               FilledButton.icon(
                                 onPressed: () => setState(() => _demo = true),
-                                icon: const Icon(Icons.photo_library_outlined),
-                                label: const Text('Explore sample feed'),
+                                icon: Icon(Icons.photo_library_outlined),
+                                label: Text('Explore sample feed'),
                               ),
                               TextButton.icon(
                                 onPressed: _busy ? null : () => _load(),
-                                icon: const Icon(Icons.refresh),
-                                label: const Text('Try again'),
+                                icon: Icon(Icons.refresh),
+                                label: Text('Try again'),
                               ),
                             ],
                           ),
@@ -277,19 +277,19 @@ class _CommunityState extends State<_Community> {
                     if (_posts.isEmpty && !_busy && _error == null)
                       TextButton(
                         onPressed: () => setState(() => _demo = true),
-                        child: const Text('Explore sample feed'),
+                        child: Text('Explore sample feed'),
                       ),
                     if (_more && _posts.isNotEmpty)
                       TextButton(
                         onPressed: _busy ? null : () => _load(more: true),
-                        child: const Text('Load more posts'),
+                        child: Text('Load more posts'),
                       ),
                   ],
                 );
               final p = _posts[index];
               final own = BackendScope.of(context)?.account?.id == p.ownerId;
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: EdgeInsets.only(bottom: 8),
                 child: HomePost(
                   key: ValueKey(p.id),
                   id: p.id,
@@ -312,7 +312,7 @@ class _CommunityState extends State<_Community> {
                       await Clipboard.setData(ClipboardData(text: text));
                       if (context.mounted)
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Post text copied.')),
+                          SnackBar(content: Text('Post text copied.')),
                         );
                     }
                   },
@@ -320,13 +320,13 @@ class _CommunityState extends State<_Community> {
                       ? null
                       : PopupMenuButton<String>(
                           tooltip: 'Post options',
-                          icon: const Icon(Icons.more_horiz),
+                          icon: Icon(Icons.more_horiz),
                           itemBuilder: (_) => [
                             PopupMenuItem(
                               value: 'follow',
                               child: Text(p.following ? 'Unfollow' : 'Follow'),
                             ),
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'message',
                               child: Text('Message request'),
                             ),
@@ -343,7 +343,7 @@ class _CommunityState extends State<_Community> {
                                 await widget.api.request(p.ownerId);
                                 if (context.mounted)
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                       content: Text(
                                         'Request sent. Open Messages.',
                                       ),
@@ -352,7 +352,7 @@ class _CommunityState extends State<_Community> {
                               });
                             else
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
                                     'Follow this person before sending a request.',
                                   ),
@@ -361,7 +361,7 @@ class _CommunityState extends State<_Community> {
                           },
                         ),
                   media: p.images.isEmpty
-                      ? const SizedBox.shrink()
+                      ? SizedBox.shrink()
                       : AspectRatio(
                           aspectRatio: 4 / 5,
                           child: PageView(
@@ -377,11 +377,11 @@ class _CommunityState extends State<_Community> {
                                   loadingBuilder: (context, child, progress) =>
                                       progress == null
                                       ? child
-                                      : const Center(
+                                      : Center(
                                           child: CircularProgressIndicator(),
                                         ),
                                   errorBuilder: (_, error, stack) =>
-                                      const Center(
+                                      Center(
                                         child: Icon(
                                           Icons.broken_image_outlined,
                                         ),
@@ -476,7 +476,7 @@ class _CommentsPageState extends State<CommentsPage> {
   @override
   Widget build(BuildContext context) {
     if (BackendScope.of(context)?.account?.id != _owner || _owner == null)
-      return const PageFrame(
+      return PageFrame(
         title: 'Comments',
         children: [InfoNote('Sign in again to continue.')],
       );
@@ -484,24 +484,24 @@ class _CommentsPageState extends State<CommentsPage> {
       title: 'Comments',
       children: [
         Text(widget.post.caption),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         TextField(
           controller: _body,
           enabled: !_busy,
           maxLength: 500,
           minLines: 1,
           maxLines: 4,
-          decoration: const InputDecoration(labelText: 'Add a comment'),
+          decoration: InputDecoration(labelText: 'Add a comment'),
         ),
         GradientButton(
           label: 'Post comment',
           onPressed: _busy ? null : _submit,
         ),
-        if (_busy) const LinearProgressIndicator(),
+        if (_busy) LinearProgressIndicator(),
         if (_error != null) InfoNote(_error!),
         TextButton(
           onPressed: _busy ? null : () => _load(),
-          child: const Text('Refresh comments'),
+          child: Text('Refresh comments'),
         ),
         for (final r in _rows)
           ListTile(
@@ -521,14 +521,14 @@ class _CommentsPageState extends State<CommentsPage> {
                                 setState(() => _error = serviceError(e));
                             }
                           },
-                    icon: const Icon(Icons.delete_outline),
+                    icon: Icon(Icons.delete_outline),
                   )
                 : null,
           ),
         if (_more && _rows.isNotEmpty)
           TextButton(
             onPressed: _busy ? null : () => _load(more: true),
-            child: const Text('More comments'),
+            child: Text('More comments'),
           ),
       ],
     );
