@@ -1,14 +1,14 @@
-# Current gate: account and Home feed acceptance — 0.6.0
+# Community reliability milestone — 0.7.0
 
-App work covers auth spacing, signup location, confirmation screen/Gmail access,
-persistent login routing, gradient sign-in border and the Home-only feed redesign.
-See [AUTH_AND_HOME_0.6.md](AUTH_AND_HOME_0.6.md) for the tested build and remaining
-hosted email configuration. The public anon key cannot apply admin Auth settings.
+Started the next community milestone with account-scoped photo drafts, persistent
+retry IDs and the new user-supplied launcher icon. See ICON_AND_DRAFTS_0.7.md.
+Save draft is explicit: save before leaving the composer. Publishing always saves
+the exact request first. One photo remains the current cost-controlled limit.
 
-Do not claim the live email issue resolved until the redirect allowlist/template
-are applied and a fresh confirmation succeeds on the phone. Custom SMTP is required
-to control the sender identity. Keep the shared website's correct production URL.
+Email templates and the exact app callback are live in Supabase. Fresh email
+confirmation/recovery and physical-device acceptance still need checking.
 
-After these checks, continue with real marketplace inventory bridging, moderation
-and image/account deletion, durable drafts/retry IDs, multi-photo posts and realtime
-messaging. The photo function deployment remains a prerequisite for live uploads.
+Next gates: deploy and validate the photo service against the isolated app schema;
+then moderation and image/account deletion, marketplace inventory bridging,
+multi-photo posts and realtime messaging. Website tables must not be assumed to
+match mobile tables. No production-ready or live-upload claim is made here.

@@ -1,3 +1,17 @@
+# Latest: version 0.7.0 — launcher icon and durable photo drafts
+
+User-supplied gradient C launcher artwork replaces the old icon at all Android
+densities, including the adaptive icon. Photo drafts can be saved locally and
+restored for the same account; publication persists its exact retry payload
+before sending. Pending publication cannot be edited into a different request.
+CI and real-device results are tracked in [ICON_AND_DRAFTS_0.7.md](ICON_AND_DRAFTS_0.7.md).
+
+Supabase email templates and the mobile callback are now configured; see
+[RESEND_EMAIL_SETUP.md](RESEND_EMAIL_SETUP.md). Live email/phone acceptance and
+the photo service deployment remain separate gates.
+
+---
+
 # Latest: version 0.6.0 — account and Home feed update
 
 See [AUTH_AND_HOME_0.6.md](AUTH_AND_HOME_0.6.md) for the APK, verified results and
