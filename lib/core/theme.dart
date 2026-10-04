@@ -11,28 +11,63 @@ abstract final class NightTheme {
   static const magenta = Color(0xFFE52CEB);
   static const gradient = LinearGradient(colors: [cyan, violet, magenta]);
 
-  static Color canvas(BuildContext context) => Theme.of(context).scaffoldBackgroundColor;
-  static Color panel(BuildContext context) => Theme.of(context).colorScheme.surface;
-  static Color line(BuildContext context) => Theme.of(context).colorScheme.outlineVariant;
-  static Color secondaryText(BuildContext context) => Theme.of(context).colorScheme.onSurfaceVariant;
-  static Color ink(BuildContext context) => Theme.of(context).colorScheme.onSurface;
+  static Color canvas(BuildContext context) =>
+      Theme.of(context).scaffoldBackgroundColor;
+  static Color panel(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+  static Color line(BuildContext context) =>
+      Theme.of(context).colorScheme.outlineVariant;
+  static Color secondaryText(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant;
+  static Color ink(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
 
   static ThemeData get light {
-    const scheme = ColorScheme.light(primary: Color(0xFF006EA6), secondary: Color(0xFF9332AD),
-      surface: Colors.white, onSurface: Color(0xFF192034), onSurfaceVariant: Color(0xFF566078),
-      outlineVariant: Color(0xFFDCE1ED));
-    return ThemeData(useMaterial3: true, brightness: Brightness.light,
-      scaffoldBackgroundColor: const Color(0xFFF5F7FC), colorScheme: scheme,
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFF5F7FC), surfaceTintColor: Colors.transparent),
-      inputDecorationTheme: InputDecorationTheme(filled: true, fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
-      navigationBarTheme: NavigationBarThemeData(backgroundColor: Colors.white,
-        indicatorColor: const Color(0xFFE8DDFC), height: 72,
-        labelTextStyle: WidgetStateProperty.all(const TextStyle(fontSize: 11, fontWeight: FontWeight.w600))),
-      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(
-        foregroundColor: scheme.onSurface, minimumSize: const Size(48,48), side: const BorderSide(color: Color(0xFFDCE1ED)))),
-      dividerColor: scheme.outlineVariant);
+    const scheme = ColorScheme.light(
+      primary: Color(0xFF006EA6),
+      secondary: Color(0xFF9332AD),
+      surface: Colors.white,
+      onSurface: Color(0xFF192034),
+      onSurfaceVariant: Color(0xFF566078),
+      outlineVariant: Color(0xFFDCE1ED),
+    );
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFF5F7FC),
+      colorScheme: scheme,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFFF5F7FC),
+        surfaceTintColor: Colors.transparent,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 16,
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: Colors.white,
+        indicatorColor: const Color(0xFFE8DDFC),
+        height: 72,
+        labelTextStyle: WidgetStateProperty.all(
+          const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: scheme.onSurface,
+          minimumSize: const Size(48, 48),
+          side: const BorderSide(color: Color(0xFFDCE1ED)),
+        ),
+      ),
+      chipTheme: ChipThemeData(selectedColor: const Color(0xFFEDE3FA),
+        labelStyle: TextStyle(color: scheme.onSurface), checkmarkColor: scheme.onSurface),
+      dividerColor: scheme.outlineVariant,
+    );
   }
 
   static ThemeData get data => ThemeData(
