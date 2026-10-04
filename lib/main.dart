@@ -34,5 +34,11 @@ Future<void> main() async {
   }
   final appearance = Appearance();
   await appearance.restore();
-  runApp(CarsNightApp(backend: backend, startupError: startupError, appearance: appearance));
+  runApp(
+    CarsNightApp(
+      backend: backend,
+      startupError: startupError,
+      appearance: appearance,
+    ),
+  );
 }

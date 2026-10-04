@@ -168,7 +168,9 @@ class PlanPage extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'A bigger garage.\nMore possibilities.',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(color: Colors.white),
             ),
             const SizedBox(height: 12),
             const Text(

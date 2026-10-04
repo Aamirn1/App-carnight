@@ -13,6 +13,18 @@ key; if Android refuses an update, uninstall this preview before installing it.
 Uninstalling removes the stored session and saved photo drafts. Exiting the sample
 feed resets its demo content; explicitly saved account drafts survive app restart.
 
+## Profile, theme and Marketplace checks for 0.8.0
+
+- Open Profile: review cover/avatar overlap, details and Posts/Photos/About tabs.
+- Edit profile details and reopen the app to check signed-in metadata persistence.
+- Use Settings to choose Light, Dark or System; confirm the choice survives restart.
+- Check text readability on Home, messages, auth, Marketplace and supporting pages.
+- Buy and Rent: search is immediately below the subtitle; swipe the filter row
+  horizontally to reach category, rental dates and Reset. Verify filters still work.
+- Test with large system text and narrow screens. Report phone model and screenshot.
+- Avatar/cover picker uses illustrations or your loaded published photos. Direct
+  profile-photo upload and public sharing of the new metadata remain future work.
+
 ## Icon and saved-draft checks for 0.7.0
 
 - Check the new gradient C launcher icon on your phone's launcher.

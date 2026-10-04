@@ -1,6 +1,6 @@
 # Cars Night — Flutter community app
 
-**Version 0.7.0 — new icon and saved photo drafts.** Cars Night is a social app for car lovers,
+**Version 0.8.0 — redesigned Profile, light mode and compact Marketplace.** Cars Night is a social app for car lovers,
 with a marketplace as one destination. The approved dark/neon visual style remains.
 
 Navigation: **Home / Messages / Create / Market / Profile**. Market opens Marketplace (Buy/Rent).
@@ -9,6 +9,13 @@ Navigation: **Home / Messages / Create / Market / Profile**. Market opens Market
 The welcome image now starts at the top, including behind the status bar.
 
 ## Implemented in this increment
+
+- Cover/overlapping avatar, profile details, Posts/Photos/About tabs and account actions.
+- Settings: persistent Light, Dark and System appearance with theme-aware surfaces.
+- Buy and Rent search directly under the subtitle, then a single scrollable filter row.
+
+[Profile/theme reference analysis and verification](docs/PROFILE_THEME_0.8.md).
+
 
 - User-supplied gradient C launcher icon, with Android adaptive/density variants.
 - Save, restore and discard an account-scoped photo draft on the device.
@@ -62,10 +69,10 @@ The supplied anon key is a public client credential; never embed a service-role 
 
 ## Test APK and source
 
-[Download version 0.7.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37214653150/artifacts/11308510340).
-Verified: 39 Flutter tests, 4 media tests, isolated database checks, no analysis
-issues and a successful 54.7 MB APK. See [the report](docs/ICON_AND_DRAFTS_0.7.md).
-Available until 18 October 2026.
+[Download version 0.8.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37234218245/artifacts/11315306646).
+Verified: 43 functional Flutter tests, 6 rendered previews, 4 media tests, isolated
+SQL checks, clean analysis and a successful 54.8 MB APK.
+[Reference analysis and full report](docs/PROFILE_THEME_0.8.md).
 
 For later builds, open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
 select the latest successful run, and download **CarsNight-test-APK**. Extract

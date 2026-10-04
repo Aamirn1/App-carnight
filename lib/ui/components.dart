@@ -6,26 +6,44 @@ class Brand extends StatelessWidget {
   const Brand({super.key, this.large = false});
   final bool large;
   @override
-  Widget build(BuildContext context) => Theme.of(context).brightness == Brightness.light
-      ? Text.rich(TextSpan(children: [TextSpan(text: 'Cars', style: TextStyle(color: NightTheme.ink(context))),
-          TextSpan(text: 'Night', style: TextStyle(color: Theme.of(context).colorScheme.primary))]),
-          style: TextStyle(fontSize: large ? 40 : 27, fontWeight: FontWeight.w800, fontStyle: FontStyle.italic), semanticsLabel: 'Cars Night')
+  Widget build(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.light
+      ? Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: 'Cars',
+                style: TextStyle(color: NightTheme.ink(context)),
+              ),
+              TextSpan(
+                text: 'Night',
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              ),
+            ],
+          ),
+          style: TextStyle(
+            fontSize: large ? 40 : 27,
+            fontWeight: FontWeight.w800,
+            fontStyle: FontStyle.italic,
+          ),
+          semanticsLabel: 'Cars Night',
+        )
       : Image.asset(
-    NightAssets.wordmark,
-    width: large ? 248 : 142,
-    height: large ? 99 : 57,
-    fit: BoxFit.contain,
-    cacheWidth: large ? 744 : 426,
-    semanticLabel: 'Cars Night',
-    errorBuilder: (_, error, stack) => Text(
-      'Cars Night',
-      style: TextStyle(
-        fontSize: large ? 40 : 24,
-        fontStyle: FontStyle.italic,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
+          NightAssets.wordmark,
+          width: large ? 248 : 142,
+          height: large ? 99 : 57,
+          fit: BoxFit.contain,
+          cacheWidth: large ? 744 : 426,
+          semanticLabel: 'Cars Night',
+          errorBuilder: (_, error, stack) => Text(
+            'Cars Night',
+            style: TextStyle(
+              fontSize: large ? 40 : 24,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
 }
 
 class GradientButton extends StatelessWidget {
@@ -47,7 +65,7 @@ class GradientButton extends StatelessWidget {
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
         foregroundColor: Colors.white,
-        minimumSize: Size.fromHeight(52),
+        minimumSize: const Size.fromHeight(52),
       ),
       onPressed: onPressed,
       child: Text(label),
@@ -83,7 +101,7 @@ class AssetPhoto extends StatelessWidget {
           fit: BoxFit.cover,
           cacheWidth: width,
           alignment: asset == NightAssets.hero
-              ? Alignment(0, 0.4)
+              ? const Alignment(0, 0.4)
               : Alignment.center,
           semanticLabel: label,
           errorBuilder: (_, error, stack) => ColoredBox(
@@ -127,12 +145,16 @@ class InfoNote extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(vertical: 12),
+    padding: const EdgeInsets.symmetric(vertical: 12),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.info_outline, size: 18, color: NightTheme.secondaryText(context)),
-        SizedBox(width: 8),
+        Icon(
+          Icons.info_outline,
+          size: 18,
+          color: NightTheme.secondaryText(context),
+        ),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
@@ -162,24 +184,24 @@ class EmptyState extends StatelessWidget {
   final Widget? action;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.all(24),
+    padding: const EdgeInsets.all(24),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: Theme.of(context).colorScheme.primary, size: 48),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           message,
           textAlign: TextAlign.center,
           style: TextStyle(color: NightTheme.secondaryText(context)),
         ),
-        if (action != null) ...[SizedBox(height: 16), action!],
+        if (action != null) ...[const SizedBox(height: 16), action!],
       ],
     ),
   );
@@ -197,9 +219,9 @@ class PageFrame extends StatelessWidget {
       child: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 640),
+          constraints: const BoxConstraints(maxWidth: 640),
           child: ListView(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             children: children,
           ),
         ),
@@ -221,18 +243,18 @@ Future<void> showUnavailable(
   isScrollControlled: true,
   useSafeArea: true,
   builder: (sheetContext) => SingleChildScrollView(
-    padding: EdgeInsets.fromLTRB(24, 0, 24, 32),
+    padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: Theme.of(context).textTheme.titleLarge),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Text(message),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         OutlinedButton(
           onPressed: () => Navigator.pop(sheetContext),
-          child: Text('Got it'),
+          child: const Text('Got it'),
         ),
       ],
     ),
@@ -254,12 +276,12 @@ class GradientOutlineButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(28),
     ),
     child: Padding(
-      padding: EdgeInsets.all(1.5),
+      padding: const EdgeInsets.all(1.5),
       child: FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: NightTheme.canvas(context),
           foregroundColor: NightTheme.ink(context),
-          minimumSize: Size.fromHeight(52),
+          minimumSize: const Size.fromHeight(52),
         ),
         onPressed: onPressed,
         child: Text(label),

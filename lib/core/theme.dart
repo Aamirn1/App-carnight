@@ -64,8 +64,11 @@ abstract final class NightTheme {
           side: const BorderSide(color: Color(0xFFDCE1ED)),
         ),
       ),
-      chipTheme: ChipThemeData(selectedColor: const Color(0xFFEDE3FA),
-        labelStyle: TextStyle(color: scheme.onSurface), checkmarkColor: scheme.onSurface),
+      chipTheme: ChipThemeData(
+        selectedColor: const Color(0xFFEDE3FA),
+        labelStyle: TextStyle(color: scheme.onSurface),
+        checkmarkColor: scheme.onSurface,
+      ),
       dividerColor: scheme.outlineVariant,
     );
   }

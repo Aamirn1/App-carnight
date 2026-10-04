@@ -1,3 +1,12 @@
+# Current acceptance — Profile, themes and Marketplace 0.8.0
+
+The profile redesign, persistent appearance choice and compact Buy/Rent filters
+are built and checked. See PROFILE_THEME_0.8.md for the APK and visual report.
+Next, validate on the user's phone: appearance after restart, profile saves with
+the live backend, actual follower/post counts and horizontal filter interactions.
+New profile metadata is owner-facing; public profile sharing and direct avatar
+uploads remain future work. No shared website schema was changed.
+
 # Community reliability milestone — 0.7.0
 
 Started the next community milestone with account-scoped photo drafts, persistent

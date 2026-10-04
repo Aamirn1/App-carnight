@@ -9,11 +9,16 @@ class Appearance extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       _mode = switch (prefs.getString('carsnight.appearance')) {
-        'light' => ThemeMode.light, 'system' => ThemeMode.system, _ => ThemeMode.dark,
+        'light' => ThemeMode.light,
+        'system' => ThemeMode.system,
+        _ => ThemeMode.dark,
       };
       notifyListeners();
-    } catch (_) { /* Keep the existing dark default if preferences cannot load. */ }
+    } catch (_) {
+      /* Keep the existing dark default if preferences cannot load. */
+    }
   }
+
   Future<void> select(ThemeMode value) async {
     final prefs = await SharedPreferences.getInstance();
     if (!await prefs.setString('carsnight.appearance', value.name)) {
@@ -25,6 +30,11 @@ class Appearance extends ChangeNotifier {
 }
 
 class AppearanceScope extends InheritedNotifier<Appearance> {
-  const AppearanceScope({super.key, required Appearance controller, required super.child}) : super(notifier: controller);
-  static Appearance? of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<AppearanceScope>()?.notifier;
+  const AppearanceScope({
+    super.key,
+    required Appearance controller,
+    required super.child,
+  }) : super(notifier: controller);
+  static Appearance? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AppearanceScope>()?.notifier;
 }

@@ -1,7 +1,9 @@
 # Latest: 0.8.0 — profile, light mode and compact marketplace
 
 See [PROFILE_THEME_0.8.md](PROFILE_THEME_0.8.md) for reference analysis, implementation
-and verification. CI pending; live profile metadata/counts and device review remain open.
+and verification. 43 functional tests, 6 preview renders, 4 media tests and SQL checks
+passed. Analysis is clean; the 54.8 MB APK built successfully. Live profile
+metadata/counts and physical-device review remain open.
 
 ---
 

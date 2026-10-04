@@ -23,7 +23,7 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
   final _caption = TextEditingController();
   final _picker = ImagePicker();
   Uint8List? _photo;
-  String _request = Uuid().v4();
+  String _request = const Uuid().v4();
   String? _error;
   bool _busy = false;
   bool _attempted = false;
@@ -71,20 +71,20 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
 
   Future<void> _accept(XFile file) async {
     if (await file.length() > 2 * 1024 * 1024) {
-      throw FormatException(
+      throw const FormatException(
         'Choose a smaller photo (under 2 MB after resizing).',
       );
     }
     final bytes = await file.readAsBytes();
     if (bytes.length < 3 || bytes[0] != 0xff || bytes[1] != 0xd8) {
-      throw FormatException(
+      throw const FormatException(
         'Choose a JPEG photo. Videos, GIFs and other formats are not supported yet.',
       );
     }
     if (mounted)
       setState(() {
         _photo = bytes;
-        _request = Uuid().v4();
+        _request = const Uuid().v4();
         _error = null;
         _draftNote = 'Unsaved changes — tap Save draft before leaving.';
       });
@@ -124,7 +124,7 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Discard this draft?'),
+        title: const Text('Discard this draft?'),
         content: Text(
           _attempted
               ? 'Publication may already have succeeded. Check your feed before starting another post. This removes only the local draft.'
@@ -133,11 +133,11 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Keep draft'),
+            child: const Text('Keep draft'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Discard'),
+            child: const Text('Discard'),
           ),
         ],
       ),
@@ -151,7 +151,7 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
         _photo = null;
         _caption.clear();
         _attempted = false;
-        _request = Uuid().v4();
+        _request = const Uuid().v4();
         _error = null;
         _draftNote = null;
       });
@@ -235,7 +235,7 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
       if (response.status != 200 ||
           response.data is! Map ||
           response.data['post_id'] == null) {
-        throw FormatException(
+        throw const FormatException(
           'Publishing is unavailable. Try again with the same photo.',
         );
       }
@@ -285,7 +285,7 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
   @override
   Widget build(BuildContext context) {
     if (BackendScope.of(context)?.account?.id != widget.ownerId) {
-      return PageFrame(
+      return const PageFrame(
         title: 'Create',
         children: [InfoNote('Sign in to your account to create a post.')],
       );
@@ -299,12 +299,12 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
             'Your car. Your story.',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'One JPEG photo per post. Photos and captions are public when published.',
             style: TextStyle(color: NightTheme.secondaryText(context)),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           if (_photo != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
@@ -313,28 +313,28 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
                 height: 260,
                 fit: BoxFit.contain,
                 cacheWidth: 720,
-                errorBuilder: (_, error, stack) => InfoNote(
+                errorBuilder: (_, error, stack) => const InfoNote(
                   'Photo preview unavailable. Choose another photo.',
                 ),
               ),
             ),
           OutlinedButton.icon(
             onPressed: _busy || _recovering || _attempted ? null : _choose,
-            icon: Icon(Icons.add_photo_alternate_outlined),
+            icon: const Icon(Icons.add_photo_alternate_outlined),
             label: Text(_photo == null ? 'Choose photo' : 'Change photo'),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           TextField(
             controller: _caption,
             enabled: !_busy && !_recovering && !_attempted,
             maxLength: 500,
             minLines: 3,
             maxLines: 6,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Tell us about the photo',
             ),
             onChanged: (_) {
-              _request = Uuid().v4();
+              _request = const Uuid().v4();
               setState(
                 () => _draftNote =
                     'Unsaved changes — tap Save draft before leaving.',
@@ -343,7 +343,7 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
           ),
           if (_draftNote != null) InfoNote(_draftNote!),
           if (_attempted)
-            InfoNote(
+            const InfoNote(
               'Publication is pending confirmation. Retry the same post without creating a duplicate.',
             ),
           if (_error != null) InfoNote(_error!),
@@ -354,17 +354,17 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
                 onPressed: _busy || _recovering || _photo == null
                     ? null
                     : _saveDraft,
-                icon: Icon(Icons.save_outlined),
-                label: Text('Save draft'),
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Save draft'),
               ),
               TextButton(
                 onPressed: _busy || _recovering ? null : _discard,
-                child: Text('Discard draft'),
+                child: const Text('Discard draft'),
               ),
             ],
           ),
-          SizedBox(height: 16),
-          if (_busy) LinearProgressIndicator(),
+          const SizedBox(height: 16),
+          if (_busy) const LinearProgressIndicator(),
           GradientButton(
             label: _busy
                 ? 'Please wait…'
@@ -373,11 +373,14 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
                 : 'Publish photo',
             onPressed: _busy || _recovering || _photo == null ? null : _publish,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'Share photos you have permission to post. Avoid sharing personal details. '
             'Save your draft before leaving. Saved drafts stay on this device for your account until published or discarded.',
-            style: TextStyle(color: NightTheme.secondaryText(context), fontSize: 12),
+            style: TextStyle(
+              color: NightTheme.secondaryText(context),
+              fontSize: 12,
+            ),
           ),
         ],
       ),

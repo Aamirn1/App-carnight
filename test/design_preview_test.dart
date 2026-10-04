@@ -18,7 +18,9 @@ void main() {
           final font = File('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf');
           if (font.existsSync()) {
             final loader = FontLoader('Roboto')
-              ..addFont(Future.value(ByteData.sublistView(font.readAsBytesSync())));
+              ..addFont(
+                Future.value(ByteData.sublistView(font.readAsBytesSync())),
+              );
             await loader.load();
           }
           final icons = FontLoader('MaterialIcons')
@@ -33,30 +35,57 @@ void main() {
         addTearDown(session.dispose);
         final baseTheme = dark ? NightTheme.data : NightTheme.light;
         final previewTheme = baseTheme.copyWith(
-          appBarTheme: baseTheme.appBarTheme.copyWith(titleTextStyle:
-            (baseTheme.appBarTheme.titleTextStyle ?? baseTheme.textTheme.titleLarge!).copyWith(fontFamily: 'Roboto')),
-          chipTheme: baseTheme.chipTheme.copyWith(labelStyle:
-            (baseTheme.chipTheme.labelStyle ?? baseTheme.textTheme.labelLarge!).copyWith(fontFamily: 'Roboto')),
+          appBarTheme: baseTheme.appBarTheme.copyWith(
+            titleTextStyle:
+                (baseTheme.appBarTheme.titleTextStyle ??
+                        baseTheme.textTheme.titleLarge!)
+                    .copyWith(fontFamily: 'Roboto'),
+          ),
+          chipTheme: baseTheme.chipTheme.copyWith(
+            labelStyle:
+                (baseTheme.chipTheme.labelStyle ??
+                        baseTheme.textTheme.labelLarge!)
+                    .copyWith(fontFamily: 'Roboto'),
+          ),
         );
-        await tester.pumpWidget(MaterialApp(
-          theme: previewTheme,
-          home: RepaintBoundary(key: const ValueKey('design-preview'), child: Scaffold(
-            appBar: AppBar(title: const Text('Cars Night')),
-            body: page == 'profile' ? ProfilePage(session: session) : MarketplacePage(
-              kind: page == 'buy' ? ListingKind.sale : ListingKind.rental, session: session),
-          )),
-        ));
-        final context = tester.element(find.byKey(const ValueKey('design-preview')));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: previewTheme,
+            home: RepaintBoundary(
+              key: const ValueKey('design-preview'),
+              child: Scaffold(
+                appBar: AppBar(title: const Text('Cars Night')),
+                body: page == 'profile'
+                    ? ProfilePage(session: session)
+                    : MarketplacePage(
+                        kind: page == 'buy'
+                            ? ListingKind.sale
+                            : ListingKind.rental,
+                        session: session,
+                      ),
+              ),
+            ),
+          ),
+        );
+        final context = tester.element(
+          find.byKey(const ValueKey('design-preview')),
+        );
         await tester.runAsync(() async {
           await Future.wait([
-            ...NightAssets.photos.map((asset) => precacheImage(AssetImage(asset), context)),
-            ...tester.widgetList<Image>(find.byType(Image)).map((image) => precacheImage(image.image, context)),
+            ...NightAssets.photos.map(
+              (asset) => precacheImage(AssetImage(asset), context),
+            ),
+            ...tester
+                .widgetList<Image>(find.byType(Image))
+                .map((image) => precacheImage(image.image, context)),
           ]);
         });
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        await expectLater(find.byKey(const ValueKey('design-preview')),
-          matchesGoldenFile('previews/$page-${dark ? 'dark' : 'light'}.png'));
+        await expectLater(
+          find.byKey(const ValueKey('design-preview')),
+          matchesGoldenFile('previews/$page-${dark ? 'dark' : 'light'}.png'),
+        );
       }, skip: !enabled);
     }
   }

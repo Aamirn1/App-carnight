@@ -14,21 +14,21 @@ class MessagesPage extends StatelessWidget {
     final backend = BackendScope.of(context);
     if (backend?.account == null || backend?.social == null) {
       return ListView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         children: [
           Text('Messages', style: Theme.of(context).textTheme.headlineMedium),
-          EmptyState(
+          const EmptyState(
             title: 'Your car conversations, together',
             message:
                 'Chat with your community and keep marketplace enquiries in one place.',
             icon: Icons.forum_outlined,
           ),
-          InfoNote(
+          const InfoNote(
             'New conversations start as requests. The recipient chooses whether to accept.',
           ),
           GradientButton(
             label: 'Sign in to message',
-            onPressed: () => pushPage<void>(context, AuthPage()),
+            onPressed: () => pushPage<void>(context, const AuthPage()),
           ),
         ],
       );
@@ -99,7 +99,7 @@ class _InboxState extends State<_Inbox> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(16, 12, 8, 4),
+          padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
           child: Row(
             children: [
               Expanded(
@@ -110,13 +110,13 @@ class _InboxState extends State<_Inbox> {
               ),
               IconButton(
                 tooltip: 'Find car lovers',
-                onPressed: () => pushPage<void>(context, PeoplePage()),
-                icon: Icon(Icons.person_add_alt),
+                onPressed: () => pushPage<void>(context, const PeoplePage()),
+                icon: const Icon(Icons.person_add_alt),
               ),
               IconButton(
                 tooltip: 'Refresh messages',
                 onPressed: _busy ? null : () => _load(),
-                icon: Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh),
               ),
             ],
           ),
@@ -131,7 +131,7 @@ class _InboxState extends State<_Inbox> {
                 (2, 'Requests'),
               ])
                 Padding(
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   child: ChoiceChip(
                     label: Text(entry.$2),
                     selected: _tab == entry.$1,
@@ -143,20 +143,20 @@ class _InboxState extends State<_Inbox> {
         ),
         if (_error != null)
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: InfoNote(_error!),
           ),
-        if (_busy) LinearProgressIndicator(),
+        if (_busy) const LinearProgressIndicator(),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             itemCount: rows.length + 1,
             itemBuilder: (context, index) {
               if (index == rows.length)
                 return Column(
                   children: [
                     if (rows.isEmpty && !_busy && _error == null)
-                      EmptyState(
+                      const EmptyState(
                         title: 'No conversations here yet',
                         message:
                             'Find people to follow and send a conversation request.',
@@ -165,7 +165,7 @@ class _InboxState extends State<_Inbox> {
                     if (_more && _rows.isNotEmpty)
                       TextButton(
                         onPressed: _busy ? null : () => _load(more: true),
-                        child: Text('Load more conversations'),
+                        child: const Text('Load more conversations'),
                       ),
                   ],
                 );
@@ -189,7 +189,7 @@ class _InboxState extends State<_Inbox> {
                       ? 'Wants to connect'
                       : 'Request sent',
                 ),
-                trailing: Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
                   await pushPage<void>(
                     context,
@@ -216,7 +216,7 @@ class PeoplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final backend = BackendScope.of(context);
     if (backend?.account == null || backend?.social == null)
-      return AuthPage();
+      return const AuthPage();
     return _People(
       key: ValueKey(backend!.account!.id),
       api: backend.social!,
@@ -302,15 +302,15 @@ class _PeopleState extends State<_People> {
           suffixIcon: IconButton(
             tooltip: 'Search people',
             onPressed: _busy ? null : _search,
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
           ),
         ),
       ),
-      InfoNote(
+      const InfoNote(
         'Follow people you enjoy. A conversation request needs their acceptance before messages can be sent.',
       ),
       if (_error != null) InfoNote(_error!),
-      if (_busy) LinearProgressIndicator(),
+      if (_busy) const LinearProgressIndicator(),
       for (final row in _rows)
         ListTile(
           title: Text(row['display_name'] as String),
@@ -350,27 +350,27 @@ class _PeopleState extends State<_People> {
                         await widget.api.request(row['id'] as String);
                         if (context.mounted)
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text(
                                 'Request sent. Check Messages → Requests.',
                               ),
                             ),
                           );
                       }),
-                icon: Icon(Icons.chat_bubble_outline),
+                icon: const Icon(Icons.chat_bubble_outline),
               ),
             ],
           ),
         ),
       if (_rows.isEmpty && !_busy && _error == null)
-        EmptyState(
+        const EmptyState(
           title: 'No people found',
           message:
               'Try a different name. New members appear after opening their community profile.',
         ),
       TextButton(
-        onPressed: () => pushPage<void>(context, BlockedPeoplePage()),
-        child: Text('Manage blocked people'),
+        onPressed: () => pushPage<void>(context, const BlockedPeoplePage()),
+        child: const Text('Manage blocked people'),
       ),
     ],
   );
@@ -394,7 +394,7 @@ class _ConversationPageState extends State<ConversationPage> {
   final List<ChatMessage> _rows = [];
   late String _status = widget.conversation.status;
   String? _error;
-  String _requestId = Uuid().v4();
+  String _requestId = const Uuid().v4();
   bool _busy = false, _loading = false, _more = true;
   SocialRepository get _api => BackendScope.of(context)!.social!;
   bool get _authorized => BackendScope.of(context)?.account?.id == widget.owner;
@@ -465,7 +465,7 @@ class _ConversationPageState extends State<ConversationPage> {
       await _api.send(widget.conversation.id, _body.text, _requestId);
       if (!mounted || !_authorized) return;
       _body.clear();
-      _requestId = Uuid().v4();
+      _requestId = const Uuid().v4();
       await _load();
     } catch (e) {
       if (mounted) setState(() => _error = serviceError(e));
@@ -492,7 +492,7 @@ class _ConversationPageState extends State<ConversationPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -515,7 +515,7 @@ class _ConversationPageState extends State<ConversationPage> {
       if (report) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Report submitted.')));
+        ).showSnackBar(const SnackBar(content: Text('Report submitted.')));
       } else {
         Navigator.pop(context);
       }
@@ -527,7 +527,7 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   Widget build(BuildContext context) {
     if (!_authorized)
-      return PageFrame(
+      return const PageFrame(
         title: 'Messages',
         children: [
           InfoNote('Your session changed. Return to Messages to continue.'),
@@ -540,13 +540,13 @@ class _ConversationPageState extends State<ConversationPage> {
           IconButton(
             tooltip: 'Refresh conversation',
             onPressed: _loading ? null : () => _load(),
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
           ),
           PopupMenuButton<bool>(
             onSelected: _safety,
             itemBuilder: (_) => [
-              PopupMenuItem(value: true, child: Text('Report')),
-              PopupMenuItem(value: false, child: Text('Block')),
+              const PopupMenuItem(value: true, child: Text('Report')),
+              const PopupMenuItem(value: false, child: Text('Block')),
             ],
           ),
         ],
@@ -556,13 +556,13 @@ class _ConversationPageState extends State<ConversationPage> {
           children: [
             if (_error != null)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: InfoNote(_error!),
               ),
-            if (_loading) LinearProgressIndicator(),
+            if (_loading) const LinearProgressIndicator(),
             if (_status == 'pending')
               Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
                     Text(
@@ -576,11 +576,11 @@ class _ConversationPageState extends State<ConversationPage> {
                         children: [
                           FilledButton(
                             onPressed: _busy ? null : () => _respond(true),
-                            child: Text('Accept'),
+                            child: const Text('Accept'),
                           ),
                           OutlinedButton(
                             onPressed: _busy ? null : () => _respond(false),
-                            child: Text('Decline'),
+                            child: const Text('Decline'),
                           ),
                         ],
                       ),
@@ -588,11 +588,11 @@ class _ConversationPageState extends State<ConversationPage> {
                 ),
               ),
             if (_status == 'declined')
-              InfoNote('This conversation request was declined.'),
+              const InfoNote('This conversation request was declined.'),
             Expanded(
               child: ListView.builder(
                 reverse: true,
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 itemCount: _rows.length + 1,
                 itemBuilder: (context, index) {
                   if (index == _rows.length)
@@ -601,18 +601,18 @@ class _ConversationPageState extends State<ConversationPage> {
                             onPressed: _loading
                                 ? null
                                 : () => _load(more: true),
-                            child: Text('Older messages'),
+                            child: const Text('Older messages'),
                           )
-                        : SizedBox.shrink();
+                        : const SizedBox.shrink();
                   final m = _rows[index];
                   return Align(
                     alignment: m.sender == widget.owner
                         ? Alignment.centerRight
                         : Alignment.centerLeft,
                     child: Container(
-                      constraints: BoxConstraints(maxWidth: 310),
-                      margin: EdgeInsets.only(bottom: 10),
-                      padding: EdgeInsets.all(12),
+                      constraints: const BoxConstraints(maxWidth: 310),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: m.sender == widget.owner
                             ? Theme.of(context).colorScheme.secondaryContainer
@@ -627,7 +627,7 @@ class _ConversationPageState extends State<ConversationPage> {
             ),
             if (_status == 'active')
               Padding(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -638,8 +638,8 @@ class _ConversationPageState extends State<ConversationPage> {
                         minLines: 1,
                         maxLines: 4,
                         maxLength: 2000,
-                        onChanged: (_) => _requestId = Uuid().v4(),
-                        decoration: InputDecoration(
+                        onChanged: (_) => _requestId = const Uuid().v4(),
+                        decoration: const InputDecoration(
                           labelText: 'Message',
                           counterText: '',
                         ),
@@ -649,7 +649,7 @@ class _ConversationPageState extends State<ConversationPage> {
                       tooltip: 'Send message',
                       onPressed: _busy ? null : _send,
                       icon: _busy
-                          ? SizedBox(
+                          ? const SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
@@ -712,7 +712,7 @@ class _BlockedPeoplePageState extends State<BlockedPeoplePage> {
     title: 'Blocked people',
     children: [
       if (_error != null) InfoNote(_error!),
-      if (_busy) LinearProgressIndicator(),
+      if (_busy) const LinearProgressIndicator(),
       for (final row in _rows)
         ListTile(
           title: Text(row['blocked_label'] as String? ?? 'Car enthusiast'),
@@ -729,10 +729,10 @@ class _BlockedPeoplePageState extends State<BlockedPeoplePage> {
                       if (mounted) setState(() => _error = serviceError(e));
                     }
                   },
-            child: Text('Unblock'),
+            child: const Text('Unblock'),
           ),
         ),
-      if (_rows.isEmpty && !_busy) InfoNote('No blocked people.'),
+      if (_rows.isEmpty && !_busy) const InfoNote('No blocked people.'),
     ],
   );
 }
