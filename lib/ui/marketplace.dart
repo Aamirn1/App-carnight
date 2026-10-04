@@ -78,7 +78,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
     if (!mounted || result == null) return;
     if (!result.end.isAfter(result.start)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Drop-off must be at least one day after pickup.'),
         ),
       );
@@ -114,79 +114,137 @@ class _MarketplacePageState extends State<MarketplacePage> {
       key: PageStorageKey<String>('market-${widget.kind.name}'),
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
           sliver: SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   rent ? 'Rent a Car' : 'Find Your Dream Car',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
                   rent
                       ? 'For special events, trips or daily use'
                       : 'Buy your next car. Find your next adventure.',
                   style: TextStyle(color: NightTheme.secondaryText(context)),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextField(
                   key: ValueKey('search-${widget.kind.name}'),
                   controller: _search,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     labelText: 'Search make, model or keyword',
-                    prefixIcon: Icon(Icons.search),
-                    suffixIcon: _search.text.isEmpty ? null : IconButton(
-                      tooltip: 'Clear search', icon: Icon(Icons.close),
-                      onPressed: () => setState(_search.clear)),
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _search.text.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Clear search',
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(_search.clear),
+                          ),
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 SingleChildScrollView(
                   key: ValueKey('filters-${widget.kind.name}'),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   scrollDirection: Axis.horizontal,
-                  child: Row(children: [
-                    OutlinedButton.icon(
-                      onPressed: () => showCountryPicker(context: context, showPhoneCode: false,
-                        onSelect: (country) => setState(() { _countryCode = country.countryCode; _location.clear(); })),
-                      icon: Icon(Icons.public, size: 18),
-                      label: Text(_countryCode.isEmpty ? 'All countries' : _countryCode),
-                    ),
-                    SizedBox(width: 8),
-                    SizedBox(width: 155, child: TextField(
-                      key: ValueKey(rent ? 'rental-location' : 'sale-location'),
-                      controller: _location, onChanged: (_) => setState(() {}),
-                      decoration: InputDecoration(labelText: 'City', isDense: true,
-                        prefixIcon: Icon(Icons.location_on_outlined)),
-                    )),
-                    SizedBox(width: 8),
-                    PopupMenuButton<String>(
-                      tooltip: 'Car category', initialValue: _category,
-                      onSelected: (value) => setState(() => _category = value),
-                      itemBuilder: (_) => ['All', 'Luxury', 'SUV', 'Sports', 'Sedan'].map((c) => PopupMenuItem(value: c, child: Text(c))).toList(),
-                      child: Chip(avatar: Icon(Icons.tune, size: 18), label: Text('Type · $_category')),
-                    ),
-                    if (rent) ...[
-                      SizedBox(width: 8),
-                      OutlinedButton.icon(onPressed: _pickDates, icon: Icon(Icons.calendar_today_outlined, size: 18),
-                        label: Text(_period == null ? 'Pick-up date' : 'Pick-up · ${localizations.formatCompactDate(_period!.pickup)}')),
-                      SizedBox(width: 8),
-                      OutlinedButton(onPressed: _pickDates,
-                        child: Text(_period == null ? 'Drop-off date' : 'Drop-off · ${localizations.formatCompactDate(_period!.dropoff)}')),
+                  child: Row(
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () => showCountryPicker(
+                          context: context,
+                          showPhoneCode: false,
+                          onSelect: (country) => setState(() {
+                            _countryCode = country.countryCode;
+                            _location.clear();
+                          }),
+                        ),
+                        icon: const Icon(Icons.public, size: 18),
+                        label: Text(
+                          _countryCode.isEmpty ? 'All countries' : _countryCode,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: 155,
+                        child: TextField(
+                          key: ValueKey(
+                            rent ? 'rental-location' : 'sale-location',
+                          ),
+                          controller: _location,
+                          onChanged: (_) => setState(() {}),
+                          decoration: const InputDecoration(
+                            labelText: 'City',
+                            isDense: true,
+                            prefixIcon: Icon(Icons.location_on_outlined),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      PopupMenuButton<String>(
+                        tooltip: 'Car category',
+                        initialValue: _category,
+                        onSelected: (value) =>
+                            setState(() => _category = value),
+                        itemBuilder: (_) =>
+                            ['All', 'Luxury', 'SUV', 'Sports', 'Sedan']
+                                .map(
+                                  (c) =>
+                                      PopupMenuItem(value: c, child: Text(c)),
+                                )
+                                .toList(),
+                        child: Chip(
+                          avatar: const Icon(Icons.tune, size: 18),
+                          label: Text('Type · $_category'),
+                        ),
+                      ),
+                      if (rent) ...[
+                        const SizedBox(width: 8),
+                        OutlinedButton.icon(
+                          onPressed: _pickDates,
+                          icon: const Icon(
+                            Icons.calendar_today_outlined,
+                            size: 18,
+                          ),
+                          label: Text(
+                            _period == null
+                                ? 'Pick-up date'
+                                : 'Pick-up · ${localizations.formatCompactDate(_period!.pickup)}',
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          onPressed: _pickDates,
+                          child: Text(
+                            _period == null
+                                ? 'Drop-off date'
+                                : 'Drop-off · ${localizations.formatCompactDate(_period!.dropoff)}',
+                          ),
+                        ),
+                      ],
+                      const SizedBox(width: 8),
+                      TextButton.icon(
+                        onPressed: _reset,
+                        icon: const Icon(Icons.restart_alt),
+                        label: const Text('Reset'),
+                      ),
                     ],
-                    SizedBox(width: 8),
-                    TextButton.icon(onPressed: _reset, icon: Icon(Icons.restart_alt), label: Text('Reset')),
-                  ]),
+                  ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   '${cars.length} sample listings',
-                  style: TextStyle(color: NightTheme.secondaryText(context), fontSize: 12),
+                  style: TextStyle(
+                    color: NightTheme.secondaryText(context),
+                    fontSize: 12,
+                  ),
                 ),
                 if (rent && _period != null)
                   InfoNote(
@@ -204,16 +262,16 @@ class _MarketplacePageState extends State<MarketplacePage> {
               message: 'Try another search, city or category.',
               action: OutlinedButton(
                 onPressed: _reset,
-                child: Text('Reset filters'),
+                child: const Text('Reset filters'),
               ),
             ),
           ),
         SliverPadding(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) => Padding(
-                padding: EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.only(bottom: 12),
                 child: ListingCard(
                   car: cars[index],
                   session: widget.session,
@@ -254,15 +312,15 @@ class ListingCard extends StatelessWidget {
               constraints.maxWidth >= 310 &&
               MediaQuery.textScalerOf(context).scale(14) <= 20;
           final details = Padding(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   car.title,
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   displayPrice(car),
                   style: TextStyle(
@@ -270,12 +328,15 @@ class ListingCard extends StatelessWidget {
                     color: NightTheme.ink(context),
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   horizontal
                       ? car.city
                       : '${car.year} · ${car.distanceKm} km · ${car.city}',
-                  style: TextStyle(color: NightTheme.secondaryText(context), fontSize: 12),
+                  style: TextStyle(
+                    color: NightTheme.secondaryText(context),
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -318,7 +379,7 @@ class ListingCard extends StatelessWidget {
                 child: IconButton.filledTonal(
                   key: ValueKey('save-${car.id}'),
                   style: IconButton.styleFrom(
-                    backgroundColor: Color(0xC0070A1B),
+                    backgroundColor: const Color(0xC0070A1B),
                   ),
                   tooltip: session.isSaved(car.id) ? 'Unsave car' : 'Save car',
                   onPressed: () => session.toggleSaved(car.id),
@@ -358,9 +419,9 @@ class ListingDetail extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: AssetPhoto(asset: car.imageAsset, dataSaver: session.dataSaver),
       ),
-      SizedBox(height: 20),
+      const SizedBox(height: 20),
       Text(displayPrice(car), style: Theme.of(context).textTheme.headlineSmall),
-      SizedBox(height: 12),
+      const SizedBox(height: 12),
       Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -371,25 +432,25 @@ class ListingDetail extends StatelessWidget {
           Chip(label: Text(car.city)),
         ],
       ),
-      SizedBox(height: 16),
-      Text(
+      const SizedBox(height: 16),
+      const Text(
         'About this car',
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
-      SizedBox(height: 8),
-      Text(
+      const SizedBox(height: 8),
+      const Text(
         'Explore the listing layout, save this car and try the enquiry flow. '
         'This is a sample offer with illustrative generated photography.',
       ),
       if (car.kind == ListingKind.rental && period != null) ...[
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         NightCard(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('${period!.days} days · sample base estimate'),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 formatDemoMoney(
                   period!.estimateMinor(car.priceMinor),
@@ -397,7 +458,7 @@ class ListingDetail extends StatelessWidget {
                 ),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              InfoNote(
+              const InfoNote(
                 'Excludes fees, deposits and taxes. Availability is unverified. '
                 'This is not a booking or a guaranteed quote.',
               ),
@@ -405,7 +466,7 @@ class ListingDetail extends StatelessWidget {
           ),
         ),
       ],
-      SizedBox(height: 20),
+      const SizedBox(height: 20),
       GradientButton(
         label: car.kind == ListingKind.rental
             ? 'Enquire about rental'
@@ -436,7 +497,7 @@ class ListingDetail extends StatelessWidget {
           'Report listing',
           'Reporting and moderation will be connected before real listings are accepted.',
         ),
-        child: Text('Report listing'),
+        child: const Text('Report listing'),
       ),
     ],
   );
@@ -451,7 +512,7 @@ class MarketplaceHub extends StatelessWidget {
     child: Column(
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -460,7 +521,7 @@ class MarketplaceHub extends StatelessWidget {
             ),
           ),
         ),
-        TabBar(
+        const TabBar(
           tabs: [
             Tab(key: ValueKey('market-buy'), text: 'Buy'),
             Tab(key: ValueKey('market-rent'), text: 'Rent'),

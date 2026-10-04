@@ -31,8 +31,15 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         final session = DemoSession();
         addTearDown(session.dispose);
+        final baseTheme = dark ? NightTheme.data : NightTheme.light;
+        final previewTheme = baseTheme.copyWith(
+          appBarTheme: baseTheme.appBarTheme.copyWith(titleTextStyle:
+            (baseTheme.appBarTheme.titleTextStyle ?? baseTheme.textTheme.titleLarge!).copyWith(fontFamily: 'Roboto')),
+          chipTheme: baseTheme.chipTheme.copyWith(labelStyle:
+            (baseTheme.chipTheme.labelStyle ?? baseTheme.textTheme.labelLarge!).copyWith(fontFamily: 'Roboto')),
+        );
         await tester.pumpWidget(MaterialApp(
-          theme: dark ? NightTheme.data : NightTheme.light,
+          theme: previewTheme,
           home: RepaintBoundary(key: const ValueKey('design-preview'), child: Scaffold(
             appBar: AppBar(title: const Text('Cars Night')),
             body: page == 'profile' ? ProfilePage(session: session) : MarketplacePage(
