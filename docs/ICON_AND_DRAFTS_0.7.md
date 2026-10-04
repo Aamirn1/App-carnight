@@ -16,7 +16,18 @@
 ## Verification
 
 Five storage tests cover restart recovery, ownership separation, replacement and
-deletion, invalid-write preservation, and corrupt-file handling. CI results pending.
+deletion, invalid-write preservation, and corrupt-file handling. All passed in GitHub Actions.
+
+- Tested commit: `7948473b98352587c06ef1518964d47b70a24f5b`.
+- [Successful run](https://github.com/Aamirn1/App-carnight/actions/runs/37214653150).
+- 39 Flutter tests, 4 media tests, isolated SQL ownership/privacy/quota checks passed.
+- Flutter analysis: no issues found.
+- Release-mode preview APK: 54.7 MB, development signed.
+- [Download APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37214653150/artifacts/11308510340), expires 18 October 2026.
+- Runner-formatted changed source and resolved dependency lock are retained.
+- Source artwork matches the attachment byte-for-byte; density sizes and adaptive XML checked.
+
+Physical-device icon/draft checks and live publication retries remain unverified.
 No local Flutter SDK is available; Actions runs analyzer, Flutter tests, media
 validator tests, isolated SQL tests and builds the development-signed preview APK.
 

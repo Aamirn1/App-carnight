@@ -7,9 +7,13 @@ void main() {
   late Directory directory;
   late PhotoDraftStore store;
   final photo = Uint8List.fromList([255, 216, 255, 0]);
-  PhotoDraft draft({bool attempted = false, String caption = 'Night drive'}) => PhotoDraft(
-    requestId: '12345678-1234-4234-8234-123456789abc', caption: caption,
-    photo: photo, attempted: attempted);
+  PhotoDraft draft({bool attempted = false, String caption = 'Night drive'}) =>
+      PhotoDraft(
+        requestId: '12345678-1234-4234-8234-123456789abc',
+        caption: caption,
+        photo: photo,
+        attempted: attempted,
+      );
   setUp(() async {
     directory = await Directory.systemTemp.createTemp('cars-night-draft-test');
     store = PhotoDraftStore(directory);
@@ -39,8 +43,17 @@ void main() {
   });
   test('invalid data does not overwrite a good saved draft', () async {
     await store.save('owner-a', draft());
-    await expectLater(store.save('owner-a', PhotoDraft(requestId: draft().requestId,
-      caption: 'bad', photo: Uint8List(2 * 1024 * 1024 + 1))), throwsFormatException);
+    await expectLater(
+      store.save(
+        'owner-a',
+        PhotoDraft(
+          requestId: draft().requestId,
+          caption: 'bad',
+          photo: Uint8List(2 * 1024 * 1024 + 1),
+        ),
+      ),
+      throwsFormatException,
+    );
     expect((await store.read('owner-a'))!.caption, 'Night drive');
   });
   test('corrupt saved data is reported and preserved', () async {

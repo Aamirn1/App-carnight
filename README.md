@@ -1,6 +1,6 @@
 # Cars Night — Flutter community app
 
-**Version 0.6.0 — account and Home feed preview.** Cars Night is a social app for car lovers,
+**Version 0.7.0 — new icon and saved photo drafts.** Cars Night is a social app for car lovers,
 with a marketplace as one destination. The approved dark/neon visual style remains.
 
 Navigation: **Home / Messages / Create / Market / Profile**. Market opens Marketplace (Buy/Rent).
@@ -10,6 +10,13 @@ The welcome image now starts at the top, including behind the status bar.
 
 ## Implemented in this increment
 
+- User-supplied gradient C launcher icon, with Android adaptive/density variants.
+- Save, restore and discard an account-scoped photo draft on the device.
+- Persist the exact publication request before sending; retry after restart without changing its ID.
+
+[Icon and draft milestone report](docs/ICON_AND_DRAFTS_0.7.md).
+
+
 - Persistent session routing: signed-in users open Home; signed-out users see Welcome.
 - Country/city signup fields with location defaults for Marketplace browsing.
 - Dedicated email confirmation screen, Open Gmail and verified-code fallback.
@@ -17,7 +24,9 @@ The welcome image now starts at the top, including behind the status bar.
 - Branded confirmation email template and exact hosted Auth configuration guide.
 
 [Account/email setup and verification report](docs/AUTH_AND_HOME_0.6.md).
-Live hosted Auth template/redirect/SMTP settings have not been changed by this APK.
+Branded email templates and the mobile callback are configured in Supabase with
+the existing Resend SMTP. See [live setup status](docs/RESEND_EMAIL_SETUP.md).
+Fresh email delivery and physical-device callback checks remain open.
 
 
 - One-photo JPEG composer, caption/preview, bounded upload and duplicate-safe
@@ -47,16 +56,16 @@ and does not change the website's Listing table. If the 0.3.0 mobile schema alre
 exists, apply only the new social migration after reviewing migration history.
 Never run the disposable SQL files in `supabase/tests` on your live project.
 
-Add `com.carsnight.preview://auth-callback/` to allowed auth redirects while keeping
-the website Site URL and redirects. Verify email delivery with dedicated accounts.
+The exact app callback is now allowed; the website Site URL is preserved.
+Verify fresh email delivery and phone callbacks with dedicated test accounts.
 The supplied anon key is a public client credential; never embed a service-role key.
 
 ## Test APK and source
 
-[Download version 0.6.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37135401543/artifacts/11278522898).
-Verified: 34 Flutter tests, 4 media tests, database privacy/ownership/quota checks,
-no Dart analysis issues and a successful 54.0 MB Android build. See
-[the full report](docs/AUTH_AND_HOME_0.6.md). Available until 17 October 2026.
+[Download version 0.7.0 APK ZIP](https://github.com/Aamirn1/App-carnight/actions/runs/37214653150/artifacts/11308510340).
+Verified: 39 Flutter tests, 4 media tests, isolated database checks, no analysis
+issues and a successful 54.7 MB APK. See [the report](docs/ICON_AND_DRAFTS_0.7.md).
+Available until 18 October 2026.
 
 For later builds, open [GitHub Actions](https://github.com/Aamirn1/App-carnight/actions/workflows/android-apk.yml),
 select the latest successful run, and download **CarsNight-test-APK**. Extract

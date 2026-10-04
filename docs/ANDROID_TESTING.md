@@ -10,9 +10,20 @@ This is a release-mode build signed with the generated development key, intended
 only for testing. It is not Play Store signed. The application ID is
 `com.carsnight.preview.cars_night`. A later CI build may have a different development
 key; if Android refuses an update, uninstall this preview before installing it.
-Uninstalling or exiting the demo loses all local session data.
+Uninstalling removes the stored session and saved photo drafts. Exiting the sample
+feed resets its demo content; explicitly saved account drafts survive app restart.
 
-## Account and Home checks for 0.6.0
+## Icon and saved-draft checks for 0.7.0
+
+- Check the new gradient C launcher icon on your phone's launcher.
+- Sign in, choose a JPEG, add a caption and tap Save draft.
+- Close/reopen the app, then open Create: the photo and caption should restore.
+- Sign in as another account: the first account's draft must not appear.
+- Discard removes the local draft; unsaved edits are not autosaved.
+- After the live photo service is deployed, interrupt publication and retry after
+  restarting. Confirm only one post exists. Pending requests keep their exact payload.
+
+## Account and Home checks from 0.6.0
 
 - Cold launch after sign-in goes to Home; sign-out returns to Welcome and clears private routes.
 - Signup requires a country and city. Submission opens Check your email and hides the form.

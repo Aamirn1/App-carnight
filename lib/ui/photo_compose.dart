@@ -49,7 +49,9 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
         _attempted = draft.attempted;
         _draftNote = 'Saved draft restored.';
       }
-      if (!_attempted && !kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      if (!_attempted &&
+          !kIsWeb &&
+          defaultTargetPlatform == TargetPlatform.android) {
         final lost = await _picker.retrieveLostData();
         if (lost.files?.isNotEmpty == true) await _accept(lost.files!.first);
         if (lost.exception != null && mounted) {
@@ -59,7 +61,9 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
         }
       }
     } catch (_) {
-      if (mounted) _error = 'Could not restore the draft. Your saved file has not been removed.';
+      if (mounted)
+        _error =
+            'Could not restore the draft. Your saved file has not been removed.';
     } finally {
       if (mounted) setState(() => _recovering = false);
     }
@@ -93,7 +97,10 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
       await _persist();
       if (mounted) setState(() => _draftNote = 'Draft saved on this device.');
     } catch (_) {
-      if (mounted) setState(() => _error = 'Could not save. Keep this page open and try again.');
+      if (mounted)
+        setState(
+          () => _error = 'Could not save. Keep this page open and try again.',
+        );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -102,28 +109,55 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
   Future<void> _persist() async {
     final store = _store;
     if (store == null) throw StateError('Draft storage unavailable');
-    await store.save(widget.ownerId, PhotoDraft(requestId: _request,
-      caption: _caption.text.trim(), photo: _photo!, attempted: _attempted));
+    await store.save(
+      widget.ownerId,
+      PhotoDraft(
+        requestId: _request,
+        caption: _caption.text.trim(),
+        photo: _photo!,
+        attempted: _attempted,
+      ),
+    );
   }
 
   Future<void> _discard() async {
-    final confirmed = await showDialog<bool>(context: context, builder: (context) => AlertDialog(
-      title: const Text('Discard this draft?'),
-      content: Text(_attempted
-        ? 'Publication may already have succeeded. Check your feed before starting another post. This removes only the local draft.'
-        : 'The saved photo and caption will be removed from this device.'),
-      actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Keep draft')),
-        TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Discard'))],
-    ));
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard this draft?'),
+        content: Text(
+          _attempted
+              ? 'Publication may already have succeeded. Check your feed before starting another post. This removes only the local draft.'
+              : 'The saved photo and caption will be removed from this device.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep draft'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    );
     if (confirmed != true || !mounted) return;
     setState(() => _busy = true);
     try {
       await _store?.clear(widget.ownerId);
       if (!mounted) return;
-      setState(() { _photo = null; _caption.clear(); _attempted = false;
-        _request = const Uuid().v4(); _error = null; _draftNote = null; });
+      setState(() {
+        _photo = null;
+        _caption.clear();
+        _attempted = false;
+        _request = const Uuid().v4();
+        _error = null;
+        _draftNote = null;
+      });
     } catch (_) {
-      if (mounted) setState(() => _error = 'Could not discard the draft. Try again.');
+      if (mounted)
+        setState(() => _error = 'Could not discard the draft. Try again.');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -177,16 +211,19 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
       _attempted = true;
       await _persist();
     } catch (_) {
-      if (mounted) setState(() {
-        _attempted = previouslyAttempted;
-        _busy = false;
-        _error = 'Could not save the post for safe retry. Free some device storage and try again.';
-      });
+      if (mounted)
+        setState(() {
+          _attempted = previouslyAttempted;
+          _busy = false;
+          _error =
+              'Could not save the post for safe retry. Free some device storage and try again.';
+        });
       return;
     }
     try {
       // The exact payload is already on disk before any network request.
-      if (!mounted || BackendScope.of(context)?.account?.id != widget.ownerId) return;
+      if (!mounted || BackendScope.of(context)?.account?.id != widget.ownerId)
+        return;
       final response = await api.client.functions.invoke(
         'cn-publish-photo',
         body: {
@@ -296,21 +333,44 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
             decoration: const InputDecoration(
               labelText: 'Tell us about the photo',
             ),
-            onChanged: (_) { _request = const Uuid().v4();
-              setState(() => _draftNote = 'Unsaved changes — tap Save draft before leaving.'); },
+            onChanged: (_) {
+              _request = const Uuid().v4();
+              setState(
+                () => _draftNote =
+                    'Unsaved changes — tap Save draft before leaving.',
+              );
+            },
           ),
           if (_draftNote != null) InfoNote(_draftNote!),
-          if (_attempted) const InfoNote('Publication is pending confirmation. Retry the same post without creating a duplicate.'),
+          if (_attempted)
+            const InfoNote(
+              'Publication is pending confirmation. Retry the same post without creating a duplicate.',
+            ),
           if (_error != null) InfoNote(_error!),
-          Wrap(spacing: 12, children: [
-            TextButton.icon(onPressed: _busy || _recovering || _photo == null ? null : _saveDraft,
-              icon: const Icon(Icons.save_outlined), label: const Text('Save draft')),
-            TextButton(onPressed: _busy || _recovering ? null : _discard, child: const Text('Discard draft')),
-          ]),
+          Wrap(
+            spacing: 12,
+            children: [
+              TextButton.icon(
+                onPressed: _busy || _recovering || _photo == null
+                    ? null
+                    : _saveDraft,
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Save draft'),
+              ),
+              TextButton(
+                onPressed: _busy || _recovering ? null : _discard,
+                child: const Text('Discard draft'),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           if (_busy) const LinearProgressIndicator(),
           GradientButton(
-            label: _busy ? 'Please wait…' : _attempted ? 'Retry publication' : 'Publish photo',
+            label: _busy
+                ? 'Please wait…'
+                : _attempted
+                ? 'Retry publication'
+                : 'Publish photo',
             onPressed: _busy || _recovering || _photo == null ? null : _publish,
           ),
           const SizedBox(height: 12),
