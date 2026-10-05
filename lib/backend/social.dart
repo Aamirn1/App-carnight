@@ -235,4 +235,31 @@ class SocialRepository {
       'reason': reason.trim(),
     });
   }
+  Future<void> deletePost(String id) async {
+    await client.from('cn_posts').delete().eq('id', id).eq('owner_id', me);
+  }
+
+  Future<void> reportPost(String id, String reason) async {
+    await client.rpc<void>('cn_report_post', params: {
+      'target': id, 'reason_text': reason.trim(),
+    });
+  }
+
+  Future<bool> isModerator() async {
+    if (client.auth.currentUser == null) return false;
+    final rows = await client.from('cn_moderators').select('user_id').eq('user_id', me).limit(1);
+    return rows.isNotEmpty;
+  }
+
+  Future<List<Map<String, dynamic>>> moderationQueue() async {
+    final rows = await client.rpc<List<dynamic>>('cn_moderation_queue');
+    return rows.cast<Map<String, dynamic>>();
+  }
+
+  Future<void> reviewReport(String id, String decision, String note) async {
+    await client.rpc<void>('cn_review_report', params: {
+      'report': id, 'decision': decision, 'review_note': note.trim(),
+    });
+  }
+
 }

@@ -4,6 +4,8 @@ import '../core/session.dart';
 import '../core/theme.dart';
 import '../core/appearance.dart';
 import 'components.dart';
+import '../backend/session.dart';
+import 'moderation.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key, required this.session});
@@ -14,6 +16,13 @@ class SettingsPage extends StatelessWidget {
     builder: (context, _) => PageFrame(
       title: 'Settings',
       children: [
+        if (BackendScope.of(context)?.social case final api?)
+          FutureBuilder<bool>(
+            future: api.isModerator(),
+            builder: (context, snapshot) => snapshot.data == true
+                ? ListTile(leading: const Icon(Icons.shield_outlined), title: const Text('Moderation queue'), onTap: () => pushPage<void>(context, ModerationPage(api: api)))
+                : const SizedBox.shrink(),
+          ),
         NightCard(
           child: Padding(
             padding: const EdgeInsets.all(16),

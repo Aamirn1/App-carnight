@@ -51,6 +51,10 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202610030001_photo_publish.sql
       - name: Apply media path validation correction
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261004223915_cn_media_path_validation.sql
+      - name: Apply moderation and cleanup schema
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261005082711_cn_moderation_cleanup.sql
+      - name: Test moderation, deletion and cleanup retries
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/moderation_cleanup.sql
       - name: Test photo publishing permissions and quotas
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/photo_publish.sql
       - name: Test social privacy and requests

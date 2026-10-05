@@ -91,6 +91,35 @@ class _CommunityState extends State<_Community> {
     }
   }
 
+
+  Future<void> _deletePost(CommunityPost post) async {
+    final confirmed = await showDialog<bool>(context: context, builder: (dialog) => AlertDialog(
+      title: const Text('Delete this post?'),
+      content: const Text('Your post and its comments will be removed. Photo cleanup runs in the background. This cannot be undone.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(dialog, false), child: const Text('Cancel')),
+        TextButton(onPressed: () => Navigator.pop(dialog, true), child: const Text('Delete post')),
+      ],
+    ));
+    if (confirmed == true && mounted) await _action(post.id, () => widget.api.deletePost(post.id));
+  }
+
+  Future<void> _reportPost(CommunityPost post) async {
+    final reason = await showDialog<String>(context: context, builder: (dialog) => SimpleDialog(
+      title: const Text('Report post'),
+      children: [
+        for (final reason in ['Spam or scam', 'Harassment or hate', 'Inappropriate image', 'Misleading car listing', 'Other concern'])
+          SimpleDialogOption(onPressed: () => Navigator.pop(dialog, reason), child: Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text(reason))),
+        SimpleDialogOption(onPressed: () => Navigator.pop(dialog), child: const Text('Cancel')),
+      ],
+    ));
+    if (reason == null || !mounted) return;
+    await _action(post.id, () async {
+      await widget.api.reportPost(post.id, reason);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report submitted for review.')));
+    });
+  }
+
   Widget _header() => Column(
     children: [
       const StoryRail(),
@@ -328,7 +357,11 @@ class _CommunityState extends State<_Community> {
                     }
                   },
                   trailing: own
-                      ? null
+                      ? PopupMenuButton<String>(
+                          tooltip: 'Your post options',
+                          itemBuilder: (_) => const [PopupMenuItem(value: 'delete', child: Text('Delete post'))],
+                          onSelected: (_) => _deletePost(p),
+                        )
                       : PopupMenuButton<String>(
                           tooltip: 'Post options',
                           icon: const Icon(Icons.more_horiz),
@@ -341,8 +374,13 @@ class _CommunityState extends State<_Community> {
                               value: 'message',
                               child: Text('Message request'),
                             ),
+                            const PopupMenuItem(value: 'report', child: Text('Report post')),
                           ],
                           onSelected: (value) {
+                            if (value == 'report') {
+                              _reportPost(p);
+                              return;
+                            }
                             if (value == 'follow')
                               _action(
                                 p.id,

@@ -1,2 +1,6 @@
 [functions.cn-publish-photo]
 verify_jwt = true
+
+# This endpoint uses a scheduler-only Vault credential, not a user's JWT.
+[functions.cn-cleanup-media]
+verify_jwt = false
