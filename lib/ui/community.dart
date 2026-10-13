@@ -428,6 +428,10 @@ class _CommunityState extends State<_Community> {
                           ],
                           onSelected: (value) {
                             if (value == 'profile') {
+                              if (BackendScope.of(context)?.account == null) {
+                                pushPage<void>(context, const AuthPage());
+                                return;
+                              }
                               pushPage<void>(context, PublicProfilePage(api: widget.api, user: p.ownerId));
                               return;
                             }

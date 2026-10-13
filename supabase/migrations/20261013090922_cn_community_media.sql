@@ -39,6 +39,15 @@ begin
  insert into public.cn_media_cleanup(storage_path) values(old.owner_id::text||'/'||old.request_id::text||'.jpg'),(old.owner_id::text||'/'||old.request_id::text||'_thumb.jpg') on conflict(storage_path) do nothing;
  return old;
 end $$;
+-- During an Auth cascade the owner row is already gone. Avoid updating the
+-- soon-to-be-cascaded reservation and rechecking its now-missing FK parent.
+create or replace function public.cn_retire_photo() returns trigger
+language plpgsql security definer set search_path='' as $$
+begin
+ update public.cn_photo_requests set state='deleted' where post_id=old.id
+ and exists(select 1 from auth.users where id=old.owner_id);
+ return old;
+end $$;
 create function public.cn_finish_photo_v2(actor uuid, request uuid, image_width integer,image_height integer,image_bytes integer,thumb_width integer,thumb_height integer,thumb_bytes integer)
 returns uuid language plpgsql security definer set search_path='' as $$
 declare result uuid; begin
