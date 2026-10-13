@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../backend/session.dart';
@@ -50,7 +52,28 @@ class _Inbox extends StatefulWidget {
   State<_Inbox> createState() => _InboxState();
 }
 
-class _InboxState extends State<_Inbox> {
+class _InboxState extends State<_Inbox> with WidgetsBindingObserver {
+  RealtimeChannel? _channel;
+  Timer? _refreshTimer;
+  bool _pendingRefresh = false;
+  void _scheduleRefresh() {
+    if (!mounted) return;
+    _refreshTimer?.cancel();
+    _refreshTimer = Timer(const Duration(milliseconds: 350), () {
+      if (_busy) { _pendingRefresh = true; } else { _load(); }
+    });
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _scheduleRefresh();
+  }
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _refreshTimer?.cancel();
+    if (_channel != null) unawaited(widget.api.stopWatching(_channel!));
+    super.dispose();
+  }
   final List<Conversation> _rows = [];
   Map<String, String> _names = {};
   int _tab = 0;
@@ -59,6 +82,8 @@ class _InboxState extends State<_Inbox> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _channel = widget.api.watchMessages(_scheduleRefresh);
     _load();
   }
 
@@ -83,7 +108,10 @@ class _InboxState extends State<_Inbox> {
     } catch (e) {
       if (mounted) setState(() => _error = serviceError(e));
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) {
+        setState(() => _busy = false);
+        if (_pendingRefresh) { _pendingRefresh = false; _scheduleRefresh(); }
+      }
     }
   }
 
@@ -190,7 +218,7 @@ class _InboxState extends State<_Inbox> {
                       ? 'Wants to connect'
                       : 'Request sent',
                 ),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: c.unread > 0 ? Badge(label: Text('${c.unread}'), child: const Icon(Icons.chat_bubble_outline)) : const Icon(Icons.chevron_right),
                 onTap: () async {
                   await pushPage<void>(
                     context,
@@ -394,7 +422,23 @@ class ConversationPage extends StatefulWidget {
   State<ConversationPage> createState() => _ConversationPageState();
 }
 
-class _ConversationPageState extends State<ConversationPage> {
+class _ConversationPageState extends State<ConversationPage> with WidgetsBindingObserver {
+  RealtimeChannel? _channel;
+  SocialRepository? _watchApi;
+  Timer? _refreshTimer;
+  bool _pendingRefresh = false;
+  void _scheduleRefresh() {
+    if (!mounted) return;
+    _refreshTimer?.cancel();
+    _refreshTimer = Timer(const Duration(milliseconds: 350), () {
+      if (_loading) { _pendingRefresh = true; } else { _load(); }
+    });
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _scheduleRefresh();
+  }
+
   final _body = TextEditingController();
   final List<ChatMessage> _rows = [];
   late String _status = widget.conversation.status;
@@ -406,8 +450,15 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (!_authorized) {
+      if (_channel != null) { unawaited(_watchApi!.stopWatching(_channel!)); _channel = null; }
+      return;
+    }
     if (!_started) {
       _started = true;
+      WidgetsBinding.instance.addObserver(this);
+      _watchApi = _api;
+      _channel = _api.watchMessages(_scheduleRefresh, conversation: widget.conversation.id);
       _load();
     }
   }
@@ -415,6 +466,9 @@ class _ConversationPageState extends State<ConversationPage> {
   bool _started = false;
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _refreshTimer?.cancel();
+    if (_channel != null) unawaited(_watchApi!.stopWatching(_channel!));
     _body.dispose();
     super.dispose();
   }
@@ -440,10 +494,16 @@ class _ConversationPageState extends State<ConversationPage> {
         _rows.addAll(rows.where((r) => !ids.contains(r.id)));
         _more = rows.length == 30;
       });
+      if ((ModalRoute.of(context)?.isCurrent ?? false) && (WidgetsBinding.instance.lifecycleState == null || WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed)) {
+        await api.markRead(rows.map((r) => r.id).toList());
+      }
     } catch (e) {
       if (mounted) setState(() => _error = serviceError(e));
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+        if (_pendingRefresh) { _pendingRefresh = false; _scheduleRefresh(); }
+      }
     }
   }
 

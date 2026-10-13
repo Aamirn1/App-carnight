@@ -1,9 +1,14 @@
-name: Build Android test APK
+name: Validate Cars Night
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      build_apk:
+        description: Build APK after all phase acceptance gates pass
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -67,8 +72,12 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013090922_cn_community_media.sql
       - name: Test profile, saved-post and account cleanup isolation
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/community_media.sql
+      - name: Apply conversation read state
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013121147_cn_conversation_read_state.sql
+      - name: Test unread ownership
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/conversation_reads.sql
   build:
-    name: Analyze, test and build APK
+    name: Analyze and test
     needs: database
     runs-on: ubuntu-24.04
     timeout-minutes: 35
@@ -114,6 +123,7 @@ jobs:
           path: test/previews/
           retention-days: 14
       - name: Build release-mode preview APK
+        if: github.event_name == 'workflow_dispatch' && inputs.build_apk
         env:
           SUPABASE_URL: ${{ vars.SUPABASE_URL || 'https://romhqgmsoabzowwvuvvp.supabase.co' }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
@@ -138,6 +148,7 @@ jobs:
           PYCONFIG
           flutter build apk --release --dart-define-from-file=/tmp/cars-night-config.json
       - name: Prepare download
+        if: github.event_name == 'workflow_dispatch' && inputs.build_apk
         run: |
           mkdir -p artifacts
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/CarsNight-preview.apk
@@ -145,6 +156,7 @@ jobs:
           cd artifacts
           sha256sum CarsNight-preview.apk > SHA256SUMS.txt
       - name: Upload APK
+        if: github.event_name == 'workflow_dispatch' && inputs.build_apk
         id: apk
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -166,6 +178,7 @@ jobs:
             android/
           retention-days: 14
       - name: Write download instructions
+        if: github.event_name == 'workflow_dispatch' && inputs.build_apk
         run: |
           echo '## Cars Night test APK' >> "$GITHUB_STEP_SUMMARY"
           echo 'Analysis and tests passed; release-mode APK built with a development signing key.' >> "$GITHUB_STEP_SUMMARY"

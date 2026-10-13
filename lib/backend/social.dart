@@ -29,9 +29,11 @@ class Conversation {
       requester = row['requester_id'] as String,
       recipient = row['recipient_id'] as String,
       status = row['status'] as String,
-      listingId = row['listing_id'] as String?;
+      listingId = row['listing_id'] as String?,
+      unread = (row['unread_count'] as num?)?.toInt() ?? 0;
   final String id, requester, recipient, status;
   final String? listingId;
+  final int unread;
   String other(String me) => requester == me ? recipient : requester;
 }
 
@@ -203,14 +205,34 @@ class SocialRepository {
   }
 
   Future<List<Conversation>> inbox({int offset = 0}) async {
-    final rows = await client
-        .from('cn_conversations')
-        .select()
-        .order('created_at', ascending: false)
-        .order('id', ascending: false)
-        .range(offset, offset + 19);
-    return rows.map(Conversation.fromJson).toList();
+    final rows = await client.rpc<List<dynamic>>('cn_inbox', params: {'page_offset': offset});
+    return rows.map((r) => Conversation.fromJson(r as Map<String, dynamic>)).toList();
   }
+
+  Future<void> markRead(List<String> ids) async {
+    if (ids.isEmpty) return;
+    await client.rpc<void>('cn_mark_messages_read', params: {'message_ids': ids});
+  }
+
+  /// Events invalidate data; authoritative reads still apply consent and RLS.
+  RealtimeChannel watchMessages(void Function() refresh, {String? conversation}) {
+    final channel = client.channel('cn-chat-${me}-${conversation ?? 'inbox'}-${DateTime.now().microsecondsSinceEpoch}');
+    channel.onPostgresChanges(
+      event: PostgresChangeEvent.insert, schema: 'public', table: 'cn_messages',
+      filter: conversation == null ? null : PostgresChangeFilter(type: PostgresChangeFilterType.eq, column: 'conversation_id', value: conversation),
+      callback: (_) => refresh(),
+    );
+    for (final event in [PostgresChangeEvent.insert, PostgresChangeEvent.update]) {
+      channel.onPostgresChanges(event: event, schema: 'public', table: 'cn_conversations',
+        filter: conversation == null ? null : PostgresChangeFilter(type: PostgresChangeFilterType.eq, column: 'id', value: conversation),
+        callback: (_) => refresh());
+    }
+    channel.subscribe((status, error) {
+      if (status == RealtimeSubscribeStatus.subscribed) refresh();
+    });
+    return channel;
+  }
+  Future<void> stopWatching(RealtimeChannel channel) async { await client.removeChannel(channel); }
 
   Future<Conversation> conversation(String id) async => Conversation.fromJson(
     await client.from('cn_conversations').select().eq('id', id).single(),
