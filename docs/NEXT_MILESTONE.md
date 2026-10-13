@@ -1,3 +1,17 @@
+# Consolidated pre-launch work
+
+Follow PRELAUNCH_PHASES.md (A–D) in order. Phase A restores the original brand in
+light mode, fixes gradient control contrast and records all feature/launch gaps
+in FEATURE_AUDIT.md. Automated build and renders are the current acceptance gate.
+
+# Current checkpoint — Moderation and post cleanup 0.9.0
+
+Post deletion, report review and scheduled image cleanup are implemented and
+deployed. See MODERATION_CLEANUP_0.9.md. Moderator role assignment and physical
+phone acceptance remain open. Full self-service account deletion is the next
+unfinished part of this milestone; shared website identity/data must be handled
+explicitly. Then proceed to feed thumbnails/caching and live inventory bridging.
+
 # Current acceptance — Profile, themes and Marketplace 0.8.0
 
 The profile redesign, persistent appearance choice and compact Buy/Rent filters

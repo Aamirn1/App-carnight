@@ -82,7 +82,7 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         const InfoNote(
-          'Images are bundled locally. This switch does not change network usage '
+          'This lowers image decoding resolution. It does not change network usage '
           'or file size. The preference lasts for this demo session.',
         ),
         const SizedBox(height: 12),
@@ -107,8 +107,9 @@ class SettingsPage extends StatelessWidget {
                 onTap: () => showUnavailable(
                   context,
                   'Privacy in this preview',
-                  'There is no connected backend, analytics service or public account. '
-                      'The production privacy policy will be provided before sign-up launches.',
+                  'Online account, post and message data use the Cars Night backend. '
+                      'Published photos are public. Local photo drafts stay on this device. '
+                      'The full privacy policy and support details are required before public launch.',
                 ),
               ),
               ListTile(
@@ -117,9 +118,11 @@ class SettingsPage extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => showUnavailable(
                   context,
-                  'No account to delete',
-                  'You are viewing a guest demo. Account and image deletion will be '
-                      'implemented together with authentication.',
+                  BackendScope.of(context)?.account == null ? 'No account to delete' : 'Account deletion is being prepared',
+                  BackendScope.of(context)?.account == null
+                      ? 'You are exploring the sample app without signing in.'
+                      : 'Self-service account deletion is not available in this testing build. '
+                        'Cars Night app and website share your sign-in account. Post deletion is available from your post menu.',
                 ),
               ),
             ],
@@ -127,7 +130,7 @@ class SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Cars Night · Community preview 0.4.0',
+          'Cars Night · Testing build 0.10.0',
           style: TextStyle(color: NightTheme.secondaryText(context)),
         ),
       ],

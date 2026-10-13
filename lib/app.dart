@@ -363,7 +363,7 @@ class _AppShellState extends State<AppShell> {
                     leading: Icon(
                       item.$3,
                       color: _selected == item.$1
-                          ? Theme.of(context).colorScheme.primary
+                          ? NightTheme.cyan
                           : NightTheme.secondaryText(context),
                     ),
                     title: Text(item.$2),
@@ -457,8 +457,8 @@ class _AppShellState extends State<AppShell> {
           selectedIcon: Icon(Icons.forum),
           label: 'Messages',
         ),
-        const NavigationDestination(
-          key: ValueKey('nav-create'),
+        NavigationDestination(
+          key: const ValueKey('nav-create'),
           icon: DecoratedBox(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -466,7 +466,7 @@ class _AppShellState extends State<AppShell> {
             ),
             child: Padding(
               padding: EdgeInsets.all(8),
-              child: Icon(Icons.add, color: Colors.white),
+              child: Icon(Icons.add, color: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white),
             ),
           ),
           label: 'Create',

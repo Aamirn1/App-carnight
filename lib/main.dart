@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app.dart';
 import 'core/appearance.dart';
+import 'core/brand_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend/config.dart';
 import 'backend/social.dart';
@@ -34,6 +35,9 @@ Future<void> main() async {
   }
   final appearance = Appearance();
   await appearance.restore();
+  if (appearance.mode == ThemeMode.light || (appearance.mode == ThemeMode.system && WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.light)) {
+    await BrandImage.light;
+  }
   runApp(
     CarsNightApp(
       backend: backend,

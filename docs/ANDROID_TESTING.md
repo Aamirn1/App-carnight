@@ -13,6 +13,16 @@ key; if Android refuses an update, uninstall this preview before installing it.
 Uninstalling removes the stored session and saved photo drafts. Exiting the sample
 feed resets its demo content; explicitly saved account drafts survive app restart.
 
+## Moderation and deletion checks for 0.9.0
+
+- On an owned online post, open the menu and cancel Delete; the post must remain.
+- Confirm deletion on a disposable test post; refresh Home/Profile to verify removal.
+- Image cleanup is delayed by at least 20 minutes; failed cleanup retries later.
+- Report another account's test post. A normal account must not see moderator tools.
+- A separately assigned moderator can review under Settings, inspect the post,
+  and dismiss/remove with a required note. Cancellation must not change content.
+- Full account deletion remains under development and is not included in this APK.
+
 ## Profile, theme and Marketplace checks for 0.8.0
 
 - Open Profile: review cover/avatar overlap, details and Posts/Photos/About tabs.

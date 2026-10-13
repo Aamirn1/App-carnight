@@ -194,7 +194,7 @@ class _CommunityState extends State<_Community> {
               ),
               child: IconButton(
                 tooltip: 'Find car lovers',
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white,
                 onPressed: () => pushPage<void>(context, const PeoplePage()),
                 icon: const Icon(Icons.person_add_alt_1_outlined),
               ),

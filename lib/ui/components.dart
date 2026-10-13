@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+import '../core/brand_image.dart';
 import '../core/assets.dart';
 import '../core/theme.dart';
 
@@ -6,44 +8,21 @@ class Brand extends StatelessWidget {
   const Brand({super.key, this.large = false});
   final bool large;
   @override
-  Widget build(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.light
-      ? Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: 'Cars',
-                style: TextStyle(color: NightTheme.ink(context)),
-              ),
-              TextSpan(
-                text: 'Night',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-            ],
-          ),
-          style: TextStyle(
-            fontSize: large ? 40 : 27,
-            fontWeight: FontWeight.w800,
-            fontStyle: FontStyle.italic,
-          ),
-          semanticsLabel: 'Cars Night',
-        )
-      : Image.asset(
-          NightAssets.wordmark,
-          width: large ? 248 : 142,
-          height: large ? 99 : 57,
-          fit: BoxFit.contain,
-          cacheWidth: large ? 744 : 426,
-          semanticLabel: 'Cars Night',
-          errorBuilder: (_, error, stack) => Text(
-            'Cars Night',
-            style: TextStyle(
-              fontSize: large ? 40 : 24,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
+  Widget build(BuildContext context) {
+    final width = large ? 248.0 : 142.0;
+    final height = large ? 99.0 : 57.0;
+    final original = Image.asset(NightAssets.wordmark, width: width, height: height,
+      fit: BoxFit.contain, cacheWidth: large ? 744 : 426, semanticLabel: 'Cars Night');
+    if (Theme.of(context).brightness != Brightness.light) return original;
+    return Semantics(label: 'Cars Night', image: true, child: ExcludeSemantics(
+      child: SizedBox(width: width, height: height, child: FutureBuilder<ui.Image>(
+        future: BrandImage.light,
+        builder: (context, snapshot) => snapshot.data == null
+            ? original
+            : RawImage(image: snapshot.data, width: width, height: height, fit: BoxFit.contain),
+      )),
+    ));
+  }
 }
 
 class GradientButton extends StatelessWidget {
@@ -64,7 +43,7 @@ class GradientButton extends StatelessWidget {
       style: FilledButton.styleFrom(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white,
         minimumSize: const Size.fromHeight(52),
       ),
       onPressed: onPressed,

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cars_night/core/assets.dart';
+import 'package:cars_night/core/brand_image.dart';
+import 'package:cars_night/ui/components.dart';
 import 'package:cars_night/core/theme.dart';
 import 'package:cars_night/core/session.dart';
 import 'package:cars_night/ui/profile.dart';
@@ -12,7 +14,7 @@ import 'package:cars_night/domain/models.dart';
 void main() {
   const enabled = bool.fromEnvironment('GENERATE_PREVIEWS');
   for (final dark in [false, true]) {
-    for (final page in ['profile', 'buy', 'rent']) {
+    for (final page in ['profile', 'buy', 'rent', 'brand']) {
       testWidgets('$page ${dark ? 'dark' : 'light'} preview', (tester) async {
         await tester.runAsync(() async {
           final font = File('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf');
@@ -26,6 +28,7 @@ void main() {
           final icons = FontLoader('MaterialIcons')
             ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
           await icons.load();
+          if (!dark) await BrandImage.light;
         });
         tester.view.physicalSize = const Size(390, 1000);
         tester.view.devicePixelRatio = 1;
@@ -55,7 +58,9 @@ void main() {
               key: const ValueKey('design-preview'),
               child: Scaffold(
                 appBar: AppBar(title: const Text('Cars Night')),
-                body: page == 'profile'
+                body: page == 'brand'
+                    ? const Center(child: Brand(large: true))
+                    : page == 'profile'
                     ? ProfilePage(session: session)
                     : MarketplacePage(
                         kind: page == 'buy'

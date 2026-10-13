@@ -53,6 +53,8 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261004223915_cn_media_path_validation.sql
       - name: Apply moderation and cleanup schema
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261005082711_cn_moderation_cleanup.sql
+      - name: Tighten social RPC grants
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261005083653_cn_social_rpc_grants.sql
       - name: Test moderation, deletion and cleanup retries
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/moderation_cleanup.sql
       - name: Test photo publishing permissions and quotas
@@ -84,7 +86,7 @@ jobs:
           cache: true
       - name: Check and test media validator
         run: |
-          npx --yes deno@2.2.12 check supabase/functions/cn-publish-photo/index.ts
+          npx --yes deno@2.2.12 check supabase/functions/cn-publish-photo/index.ts supabase/functions/cn-cleanup-media/index.ts
           npx --yes deno@2.2.12 test --allow-read --allow-net=jsr.io supabase/functions/cn-publish-photo/media_test.ts
       - name: Generate Android host
         run: bash scripts/bootstrap_android.sh
