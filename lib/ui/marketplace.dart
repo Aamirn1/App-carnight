@@ -6,6 +6,7 @@ import '../core/theme.dart';
 import '../data/demo_catalog.dart';
 import '../domain/models.dart';
 import 'components.dart';
+import 'live_market.dart';
 
 /// Demo fixtures use USD (two minor-unit digits). Locale-aware currency
 /// formatting and currencies with other exponents are a production requirement.
@@ -530,8 +531,8 @@ class MarketplaceHub extends StatelessWidget {
         Expanded(
           child: TabBarView(
             children: [
-              MarketplacePage(kind: ListingKind.sale, session: session),
-              MarketplacePage(kind: ListingKind.rental, session: session),
+              if (BackendScope.of(context)?.social case final api?) LiveMarketplace(api: api, kind: 'sale') else MarketplacePage(kind: ListingKind.sale, session: session),
+              if (BackendScope.of(context)?.social case final api?) LiveMarketplace(api: api, kind: 'rental') else MarketplacePage(kind: ListingKind.rental, session: session),
             ],
           ),
         ),
