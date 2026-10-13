@@ -191,6 +191,8 @@ String serviceError(Object error) {
   if (error is AuthException) {
     if (error.code == 'invalid_credentials')
       return 'Email or password is incorrect.';
+    if (error.code == 'session_expired') return 'Your session expired. Sign in again before deleting your account.';
+    if (error.code == 'rate_limit') return 'Too many attempts. Please try again later.';
     if (error.code == 'email_not_confirmed')
       return 'Confirm your email before signing in.';
     if (error.statusCode == '429')

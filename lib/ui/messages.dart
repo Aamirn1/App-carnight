@@ -6,6 +6,7 @@ import '../backend/supabase_repositories.dart';
 import '../core/theme.dart';
 import 'auth.dart';
 import 'components.dart';
+import 'public_profile.dart';
 
 class MessagesPage extends StatelessWidget {
   const MessagesPage({super.key});
@@ -314,6 +315,7 @@ class _PeopleState extends State<_People> {
       for (final row in _rows)
         ListTile(
           title: Text(row['display_name'] as String),
+          onTap: () => pushPage<void>(context, PublicProfilePage(api: widget.api, user: row['id'] as String)),
           subtitle: Text(
             _following.contains(row['id']) ? 'Following' : 'Car community',
           ),

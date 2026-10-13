@@ -13,6 +13,8 @@ import 'messages.dart';
 import 'components.dart';
 import 'feed.dart';
 import 'marketplace.dart';
+import 'remote_photo.dart';
+import 'public_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key, required this.session});
@@ -55,35 +57,21 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final rows = await api.client
           .from('cn_posts')
-          .select('id,caption,created_at,cn_post_media(storage_path,position)')
+          .select('id,caption,created_at,cn_post_media(storage_path,position),cn_post_thumbnails(storage_path,position)')
           .eq('owner_id', owner)
           .eq('status', 'published')
           .order('created_at', ascending: false)
           .order('id', ascending: false)
           .range(more ? _posts.length : 0, (more ? _posts.length : 0) + 19);
-      final counts = await Future.wait([
-        api.client
-            .from('cn_follows')
-            .count(CountOption.exact)
-            .eq('followed_id', owner),
-        api.client
-            .from('cn_follows')
-            .count(CountOption.exact)
-            .eq('follower_id', owner),
-        api.client
-            .from('cn_posts')
-            .count(CountOption.exact)
-            .eq('owner_id', owner)
-            .eq('status', 'published'),
-      ]);
+      final counts = await api.profile(owner);
       if (!mounted || owner != _owner) return;
       setState(() {
         if (!more) _posts.clear();
         _posts.addAll(rows);
         _more = rows.length == 20;
-        _followers = counts[0];
-        _following = counts[1];
-        _total = counts[2];
+        _followers = (counts['followers'] as num).toInt();
+        _following = (counts['following'] as num).toInt();
+        _total = (counts['posts'] as num).toInt();
       });
     } catch (_) {
       if (mounted)
@@ -107,13 +95,10 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
     if (api == null || api.me != _owner) throw StateError('Sign in again');
-    if (values['display_name'] != null) {
-      await api.client.from('cn_profiles').upsert({
-        'id': _owner,
-        'display_name': values['display_name'],
-      });
-    }
-    await api.client.auth.updateUser(UserAttributes(data: values));
+    await api.client.auth.updateUser(UserAttributes(data: {
+      ...values,
+      if (values['display_name'] != null) 'cn_public_profile': true,
+    }));
     if (mounted) setState(() {});
   }
 
@@ -146,12 +131,8 @@ class _ProfilePageState extends State<ProfilePage> {
     final api = BackendScope.of(context)?.social;
     if (api == null || !path.startsWith('${_owner ?? ''}/'))
       return const Icon(Icons.person_outline, size: 48);
-    return Image.network(
-      api.imageUrl(path),
-      fit: fit,
-      cacheWidth: 720,
-      errorBuilder: (_, e, s) => const Icon(Icons.broken_image_outlined),
-    );
+    return RemotePhoto(url: api.imageUrl(path), fit: fit, decodeWidth: 720);
+
   }
 
   Future<void> _chooseImage(bool cover) async {
@@ -636,6 +617,7 @@ class _ProfileEditorState extends State<_ProfileEditor> {
     child: PageFrame(
       title: 'Edit profile',
       children: [
+        const InfoNote('Your name, bio, city and dream car will be visible to other signed-in members. Leave optional details blank to keep them private.'),
         Form(
           key: _form,
           child: Column(
@@ -654,14 +636,14 @@ class _ProfileEditorState extends State<_ProfileEditor> {
                 enabled: !_busy,
                 maxLength: 160,
                 maxLines: 3,
-                decoration: const InputDecoration(labelText: 'Bio'),
+                decoration: const InputDecoration(labelText: 'Public bio'),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _city,
                 enabled: !_busy,
                 maxLength: 80,
-                decoration: const InputDecoration(labelText: 'City'),
+                decoration: const InputDecoration(labelText: 'Public city'),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -710,7 +692,10 @@ class SavedPage extends StatelessWidget {
   const SavedPage({super.key, required this.session});
   final DemoSession session;
   @override
-  Widget build(BuildContext context) => ListenableBuilder(
+  Widget build(BuildContext context) {
+    final api = BackendScope.of(context)?.social;
+    if (api != null && BackendScope.of(context)?.account != null) return OnlineSavedPage(api: api);
+    return ListenableBuilder(
     listenable: session,
     builder: (context, _) {
       final cars = DemoCatalog.listings
@@ -751,4 +736,5 @@ class SavedPage extends StatelessWidget {
       );
     },
   );
+  }
 }

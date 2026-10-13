@@ -11,6 +11,8 @@ import 'feed.dart';
 import 'messages.dart';
 import 'home_post.dart';
 import '../core/platform_actions.dart';
+import 'remote_photo.dart';
+import 'public_profile.dart';
 
 class CommunityPage extends StatelessWidget {
   const CommunityPage({super.key, required this.demo});
@@ -381,7 +383,7 @@ class _CommunityState extends State<_Community> {
                         ),
                   onComment: () => _comments(p),
                   onShare: () async {
-                    final text = 'Cars Night · ${p.name}\n${p.caption}';
+                    final text = 'Cars Night · ${p.name}\n${p.caption}${p.images.isEmpty ? '' : '\nPhoto: ${widget.api.imageUrl(p.images.first)}'}';
                     if (!await PlatformActions.shareText(text)) {
                       await Clipboard.setData(ClipboardData(text: text));
                       if (context.mounted)
@@ -390,6 +392,8 @@ class _CommunityState extends State<_Community> {
                         );
                     }
                   },
+                  saved: p.saved,
+                  onSave: _pending.contains(p.id) ? null : () => _action(p.id, () => widget.api.savePost(p.id, !p.saved)),
                   trailing: own
                       ? PopupMenuButton<String>(
                           tooltip: 'Your post options',
@@ -406,6 +410,10 @@ class _CommunityState extends State<_Community> {
                           icon: const Icon(Icons.more_horiz),
                           itemBuilder: (_) => [
                             PopupMenuItem(
+                              value: 'profile',
+                              child: const Text('View profile'),
+                            ),
+                            PopupMenuItem(
                               value: 'follow',
                               child: Text(p.following ? 'Unfollow' : 'Follow'),
                             ),
@@ -419,6 +427,10 @@ class _CommunityState extends State<_Community> {
                             ),
                           ],
                           onSelected: (value) {
+                            if (value == 'profile') {
+                              pushPage<void>(context, PublicProfilePage(api: widget.api, user: p.ownerId));
+                              return;
+                            }
                             if (value == 'report') {
                               _reportPost(p);
                               return;
@@ -458,25 +470,13 @@ class _CommunityState extends State<_Community> {
                           child: PageView(
                             children: [
                               for (final path in p.images)
-                                Image.network(
-                                  widget.api.imageUrl(path),
-                                  fit: BoxFit.contain,
-                                  cacheWidth: widget.demo.dataSaver
-                                      ? 480
-                                      : 1000,
-                                  semanticLabel: 'Full photo by ${p.name}',
-                                  loadingBuilder: (context, child, progress) =>
-                                      progress == null
-                                      ? child
-                                      : const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                  errorBuilder: (_, error, stack) =>
-                                      const Center(
-                                        child: Icon(
-                                          Icons.broken_image_outlined,
-                                        ),
-                                      ),
+                                GestureDetector(
+                                  onTap: () => pushPage<void>(context, PhotoDetailPage(url: widget.api.imageUrl(path), caption: p.caption)),
+                                  child: RemotePhoto(
+                                    url: widget.api.imageUrl(p.thumbnails.length > p.images.indexOf(path) ? p.thumbnails[p.images.indexOf(path)] : path),
+                                    decodeWidth: widget.demo.dataSaver ? 480 : 720,
+                                    label: 'Photo by ${p.name}. Tap to open full photo',
+                                  ),
                                 ),
                             ],
                           ),

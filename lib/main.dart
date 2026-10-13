@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'app.dart';
 import 'core/appearance.dart';
 import 'core/brand_image.dart';
+import 'data/account_cleanup.dart';
+import 'ui/remote_photo.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend/config.dart';
 import 'backend/social.dart';
@@ -35,6 +37,7 @@ Future<void> main() async {
   }
   final appearance = Appearance();
   await appearance.restore();
+  try { await AccountCleanup.retry(clearCache: PhotoCache.manager.emptyCache); } catch (_) { /* Retry confirmed deletion cleanup on the next startup. */ }
   if (appearance.mode == ThemeMode.light ||
       (appearance.mode == ThemeMode.system &&
           WidgetsBinding.instance.platformDispatcher.platformBrightness ==

@@ -28,7 +28,7 @@ class _AccountPageState extends State<AccountPage> {
         ),
         const InfoNote(
           'Private drafts are stored with your account. '
-          'Image uploads and public publishing are coming in the next increment.',
+          'Use Create to publish a photo. Saved photo drafts stay on this device.',
         ),
         for (final kind in DraftKind.values)
           ListTile(

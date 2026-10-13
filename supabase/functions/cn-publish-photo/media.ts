@@ -1,7 +1,8 @@
 import { Image } from 'jsr:@matmen/imagescript@1.3.1';
 
 export const MAX_INPUT = 2 * 1024 * 1024;
-export const MAX_OUTPUT = 512 * 1024;
+export const MAX_OUTPUT = 448 * 1024;
+export const MAX_THUMB = 64 * 1024;
 
 // Check SOF dimensions before decompression to reject oversized allocation bombs.
 export function jpegDimensions(bytes: Uint8Array): [number, number] {
@@ -35,9 +36,17 @@ export async function sanitizePhoto(bytes: Uint8Array) {
   // Copy pixels into a fresh image: do not carry EXIF/GPS or ancillary metadata.
   const clean = new Image(width,height);
   clean.bitmap.set(decoded.bitmap);
+  const scale = Math.min(1,480/Math.max(width,height));
+  const thumbnail=clean.clone().resize(Math.max(1,Math.round(width*scale)),Math.max(1,Math.round(height*scale)));
+  let thumb:Uint8Array|undefined;
+  for(const quality of [72,60,45]) {
+    const bytes=await thumbnail.encodeJPEG(quality);
+    if(bytes.length<=MAX_THUMB){thumb=bytes;break;}
+  }
+  if(!thumb)throw new Error('Thumbnail too complex');
   for (const quality of [78,65,50]) {
     const jpeg = await clean.encodeJPEG(quality);
-    if (jpeg.length <= MAX_OUTPUT) return {jpeg,width,height};
+    if (jpeg.length <= MAX_OUTPUT) return {jpeg,width,height,thumb,thumbWidth:thumbnail.width,thumbHeight:thumbnail.height};
   }
   throw new Error('Photo too complex');
 }

@@ -6,6 +6,7 @@ import '../core/appearance.dart';
 import 'components.dart';
 import '../backend/session.dart';
 import 'moderation.dart';
+import 'delete_account.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key, required this.session});
@@ -121,23 +122,21 @@ class SettingsPage extends StatelessWidget {
                 leading: const Icon(Icons.person_remove_outlined),
                 title: const Text('Delete account'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => showUnavailable(
-                  context,
-                  BackendScope.of(context)?.account == null
-                      ? 'No account to delete'
-                      : 'Account deletion is being prepared',
-                  BackendScope.of(context)?.account == null
-                      ? 'You are exploring the sample app without signing in.'
-                      : 'Self-service account deletion is not available in this testing build. '
-                            'Cars Night app and website share your sign-in account. Post deletion is available from your post menu.',
-                ),
+                onTap: () {
+                  final api = BackendScope.of(context)?.social;
+                  if (api != null && BackendScope.of(context)?.account != null) {
+                    pushPage<void>(context, DeleteAccountPage(api: api));
+                  } else {
+                    showUnavailable(context, 'No account to delete', 'You are exploring the sample app without signing in.');
+                  }
+                },
               ),
             ],
           ),
         ),
         const SizedBox(height: 24),
         Text(
-          'Cars Night · Testing build 0.10.0',
+          'Cars Night · Testing build 0.11.0',
           style: TextStyle(color: NightTheme.secondaryText(context)),
         ),
       ],

@@ -11,11 +11,13 @@ class CommunityPost {
       comments = (row['comment_count'] as num).toInt(),
       liked = row['liked'] as bool,
       following = row['following'] as bool,
-      images = (row['images'] as List<dynamic>).cast<String>();
+      images = (row['images'] as List<dynamic>).cast<String>(),
+      thumbnails = (row['thumbnails'] as List<dynamic>? ?? row['images'] as List<dynamic>).cast<String>(),
+      saved = row['saved'] == true;
   final String id, ownerId, caption, name, createdAt;
   final int likes, comments;
-  final bool liked, following;
-  final List<String> images;
+  final bool liked, following, saved;
+  final List<String> images, thumbnails;
 }
 
 class Conversation {
@@ -61,6 +63,31 @@ class SocialRepository {
     return rows
         .map((row) => CommunityPost.fromJson(row as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<List<CommunityPost>> collection({String? author, bool saved = false, CommunityPost? before}) async {
+    final rows = await client.rpc<List<dynamic>>(saved ? 'cn_saved_feed' : 'cn_author_feed', params: {
+      if (!saved) 'target': author,
+      'before_time': before?.createdAt, 'before_id': before?.id,
+    });
+    return rows.map((r) => CommunityPost.fromJson(r as Map<String,dynamic>)).toList();
+  }
+  Future<Map<String,dynamic>> profile(String id) => client.rpc<Map<String,dynamic>>('cn_profile', params: {'target':id});
+  Future<void> savePost(String id, bool saved) async {
+    if(saved) {
+      await client.from('cn_saved_posts').upsert({'user_id':me,'post_id':id},ignoreDuplicates:true);
+    } else {
+      await client.from('cn_saved_posts').delete().eq('user_id',me).eq('post_id',id);
+    }
+  }
+  Future<void> deleteAccount(String password) async {
+    try {
+      final response=await client.functions.invoke('cn-delete-account', body:{'password':password,'confirmation':'DELETE'});
+      if(response.status!=200 || (response.data as Map?)?['code']!='deleted') throw const AuthException('Deletion did not complete');
+    } on FunctionException catch(e) {
+      final code=(e.details is Map ? (e.details as Map)['code'] : null);
+      throw AuthException('Account deletion failed',code:code is String ? code : null,statusCode:e.status.toString());
+    }
   }
 
   String imageUrl(String path) =>

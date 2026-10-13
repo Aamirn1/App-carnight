@@ -26,3 +26,12 @@ Deno.test('corrupt JPEG with plausible dimensions fails decoder',async()=>{
   try {await sanitizePhoto(new Uint8Array([255,216,255,192,0,8,8,0,10,0,10,1]));} catch {rejected=true;}
   assert(rejected);
 });
+Deno.test('feed thumbnail is bounded and does not enlarge small images',async()=>{
+ const image=new Image(1000,750).fill(0x14b5ffff);
+ const clean=await sanitizePhoto(await image.encodeJPEG(90));
+ assert(clean.thumbWidth===480&&clean.thumbHeight===360);
+ assert(clean.thumb.length<=65536&&clean.jpeg.length+clean.thumb.length<=524288);
+ assert(jpegDimensions(clean.thumb)[0]===480);
+ const small=await sanitizePhoto(await new Image(60,40).fill(0x9058ffff).encodeJPEG(90));
+ assert(small.thumbWidth===60&&small.thumbHeight===40);
+});

@@ -47,12 +47,17 @@ Deno.serve(async (req: Request) => {
       contentType:'image/jpeg',cacheControl:'3600',upsert:true,
     });
     if (uploadError) return reply(503,{code:'storage'});
+    const {error:thumbError}=await admin.storage.from('cn-media').upload(`${user.id}/${request_id}_thumb.jpg`,photo.thumb,{
+      contentType:'image/jpeg',cacheControl:'3600',upsert:true,
+    });
+    if(thumbError)return reply(503,{code:'storage'});
     const {error: profileError} = await admin.from('cn_profiles').upsert({
       id:user.id,display_name:String(user.user_metadata?.display_name || 'Car enthusiast').trim().slice(0,80) || 'Car enthusiast',
     },{onConflict:'id',ignoreDuplicates:true});
     if (profileError) return reply(503,{code:'database'});
-    const {data: postId,error: finishError} = await admin.rpc('cn_finish_photo',{
+    const {data: postId,error: finishError} = await admin.rpc('cn_finish_photo_v2',{
       actor:user.id,request:request_id,image_width:photo.width,image_height:photo.height,image_bytes:photo.jpeg.length,
+      thumb_width:photo.thumbWidth,thumb_height:photo.thumbHeight,thumb_bytes:photo.thumb.length,
     });
     // Keep the charged, deterministic object on a DB failure; a retry reconciles it.
     // Never delete here: an earlier concurrent request may already have published.
