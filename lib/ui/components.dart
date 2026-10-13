@@ -11,17 +11,36 @@ class Brand extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = large ? 248.0 : 142.0;
     final height = large ? 99.0 : 57.0;
-    final original = Image.asset(NightAssets.wordmark, width: width, height: height,
-      fit: BoxFit.contain, cacheWidth: large ? 744 : 426, semanticLabel: 'Cars Night');
+    final original = Image.asset(
+      NightAssets.wordmark,
+      width: width,
+      height: height,
+      fit: BoxFit.contain,
+      cacheWidth: large ? 744 : 426,
+      semanticLabel: 'Cars Night',
+    );
     if (Theme.of(context).brightness != Brightness.light) return original;
-    return Semantics(label: 'Cars Night', image: true, child: ExcludeSemantics(
-      child: SizedBox(width: width, height: height, child: FutureBuilder<ui.Image>(
-        future: BrandImage.light,
-        builder: (context, snapshot) => snapshot.data == null
-            ? original
-            : RawImage(image: snapshot.data, width: width, height: height, fit: BoxFit.contain),
-      )),
-    ));
+    return Semantics(
+      label: 'Cars Night',
+      image: true,
+      child: ExcludeSemantics(
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: FutureBuilder<ui.Image>(
+            future: BrandImage.light,
+            builder: (context, snapshot) => snapshot.data == null
+                ? original
+                : RawImage(
+                    image: snapshot.data,
+                    width: width,
+                    height: height,
+                    fit: BoxFit.contain,
+                  ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -43,7 +62,9 @@ class GradientButton extends StatelessWidget {
       style: FilledButton.styleFrom(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
-        foregroundColor: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white,
+        foregroundColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.black
+            : Colors.white,
         minimumSize: const Size.fromHeight(52),
       ),
       onPressed: onPressed,

@@ -2,7 +2,8 @@
 
 Follow PRELAUNCH_PHASES.md (A–D) in order. Phase A restores the original brand in
 light mode, fixes gradient control contrast and records all feature/launch gaps
-in FEATURE_AUDIT.md. Automated build and renders are the current acceptance gate.
+in FEATURE_AUDIT.md. Phase A automated checks and the 0.10.0 APK passed; see UI_PHASE_A_0.10.md.
+Phase B is next: complete account lifecycle, community safety and media efficiency.
 
 # Current checkpoint — Moderation and post cleanup 0.9.0
 

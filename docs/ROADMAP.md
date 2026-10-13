@@ -1,3 +1,9 @@
+# Active pre-launch plan
+
+The four consolidated phases in PRELAUNCH_PHASES.md supersede the original
+small-phase sequencing below. FEATURE_AUDIT.md records current feature gaps.
+The historical plan is retained for original scope and architecture context.
+
 # Phased development plan
 
 ## Objective and launch boundaries

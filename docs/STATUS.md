@@ -1,3 +1,15 @@
+# Current work — 0.10.0, consolidated pre-launch Phase A
+
+Original wordmark rendering restored for light mode without replacing its font
+or Night gradient. Light gradient-control contrast and stale Settings notices
+corrected. PRELAUNCH_PHASES.md defines four large phases, and FEATURE_AUDIT.md
+classifies current controls and launch gaps. 47 functional tests, 8 inspected renders, media/SQL checks and the APK build
+passed. See UI_PHASE_A_0.10.md for evidence and remaining device checks.
+
+Moderation/post cleanup is deployed; its report is MODERATION_CLEANUP_0.9.md.
+Full account deletion, real marketplace inventory and public launch are not
+complete. Historical reports below describe earlier checkpoints.
+
 # Latest: 0.8.0 — profile, light mode and compact marketplace
 
 See [PROFILE_THEME_0.8.md](PROFILE_THEME_0.8.md) for reference analysis, implementation

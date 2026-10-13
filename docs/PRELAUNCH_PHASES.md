@@ -14,10 +14,12 @@ media for car lovers, with a secondary Buy/Rent marketplace.
 
 ## Current checkpoint
 
-A is in progress. Original light-mode logo restored using the same image geometry
-and colours, changing only bright neutral lettering to black at rendering time.
+A source/UI acceptance is complete for 0.10.0: 47 functional tests, 8 inspected
+preview renders, SQL/media checks and the APK build passed. Device/live acceptance
+remains explicitly part of the full beta in D. Original light-mode logo restored using the same image geometry
+and colours, changing only bright near-neutral lettering to black at rendering time.
 Light gradient controls use black ink for readability. No layout redesign is part
-of this fix. Build/render checks follow before closing the automated portion.
+of this fix. See UI_PHASE_A_0.10.md for the tested build and APK.
 B has existing working implementations, including deployed moderation/cleanup;
 full account deletion and physical-device acceptance remain open. C is partly
 implemented with sample marketplace inventory and basic consent-based messaging.

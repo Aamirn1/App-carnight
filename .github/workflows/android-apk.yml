@@ -94,7 +94,7 @@ jobs:
         run: flutter pub get
       - name: Format source on runner
         run: |
-          dart fix --apply --code=prefer_const_constructors --code=prefer_const_literals_to_create_immutables
+          dart fix --apply --code=prefer_const_constructors --code=prefer_const_literals_to_create_immutables --code=unnecessary_import
           dart format lib test
       - name: Analyze Dart
         run: flutter analyze --no-fatal-infos

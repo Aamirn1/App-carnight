@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
@@ -11,7 +10,9 @@ Uint8List lightBrandPixels(Uint8List source) {
   for (var i = 0; i + 3 < pixels.length; i += 4) {
     final low = math.min(pixels[i], math.min(pixels[i + 1], pixels[i + 2]));
     final high = math.max(pixels[i], math.max(pixels[i + 1], pixels[i + 2]));
-    if (pixels[i + 3] > 0 && low * 255 >= 200 * pixels[i + 3] && (high - low) * 255 <= 20 * pixels[i + 3]) {
+    if (pixels[i + 3] > 0 &&
+        low * 255 >= 200 * pixels[i + 3] &&
+        (high - low) * 255 <= 20 * pixels[i + 3]) {
       pixels[i] = 0;
       pixels[i + 1] = 0;
       pixels[i + 2] = 0;
@@ -25,20 +26,41 @@ abstract final class BrandImage {
   static Future<ui.Image> get light => _light ??= _load();
   static Future<ui.Image> _load() async {
     final data = await rootBundle.load(NightAssets.wordmark);
-    final codec = await ui.instantiateImageCodec(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+    final codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+    );
     final frame = await codec.getNextFrame();
     codec.dispose();
     final original = frame.image;
     try {
-      final rgba = await original.toByteData(format: ui.ImageByteFormat.rawRgba);
+      final rgba = await original.toByteData(
+        format: ui.ImageByteFormat.rawRgba,
+      );
       if (rgba == null) throw StateError('Brand image could not be decoded');
-      final buffer = await ui.ImmutableBuffer.fromUint8List(lightBrandPixels(rgba.buffer.asUint8List(rgba.offsetInBytes, rgba.lengthInBytes)));
-      final descriptor = ui.ImageDescriptor.raw(buffer, width: original.width, height: original.height, pixelFormat: ui.PixelFormat.rgba8888);
+      final buffer = await ui.ImmutableBuffer.fromUint8List(
+        lightBrandPixels(
+          rgba.buffer.asUint8List(rgba.offsetInBytes, rgba.lengthInBytes),
+        ),
+      );
+      final descriptor = ui.ImageDescriptor.raw(
+        buffer,
+        width: original.width,
+        height: original.height,
+        pixelFormat: ui.PixelFormat.rgba8888,
+      );
       try {
         final output = await descriptor.instantiateCodec();
-        try { return (await output.getNextFrame()).image; }
-        finally { output.dispose(); }
-      } finally { descriptor.dispose(); buffer.dispose(); }
-    } finally { original.dispose(); }
+        try {
+          return (await output.getNextFrame()).image;
+        } finally {
+          output.dispose();
+        }
+      } finally {
+        descriptor.dispose();
+        buffer.dispose();
+      }
+    } finally {
+      original.dispose();
+    }
   }
 }

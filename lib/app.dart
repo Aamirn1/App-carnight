@@ -460,13 +460,18 @@ class _AppShellState extends State<AppShell> {
         NavigationDestination(
           key: const ValueKey('nav-create'),
           icon: DecoratedBox(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: NightTheme.gradient,
             ),
             child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Icon(Icons.add, color: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white),
+              padding: const EdgeInsets.all(8),
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+              ),
             ),
           ),
           label: 'Create',

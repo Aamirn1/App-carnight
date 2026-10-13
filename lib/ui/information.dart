@@ -20,7 +20,12 @@ class SettingsPage extends StatelessWidget {
           FutureBuilder<bool>(
             future: api.isModerator(),
             builder: (context, snapshot) => snapshot.data == true
-                ? ListTile(leading: const Icon(Icons.shield_outlined), title: const Text('Moderation queue'), onTap: () => pushPage<void>(context, ModerationPage(api: api)))
+                ? ListTile(
+                    leading: const Icon(Icons.shield_outlined),
+                    title: const Text('Moderation queue'),
+                    onTap: () =>
+                        pushPage<void>(context, ModerationPage(api: api)),
+                  )
                 : const SizedBox.shrink(),
           ),
         NightCard(
@@ -118,11 +123,13 @@ class SettingsPage extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => showUnavailable(
                   context,
-                  BackendScope.of(context)?.account == null ? 'No account to delete' : 'Account deletion is being prepared',
+                  BackendScope.of(context)?.account == null
+                      ? 'No account to delete'
+                      : 'Account deletion is being prepared',
                   BackendScope.of(context)?.account == null
                       ? 'You are exploring the sample app without signing in.'
                       : 'Self-service account deletion is not available in this testing build. '
-                        'Cars Night app and website share your sign-in account. Post deletion is available from your post menu.',
+                            'Cars Night app and website share your sign-in account. Post deletion is available from your post menu.',
                 ),
               ),
             ],

@@ -91,32 +91,64 @@ class _CommunityState extends State<_Community> {
     }
   }
 
-
   Future<void> _deletePost(CommunityPost post) async {
-    final confirmed = await showDialog<bool>(context: context, builder: (dialog) => AlertDialog(
-      title: const Text('Delete this post?'),
-      content: const Text('Your post and its comments will be removed. Photo cleanup runs in the background. This cannot be undone.'),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(dialog, false), child: const Text('Cancel')),
-        TextButton(onPressed: () => Navigator.pop(dialog, true), child: const Text('Delete post')),
-      ],
-    ));
-    if (confirmed == true && mounted) await _action(post.id, () => widget.api.deletePost(post.id));
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: const Text('Delete this post?'),
+        content: const Text(
+          'Your post and its comments will be removed. Photo cleanup runs in the background. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialog, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialog, true),
+            child: const Text('Delete post'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted)
+      await _action(post.id, () => widget.api.deletePost(post.id));
   }
 
   Future<void> _reportPost(CommunityPost post) async {
-    final reason = await showDialog<String>(context: context, builder: (dialog) => SimpleDialog(
-      title: const Text('Report post'),
-      children: [
-        for (final reason in ['Spam or scam', 'Harassment or hate', 'Inappropriate image', 'Misleading car listing', 'Other concern'])
-          SimpleDialogOption(onPressed: () => Navigator.pop(dialog, reason), child: Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text(reason))),
-        SimpleDialogOption(onPressed: () => Navigator.pop(dialog), child: const Text('Cancel')),
-      ],
-    ));
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (dialog) => SimpleDialog(
+        title: const Text('Report post'),
+        children: [
+          for (final reason in [
+            'Spam or scam',
+            'Harassment or hate',
+            'Inappropriate image',
+            'Misleading car listing',
+            'Other concern',
+          ])
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(dialog, reason),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(reason),
+              ),
+            ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(dialog),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
     if (reason == null || !mounted) return;
     await _action(post.id, () async {
       await widget.api.reportPost(post.id, reason);
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report submitted for review.')));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Report submitted for review.')),
+        );
     });
   }
 
@@ -194,7 +226,9 @@ class _CommunityState extends State<_Community> {
               ),
               child: IconButton(
                 tooltip: 'Find car lovers',
-                color: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
                 onPressed: () => pushPage<void>(context, const PeoplePage()),
                 icon: const Icon(Icons.person_add_alt_1_outlined),
               ),
@@ -359,7 +393,12 @@ class _CommunityState extends State<_Community> {
                   trailing: own
                       ? PopupMenuButton<String>(
                           tooltip: 'Your post options',
-                          itemBuilder: (_) => const [PopupMenuItem(value: 'delete', child: Text('Delete post'))],
+                          itemBuilder: (_) => const [
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Delete post'),
+                            ),
+                          ],
                           onSelected: (_) => _deletePost(p),
                         )
                       : PopupMenuButton<String>(
@@ -374,7 +413,10 @@ class _CommunityState extends State<_Community> {
                               value: 'message',
                               child: Text('Message request'),
                             ),
-                            const PopupMenuItem(value: 'report', child: Text('Report post')),
+                            const PopupMenuItem(
+                              value: 'report',
+                              child: Text('Report post'),
+                            ),
                           ],
                           onSelected: (value) {
                             if (value == 'report') {

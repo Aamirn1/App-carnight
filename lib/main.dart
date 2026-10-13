@@ -35,7 +35,10 @@ Future<void> main() async {
   }
   final appearance = Appearance();
   await appearance.restore();
-  if (appearance.mode == ThemeMode.light || (appearance.mode == ThemeMode.system && WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.light)) {
+  if (appearance.mode == ThemeMode.light ||
+      (appearance.mode == ThemeMode.system &&
+          WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+              Brightness.light)) {
     await BrandImage.light;
   }
   runApp(

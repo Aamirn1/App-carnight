@@ -10,18 +10,30 @@ class ReviewApi implements SocialRepository {
   Future<List<Map<String, dynamic>>> moderationQueue() async {
     if (fail) throw Exception('denied');
     if (decisions.isNotEmpty) return [];
-    return [{'id': 'report-1', 'reason': 'Spam or scam', 'caption': 'Reported caption', 'target_post_id': 'post-1', 'images': <String>[]}];
+    return [
+      {
+        'id': 'report-1',
+        'reason': 'Spam or scam',
+        'caption': 'Reported caption',
+        'target_post_id': 'post-1',
+        'images': <String>[],
+      },
+    ];
   }
+
   @override
   Future<void> reviewReport(String id, String decision, String note) async {
     decisions.add('$id:$decision:$note');
   }
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
-  testWidgets('removal requires a review note and confirmation', (tester) async {
+  testWidgets('removal requires a review note and confirmation', (
+    tester,
+  ) async {
     final api = ReviewApi();
     await tester.pumpWidget(MaterialApp(home: ModerationPage(api: api)));
     await tester.pumpAndSettle();
