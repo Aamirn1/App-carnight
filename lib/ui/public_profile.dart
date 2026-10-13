@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../backend/social.dart';
 import '../backend/supabase_repositories.dart';
 import '../core/platform_actions.dart';
@@ -32,26 +33,29 @@ class _CollectionPage extends StatefulWidget {
 class _CollectionPageState extends State<_CollectionPage> {
   final _posts = <CommunityPost>[];
   Map<String,dynamic>? _profile;
-  bool _busy = true, _more = false;
+  bool _busy = true, _more = false, _loading = false, _mutating = false;
   String? _error;
   @override
   void initState() { super.initState(); _load(); }
   Future<void> _load({bool more = false}) async {
+    if (_loading || _mutating) return;
+    _loading = true;
     setState(() { _busy = true; _error = null; });
     try {
       final profile = widget.author == null ? null : await widget.api.profile(widget.author!);
       final posts = await widget.api.collection(author: widget.author, saved: widget.saved, before: more && _posts.isNotEmpty ? _posts.last : null);
       if (!mounted) return;
       setState(() { _profile = profile; if (!more) _posts.clear(); _posts.addAll(posts); _more = posts.length == 20; });
-    } catch (e) { if (mounted) setState(() => _error = serviceError(e)); }
-    finally { if (mounted) setState(() => _busy = false); }
+    } catch (e) { if (mounted) setState(() { _error = serviceError(e); if (e is PostgrestException && e.code == '42501') { _profile = null; _posts.clear(); } }); }
+    finally { _loading = false; if (mounted) setState(() => _busy = false); }
   }
   Future<void> _run(Future<void> Function() action) async {
     if (_busy) return;
+    _mutating = true;
     setState(() => _busy = true);
-    try { await action(); if (mounted) await _load(); }
+    try { await action(); _mutating = false; if (mounted) await _load(); }
     catch (e) { if (mounted) setState(() => _error = serviceError(e)); }
-    finally { if (mounted) setState(() => _busy = false); }
+    finally { _mutating = false; if (mounted) setState(() => _busy = false); }
   }
   Widget _header() {
     final p = _profile;

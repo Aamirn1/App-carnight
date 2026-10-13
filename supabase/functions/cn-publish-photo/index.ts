@@ -15,6 +15,8 @@ Deno.serve(async (req: Request) => {
   const admin = createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data: {user},error: authError} = await admin.auth.getUser(token);
   if (authError || !user || !user.email_confirmed_at) return reply(401,{code:'unauthorized'});
+  const attempt=await admin.rpc('cn_photo_process_attempt',{actor:user.id});
+  if(attempt.error)return reply(attempt.error.code==='P0001'?429:503,{code:attempt.error.code==='P0001'?'rate_limit':'setup'});
   try {
     let body;
     try {body = JSON.parse(new TextDecoder().decode(await readLimitedBody(req, 2900000)));}

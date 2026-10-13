@@ -112,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
             BackendScope.of(context)?.account?.displayName ??
             'Car enthusiast',
         bio: details['cn_bio'] as String? ?? '',
-        city: details['city'] as String? ?? '',
+        city: details['cn_profile_city'] as String? ?? '',
         car: details['cn_dream_car'] as String? ?? '',
         save: _save,
       ),
@@ -125,13 +125,27 @@ class _ProfilePageState extends State<ProfilePage> {
           .map((e) => e['storage_path'] as String)
           .toList();
 
-  Widget _photo(String path, {BoxFit fit = BoxFit.cover}) {
+  Widget _photo(String path, {BoxFit fit = BoxFit.cover, bool detail = false}) {
     if (NightAssets.photos.contains(path))
       return Image.asset(path, fit: fit, cacheWidth: 720);
     final api = BackendScope.of(context)?.social;
     if (api == null || !path.startsWith('${_owner ?? ''}/'))
       return const Icon(Icons.person_outline, size: 48);
-    return RemotePhoto(url: api.imageUrl(path), fit: fit, decodeWidth: 720);
+    var delivery = path;
+    if (!detail) {
+      for (final post in _posts) {
+        final media = post['cn_post_media'] as List<dynamic>? ?? [];
+        final thumbs = post['cn_post_thumbnails'] as List<dynamic>? ?? [];
+        for (final item in media) {
+          if (item['storage_path'] == path) {
+            for (final thumb in thumbs) {
+              if (thumb['position'] == item['position']) delivery = thumb['storage_path'] as String;
+            }
+          }
+        }
+      }
+    }
+    return RemotePhoto(url: api.imageUrl(delivery), fit: fit, decodeWidth: detail ? 1600 : 720);
 
   }
 
@@ -216,7 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
           account?.displayName ??
           'Car enthusiast';
       final bio = details['cn_bio'] as String? ?? '';
-      final city = details['city'] as String? ?? account?.city ?? '';
+      final city = details['cn_profile_city'] as String? ?? account?.city ?? '';
       final dream = details['cn_dream_car'] as String? ?? '';
       final cover = details['cn_cover'] as String? ?? NightAssets.hero;
       final avatar = details['cn_avatar'] as String?;
@@ -496,7 +510,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 builder: (context) => Dialog(
                                   child: AspectRatio(
                                     aspectRatio: 1,
-                                    child: _photo(p, fit: BoxFit.contain),
+                                    child: _photo(p, fit: BoxFit.contain, detail: true),
                                   ),
                                 ),
                               ),
@@ -666,7 +680,7 @@ class _ProfileEditorState extends State<_ProfileEditor> {
                   final values = <String, dynamic>{
                     'display_name': _name.text.trim(),
                     'cn_bio': _bio.text.trim(),
-                    'city': _city.text.trim(),
+                    'cn_profile_city': _city.text.trim(),
                     'cn_dream_car': _car.text.trim(),
                   };
                   try {

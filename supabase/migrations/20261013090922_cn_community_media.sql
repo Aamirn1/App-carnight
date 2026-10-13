@@ -10,7 +10,7 @@ begin
  if new.raw_user_meta_data->>'cn_public_profile'='true' then
   insert into public.cn_profiles(id,display_name,bio,city,dream_car)
   values(new.id,coalesce(nullif(left(btrim(new.raw_user_meta_data->>'display_name'),80),''),'Car enthusiast'),
-  left(coalesce(new.raw_user_meta_data->>'cn_bio',''),500),left(coalesce(new.raw_user_meta_data->>'city',''),80),left(coalesce(new.raw_user_meta_data->>'cn_dream_car',''),80))
+  left(coalesce(new.raw_user_meta_data->>'cn_bio',''),500),left(coalesce(new.raw_user_meta_data->>'cn_profile_city',''),80),left(coalesce(new.raw_user_meta_data->>'cn_dream_car',''),80))
   on conflict(id) do update set display_name=excluded.display_name,bio=excluded.bio,city=excluded.city,dream_car=excluded.dream_car;
  end if;
  return new;
@@ -157,4 +157,22 @@ create function public.cn_account_session_valid(actor uuid,session uuid) returns
 language sql stable security definer set search_path='' as $$select exists(select 1 from auth.sessions where id=session and user_id=actor)$$;
 revoke all on function public.cn_account_session_valid(uuid,uuid) from public,anon,authenticated;
 grant execute on function public.cn_account_session_valid(uuid,uuid) to service_role;
+create function public.cn_photo_process_attempt(actor uuid) returns void language plpgsql security definer set search_path='' as $$
+declare hits integer; begin
+ insert into public.cn_rate_counters as c(actor,action,started_at,hits) values(actor,'photo-process',now(),1)
+ on conflict on constraint cn_rate_counters_pkey do update set hits=case when c.started_at<now()-interval '1 minute' then 1 else c.hits+1 end,
+ started_at=case when c.started_at<now()-interval '1 minute' then now() else c.started_at end returning c.hits into hits;
+ if hits>10 then raise exception 'Try later' using errcode='P0001'; end if;
+end $$;
+revoke all on function public.cn_photo_process_attempt(uuid) from public,anon,authenticated;
+grant execute on function public.cn_photo_process_attempt(uuid) to service_role;
+create function public.cn_expire_photo_requests() returns void language plpgsql security definer set search_path='' as $$
+declare item public.cn_photo_requests; begin
+ for item in select * from public.cn_photo_requests where state='reserved' and created_at<now()-interval '7 days' for update skip locked loop
+  update public.cn_photo_requests set state='deleted' where owner_id=item.owner_id and request_id=item.request_id;
+  insert into public.cn_media_cleanup(storage_path) values(item.owner_id::text||'/'||item.request_id::text||'.jpg'),(item.owner_id::text||'/'||item.request_id::text||'_thumb.jpg') on conflict do nothing;
+ end loop;
+end $$;
+revoke all on function public.cn_expire_photo_requests() from public,anon,authenticated;
+grant execute on function public.cn_expire_photo_requests() to service_role;
 commit;

@@ -8,8 +8,9 @@ import 'package:cars_night/data/account_cleanup.dart';
 import 'package:cars_night/ui/public_profile.dart';
 import 'package:cars_night/ui/delete_account.dart';
 
-class CommunityApi extends SocialRepository {
-  CommunityApi() : super(SupabaseClient('https://example.supabase.co','public-test',authOptions: const AuthClientOptions(autoRefreshToken:false)));
+class CommunityApi implements SocialRepository {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError(invocation.memberName.toString());
   bool following = false;
   int deletionCalls = 0;
   @override
@@ -31,7 +32,7 @@ void main() {
     expect(current.thumbnails,['owner/feed_thumb.jpg']);expect(current.saved,true);
   });
   testWidgets('member profile displays real fields and updates follow state', (tester) async {
-    final api=CommunityApi();addTearDown(api.client.dispose);
+    final api=CommunityApi();
     await tester.pumpWidget(MaterialApp(theme:NightTheme.light,home:PublicProfilePage(api:api,user:'22222222-2222-2222-2222-222222222222')));
     await tester.pumpAndSettle();
     expect(find.text('Night Driver'),findsOneWidget);expect(find.text('Public car story'),findsOneWidget);
@@ -39,13 +40,13 @@ void main() {
     expect(find.text('Following'),findsOneWidget);expect(find.text('1 followers · 0 following · 0 posts'),findsOneWidget);
   });
   testWidgets('empty online saved collection is not replaced by sample posts', (tester) async {
-    final api=CommunityApi();addTearDown(api.client.dispose);
+    final api=CommunityApi();
     await tester.pumpWidget(MaterialApp(home:OnlineSavedPage(api:api)));await tester.pumpAndSettle();
     expect(find.text('Save a post from Home to find it here.'),findsOneWidget);
     expect(find.text('Alex Carter'),findsNothing);
   });
   testWidgets('account deletion needs confirmation and password; invalid password is shown', (tester) async {
-    final api=CommunityApi();addTearDown(api.client.dispose);
+    final api=CommunityApi();
     await tester.pumpWidget(MaterialApp(home:DeleteAccountPage(api:api)));await tester.pumpAndSettle();
     final button=find.widgetWithText(FilledButton,'Permanently delete app account');
     expect(tester.widget<FilledButton>(button).onPressed,isNull);

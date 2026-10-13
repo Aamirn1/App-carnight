@@ -53,7 +53,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       if (!_deleted) ...[
         TextField(controller:_password,enabled:!_busy,obscureText:true,maxLength:1024,decoration:const InputDecoration(labelText:'Current password',counterText:'')),
         CheckboxListTile(value:_confirm,onChanged:_busy?null:(value)=>setState(()=>_confirm=value??false),title:const Text('I understand and want to permanently delete my app account'),controlAffinity:ListTileControlAffinity.leading,contentPadding:EdgeInsets.zero),
-        FilledButton(onPressed:_confirm&&!_busy?_delete:null,child:Text(_busy?'Deleting…':'Permanently delete app account')),
+        FilledButton(style:FilledButton.styleFrom(backgroundColor:Theme.of(context).colorScheme.error,foregroundColor:Theme.of(context).colorScheme.onError),onPressed:_confirm&&!_busy?_delete:null,child:Text(_busy?'Deleting…':'Permanently delete app account')),
       ],
       if (_error!=null) InfoNote(_error!),
       if (_deleted) const Text('Your app account has been deleted.'),

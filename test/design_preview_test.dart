@@ -10,11 +10,14 @@ import 'package:cars_night/core/session.dart';
 import 'package:cars_night/ui/profile.dart';
 import 'package:cars_night/ui/marketplace.dart';
 import 'package:cars_night/domain/models.dart';
+import 'package:cars_night/ui/public_profile.dart';
+import 'package:cars_night/ui/delete_account.dart';
+import 'phase_b_test.dart' show CommunityApi;
 
 void main() {
   const enabled = bool.fromEnvironment('GENERATE_PREVIEWS');
   for (final dark in [false, true]) {
-    for (final page in ['profile', 'buy', 'rent', 'brand']) {
+    for (final page in ['profile', 'buy', 'rent', 'brand', 'member', 'delete']) {
       testWidgets('$page ${dark ? 'dark' : 'light'} preview', (tester) async {
         await tester.runAsync(() async {
           final font = File('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf');
@@ -56,7 +59,9 @@ void main() {
             theme: previewTheme,
             home: RepaintBoundary(
               key: const ValueKey('design-preview'),
-              child: Scaffold(
+              child: page == 'member' ? PublicProfilePage(api: CommunityApi(), user: '22222222-2222-2222-2222-222222222222')
+                : page == 'delete' ? DeleteAccountPage(api: CommunityApi())
+                : Scaffold(
                 appBar: AppBar(title: const Text('Cars Night')),
                 body: page == 'brand'
                     ? const Center(child: Brand(large: true))
