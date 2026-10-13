@@ -10,9 +10,13 @@ abstract final class AccountCleanup {
   static Future<void> mark(String owner) async {
     final prefs = await SharedPreferences.getInstance();
     final pending = {...?prefs.getStringList(key), owner}.toList();
-    if (!await prefs.setStringList(key,pending)) throw StateError('Cleanup journal unavailable');
+    if (!await prefs.setStringList(key, pending))
+      throw StateError('Cleanup journal unavailable');
   }
-  static Future<void> retry({required Future<void> Function() clearCache}) async {
+
+  static Future<void> retry({
+    required Future<void> Function() clearCache,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     final pending = prefs.getStringList(key) ?? [];
     if (pending.isEmpty) return;
@@ -20,6 +24,7 @@ abstract final class AccountCleanup {
     final store = PhotoDraftStore(Directory('${root.path}/photo-drafts'));
     for (final owner in pending) await store.clear(owner);
     await clearCache();
-    if (!await prefs.remove(key)) throw StateError('Cleanup journal could not be cleared');
+    if (!await prefs.remove(key))
+      throw StateError('Cleanup journal could not be cleared');
   }
 }

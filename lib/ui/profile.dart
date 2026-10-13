@@ -57,7 +57,9 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final rows = await api.client
           .from('cn_posts')
-          .select('id,caption,created_at,cn_post_media(storage_path,position),cn_post_thumbnails(storage_path,position)')
+          .select(
+            'id,caption,created_at,cn_post_media(storage_path,position),cn_post_thumbnails(storage_path,position)',
+          )
           .eq('owner_id', owner)
           .eq('status', 'published')
           .order('created_at', ascending: false)
@@ -95,10 +97,14 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
     if (api == null || api.me != _owner) throw StateError('Sign in again');
-    await api.client.auth.updateUser(UserAttributes(data: {
-      ...values,
-      if (values['display_name'] != null) 'cn_public_profile': true,
-    }));
+    await api.client.auth.updateUser(
+      UserAttributes(
+        data: {
+          ...values,
+          if (values['display_name'] != null) 'cn_public_profile': true,
+        },
+      ),
+    );
     if (mounted) setState(() {});
   }
 
@@ -139,14 +145,18 @@ class _ProfilePageState extends State<ProfilePage> {
         for (final item in media) {
           if (item['storage_path'] == path) {
             for (final thumb in thumbs) {
-              if (thumb['position'] == item['position']) delivery = thumb['storage_path'] as String;
+              if (thumb['position'] == item['position'])
+                delivery = thumb['storage_path'] as String;
             }
           }
         }
       }
     }
-    return RemotePhoto(url: api.imageUrl(delivery), fit: fit, decodeWidth: detail ? 1600 : 720);
-
+    return RemotePhoto(
+      url: api.imageUrl(delivery),
+      fit: fit,
+      decodeWidth: detail ? 1600 : 720,
+    );
   }
 
   Future<void> _chooseImage(bool cover) async {
@@ -510,7 +520,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 builder: (context) => Dialog(
                                   child: AspectRatio(
                                     aspectRatio: 1,
-                                    child: _photo(p, fit: BoxFit.contain, detail: true),
+                                    child: _photo(
+                                      p,
+                                      fit: BoxFit.contain,
+                                      detail: true,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -631,7 +645,9 @@ class _ProfileEditorState extends State<_ProfileEditor> {
     child: PageFrame(
       title: 'Edit profile',
       children: [
-        const InfoNote('Your name, bio, city and dream car will be visible to other signed-in members. Leave optional details blank to keep them private.'),
+        const InfoNote(
+          'Your name, bio, city and dream car will be visible to other signed-in members. Leave optional details blank to keep them private.',
+        ),
         Form(
           key: _form,
           child: Column(
@@ -708,47 +724,48 @@ class SavedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final api = BackendScope.of(context)?.social;
-    if (api != null && BackendScope.of(context)?.account != null) return OnlineSavedPage(api: api);
+    if (api != null && BackendScope.of(context)?.account != null)
+      return OnlineSavedPage(api: api);
     return ListenableBuilder(
-    listenable: session,
-    builder: (context, _) {
-      final cars = DemoCatalog.listings
-          .where((car) => session.isSaved(car.id))
-          .toList();
-      final posts = session.posts
-          .where((post) => session.isSaved(post.id))
-          .toList();
-      return PageFrame(
-        title: 'Saved collection',
-        children: [
-          if (cars.isEmpty && posts.isEmpty)
-            const EmptyState(
-              title: 'Keep your favorites close',
-              message: 'Save cars and posts to find them here.',
-              icon: Icons.bookmark_border,
-            ),
-          if (cars.isNotEmpty) ...[
-            Text('Cars', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 12),
-            for (final car in cars)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ListingCard(car: car, session: session, compact: true),
+      listenable: session,
+      builder: (context, _) {
+        final cars = DemoCatalog.listings
+            .where((car) => session.isSaved(car.id))
+            .toList();
+        final posts = session.posts
+            .where((post) => session.isSaved(post.id))
+            .toList();
+        return PageFrame(
+          title: 'Saved collection',
+          children: [
+            if (cars.isEmpty && posts.isEmpty)
+              const EmptyState(
+                title: 'Keep your favorites close',
+                message: 'Save cars and posts to find them here.',
+                icon: Icons.bookmark_border,
               ),
+            if (cars.isNotEmpty) ...[
+              Text('Cars', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 12),
+              for (final car in cars)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: ListingCard(car: car, session: session, compact: true),
+                ),
+            ],
+            if (posts.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text('Posts', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 12),
+              for (final post in posts)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: PostCard(post: post, session: session),
+                ),
+            ],
           ],
-          if (posts.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            Text('Posts', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 12),
-            for (final post in posts)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: PostCard(post: post, session: session),
-              ),
-          ],
-        ],
-      );
-    },
-  );
+        );
+      },
+    );
   }
 }

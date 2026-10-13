@@ -37,7 +37,11 @@ Future<void> main() async {
   }
   final appearance = Appearance();
   await appearance.restore();
-  try { await AccountCleanup.retry(clearCache: PhotoCache.manager.emptyCache); } catch (_) { /* Retry confirmed deletion cleanup on the next startup. */ }
+  try {
+    await AccountCleanup.retry(clearCache: PhotoCache.manager.emptyCache);
+  } catch (_) {
+    /* Retry confirmed deletion cleanup on the next startup. */
+  }
   if (appearance.mode == ThemeMode.light ||
       (appearance.mode == ThemeMode.system &&
           WidgetsBinding.instance.platformDispatcher.platformBrightness ==

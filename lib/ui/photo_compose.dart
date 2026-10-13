@@ -251,7 +251,8 @@ class _PhotoComposePageState extends State<PhotoComposePage> {
       final code = e.details is Map ? e.details['code'] : null;
       final message = switch (code) {
         'setup' => 'Photo publishing is awaiting server setup.',
-        'rate_limit' => 'Too many upload attempts. Wait a minute before retrying.',
+        'rate_limit' =>
+          'Too many upload attempts. Wait a minute before retrying.',
         'quota' =>
           'The photo posting limit has been reached. Please try later.',
         'invalid_image' =>

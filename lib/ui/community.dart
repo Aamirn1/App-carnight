@@ -383,7 +383,8 @@ class _CommunityState extends State<_Community> {
                         ),
                   onComment: () => _comments(p),
                   onShare: () async {
-                    final text = 'Cars Night · ${p.name}\n${p.caption}${p.images.isEmpty ? '' : '\nPhoto: ${widget.api.imageUrl(p.images.first)}'}';
+                    final text =
+                        'Cars Night · ${p.name}\n${p.caption}${p.images.isEmpty ? '' : '\nPhoto: ${widget.api.imageUrl(p.images.first)}'}';
                     if (!await PlatformActions.shareText(text)) {
                       await Clipboard.setData(ClipboardData(text: text));
                       if (context.mounted)
@@ -393,7 +394,12 @@ class _CommunityState extends State<_Community> {
                     }
                   },
                   saved: p.saved,
-                  onSave: _pending.contains(p.id) ? null : () => _action(p.id, () => widget.api.savePost(p.id, !p.saved)),
+                  onSave: _pending.contains(p.id)
+                      ? null
+                      : () => _action(
+                          p.id,
+                          () => widget.api.savePost(p.id, !p.saved),
+                        ),
                   trailing: own
                       ? PopupMenuButton<String>(
                           tooltip: 'Your post options',
@@ -409,9 +415,9 @@ class _CommunityState extends State<_Community> {
                           tooltip: 'Post options',
                           icon: const Icon(Icons.more_horiz),
                           itemBuilder: (_) => [
-                            PopupMenuItem(
+                            const PopupMenuItem(
                               value: 'profile',
-                              child: const Text('View profile'),
+                              child: Text('View profile'),
                             ),
                             PopupMenuItem(
                               value: 'follow',
@@ -432,7 +438,13 @@ class _CommunityState extends State<_Community> {
                                 pushPage<void>(context, const AuthPage());
                                 return;
                               }
-                              pushPage<void>(context, PublicProfilePage(api: widget.api, user: p.ownerId));
+                              pushPage<void>(
+                                context,
+                                PublicProfilePage(
+                                  api: widget.api,
+                                  user: p.ownerId,
+                                ),
+                              );
                               return;
                             }
                             if (value == 'report') {
@@ -475,11 +487,25 @@ class _CommunityState extends State<_Community> {
                             children: [
                               for (final path in p.images)
                                 GestureDetector(
-                                  onTap: () => pushPage<void>(context, PhotoDetailPage(url: widget.api.imageUrl(path), caption: p.caption)),
+                                  onTap: () => pushPage<void>(
+                                    context,
+                                    PhotoDetailPage(
+                                      url: widget.api.imageUrl(path),
+                                      caption: p.caption,
+                                    ),
+                                  ),
                                   child: RemotePhoto(
-                                    url: widget.api.imageUrl(p.thumbnails.length > p.images.indexOf(path) ? p.thumbnails[p.images.indexOf(path)] : path),
-                                    decodeWidth: widget.demo.dataSaver ? 480 : 720,
-                                    label: 'Photo by ${p.name}. Tap to open full photo',
+                                    url: widget.api.imageUrl(
+                                      p.thumbnails.length >
+                                              p.images.indexOf(path)
+                                          ? p.thumbnails[p.images.indexOf(path)]
+                                          : path,
+                                    ),
+                                    decodeWidth: widget.demo.dataSaver
+                                        ? 480
+                                        : 720,
+                                    label:
+                                        'Photo by ${p.name}. Tap to open full photo',
                                   ),
                                 ),
                             ],

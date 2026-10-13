@@ -1,3 +1,5 @@
+> Latest checkpoint: **0.11.0+13 — Phase B implementation deployed; device acceptance pending.** See [COMMUNITY_PHASE_B_0.11.md](COMMUNITY_PHASE_B_0.11.md) for features, test evidence, APK and remaining gates. This supersedes older statements below about missing deletion, member profiles, saved feeds and thumbnails. Website login is separate; app deletion does not remove website records.
+
 # Consolidated pre-launch work
 
 Follow PRELAUNCH_PHASES.md (A–D) in order. Phase A restores the original brand in

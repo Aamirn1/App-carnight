@@ -124,10 +124,15 @@ class SettingsPage extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   final api = BackendScope.of(context)?.social;
-                  if (api != null && BackendScope.of(context)?.account != null) {
+                  if (api != null &&
+                      BackendScope.of(context)?.account != null) {
                     pushPage<void>(context, DeleteAccountPage(api: api));
                   } else {
-                    showUnavailable(context, 'No account to delete', 'You are exploring the sample app without signing in.');
+                    showUnavailable(
+                      context,
+                      'No account to delete',
+                      'You are exploring the sample app without signing in.',
+                    );
                   }
                 },
               ),
