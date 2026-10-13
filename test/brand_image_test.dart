@@ -1,4 +1,7 @@
 import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
+import 'package:cars_night/core/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cars_night/core/brand_image.dart';
@@ -18,7 +21,33 @@ void main() {
     expect(source[0], 255);
   });
   testWidgets('light theme retains the real image logo without replacement text', (tester) async {
-    await tester.runAsync(() async { await BrandImage.light; });
+    await tester.runAsync(() async {
+      final light = await BrandImage.light;
+      final asset = await rootBundle.load(NightAssets.wordmark);
+      final codec = await ui.instantiateImageCodec(asset.buffer.asUint8List());
+      final original = (await codec.getNextFrame()).image;
+      final originalData = (await original.toByteData(format: ui.ImageByteFormat.rawRgba))!;
+      final renderedData = (await light.toByteData(format: ui.ImageByteFormat.rawRgba))!;
+      final source = originalData.buffer.asUint8List();
+      final rendered = renderedData.buffer.asUint8List();
+      expect(light.width, original.width);
+      expect(light.height, original.height);
+      var coloured = 0;
+      var changedGradientPixels = 0;
+      var changedAlphaPixels = 0;
+      for (var i = 0; i < source.length; i += 4) {
+        if (rendered[i + 3] != source[i + 3]) changedAlphaPixels++;
+        if (source[i] != source[i + 1] || source[i] != source[i + 2]) {
+          coloured++;
+          if (rendered[i] != source[i] || rendered[i + 1] != source[i + 1] || rendered[i + 2] != source[i + 2]) changedGradientPixels++;
+        }
+      }
+      expect(coloured, greaterThan(1000));
+      expect(changedGradientPixels, 0);
+      expect(changedAlphaPixels, 0);
+      original.dispose();
+      codec.dispose();
+    });
     await tester.pumpWidget(MaterialApp(theme: NightTheme.light, home: const Scaffold(body: Brand())));
     await tester.pumpAndSettle();
     expect(find.byType(RawImage), findsOneWidget);
