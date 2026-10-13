@@ -114,7 +114,7 @@ grant execute on function public.cn_saved_feed(timestamptz,uuid),public.cn_autho
 create function public.cn_account_delete_attempt(actor uuid) returns void language plpgsql security definer set search_path='' as $$
 declare hits integer; begin
  insert into public.cn_rate_counters as c(actor,action,started_at,hits) values(actor,'account-delete',now(),1)
- on conflict(actor,action) do update set hits=case when c.started_at<now()-interval '1 hour' then 1 else c.hits+1 end,
+ on conflict on constraint cn_rate_counters_pkey do update set hits=case when c.started_at<now()-interval '1 hour' then 1 else c.hits+1 end,
  started_at=case when c.started_at<now()-interval '1 hour' then now() else c.started_at end returning c.hits into hits;
  if hits>5 then raise exception 'Try later' using errcode='P0001'; end if;
 end $$;

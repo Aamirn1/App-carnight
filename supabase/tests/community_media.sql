@@ -11,7 +11,7 @@ select public.cn_reserve_photo('11111111-1111-1111-1111-111111111111','bbbbbbbb-
 select public.cn_finish_photo_v2('11111111-1111-1111-1111-111111111111','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',800,600,400000,480,360,50000);
 set local role authenticated;
 select set_config('request.jwt.claim.sub','22222222-2222-2222-2222-222222222222',true);
-insert into public.cn_follows values('22222222-2222-2222-2222-222222222222','11111111-1111-1111-1111-111111111111',now());
+insert into public.cn_follows(follower_id,followed_id) values('22222222-2222-2222-2222-222222222222','11111111-1111-1111-1111-111111111111');
 insert into public.cn_saved_posts(user_id,post_id) select auth.uid(),id from public.cn_posts;
 do $$ declare item jsonb; begin
  item:=public.cn_profile('11111111-1111-1111-1111-111111111111');
@@ -44,6 +44,15 @@ do $$ begin
  if not public.cn_account_session_valid('11111111-1111-1111-1111-111111111111','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa') then raise exception 'FAIL session check'; end if;
  if public.cn_account_session_valid('22222222-2222-2222-2222-222222222222','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa') then raise exception 'FAIL foreign session'; end if;
 end $$;
+set local role service_role;
+do $$ declare i integer; begin
+ for i in 1..5 loop perform public.cn_account_delete_attempt('11111111-1111-1111-1111-111111111111'); end loop;
+ begin
+  perform public.cn_account_delete_attempt('11111111-1111-1111-1111-111111111111');
+  raise exception 'FAIL delete attempt budget' using errcode='XX000';
+ exception when raise_exception then null; end;
+end $$;
+reset role;
 delete from auth.users where id='11111111-1111-1111-1111-111111111111';
 do $$ begin
  if (select count(*) from public.cn_media_cleanup)<>2 then raise exception 'FAIL two derivatives not queued'; end if;
@@ -52,5 +61,13 @@ do $$ begin
  if (select count(*) from public.cn_post_thumbnails)<>0 then raise exception 'FAIL thumbnail metadata remained'; end if;
  if (select count(*) from auth.sessions)<>0 then raise exception 'FAIL session survived'; end if;
  if (select website_marker from public.posts limit 1)<>'website-unchanged' then raise exception 'FAIL website touched'; end if;
+end $$;
+insert into public.cn_photo_charges(owner_id,request_id,created_at)
+select '11111111-1111-1111-1111-111111111111',gen_random_uuid(),now() from generate_series(1,199);
+do $$ begin
+ begin
+  perform public.cn_reserve_photo('22222222-2222-2222-2222-222222222222',gen_random_uuid(),repeat('b',64),'Cannot bypass deleted-account budget');
+  raise exception 'FAIL global budget reset after deletion' using errcode='XX000';
+ exception when raise_exception then null; end;
 end $$;
 rollback;
