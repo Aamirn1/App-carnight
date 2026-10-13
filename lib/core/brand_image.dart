@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'assets.dart';
@@ -8,7 +9,9 @@ import 'assets.dart';
 Uint8List lightBrandPixels(Uint8List source) {
   final pixels = Uint8List.fromList(source);
   for (var i = 0; i + 3 < pixels.length; i += 4) {
-    if (pixels[i + 3] > 0 && pixels[i] * 255 >= 200 * pixels[i + 3] && pixels[i] == pixels[i + 1] && pixels[i] == pixels[i + 2]) {
+    final low = math.min(pixels[i], math.min(pixels[i + 1], pixels[i + 2]));
+    final high = math.max(pixels[i], math.max(pixels[i + 1], pixels[i + 2]));
+    if (pixels[i + 3] > 0 && low * 255 >= 200 * pixels[i + 3] && (high - low) * 255 <= 20 * pixels[i + 3]) {
       pixels[i] = 0;
       pixels[i + 1] = 0;
       pixels[i + 2] = 0;
