@@ -21,7 +21,7 @@ Database tests cover third-party unread isolation, idempotent reads, later arriv
 ## Remaining work before Phase C acceptance
 
 - Physical two-account realtime/reconnect/unread/enquiry scenarios, live upload/publication and measured transfer/startup performance.
-- Saved live listings, listing-specific report review, listing editing, expanded specifications and rental date enquiry details.
+- Saved live listings, listing reporting/moderation, revision-checked editing and rental date enquiries are now implemented and deployed; see MARKET_ACTIONS_0.12.md. Expanded structured specifications remain deferred.
 - Public push notifications are not implemented; realtime updates currently require an open app.
 - Website seller linking/import is not implemented. The website Listing table was empty at inspection; website User identities are separate from Supabase Auth. Never infer ownership from matching display names. A verified linking workflow and website-side authorization are required before bridging future inventory.
 - Publication currently chooses among the latest 20 own published photos. Direct listing photo upload and multi-image galleries are not included in this checkpoint.
@@ -31,7 +31,7 @@ Security advisors retain the earlier reviewed service-only RLS and intentional c
 
 Expanded validation run 38528616475 found two new narrow-screen test assertions failing and one remaining analyzer notice. The earlier 53-test baseline passed; the expanded 55-test run is being corrected and rerun. No APK was generated.
 
-Performance advisor follow-up: three existing foreign keys on cn_comments.user_id and cn_reports.reporter_id/reported_user_id lack covering indexes. Address before load testing. Unused-index notices on this low-traffic project are not evidence that the indexes should be removed.
+Performance advisor follow-up: covering indexes for cn_comments.user_id and cn_reports.reporter_id/reported_user_id were added in the deployed market-actions migration. Unused-index notices on this low-traffic project are not evidence that the indexes should be removed.
 
 ## Verified final checkpoint
 
