@@ -29,4 +29,4 @@ Database tests cover third-party unread isolation, idempotent reads, later arriv
 
 Security advisors retain the earlier reviewed service-only RLS and intentional checked RPC findings. Website search-path and leaked-password protection findings remain release review items, documented in COMMUNITY_PHASE_B_0.11.md.
 
-Final validation: https://github.com/Aamirn1/App-carnight/actions/runs/38528616475 — 55 functional Flutter tests passed, static analysis reports no issues, database and backend/media checks passed. Both 320px marketplace theme checks use 1.5× text scaling. APK build/upload steps were skipped as requested. UI renders in this workflow still cover the previous 12 fixture views; populated live-listing visual acceptance remains open. Subsequent About/article edits only correct outdated service descriptions.
+Expanded validation run 38528616475 found two new narrow-screen test assertions failing and one remaining analyzer notice. The earlier 53-test baseline passed; the expanded 55-test run is being corrected and rerun. No APK was generated.

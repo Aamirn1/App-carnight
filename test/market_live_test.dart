@@ -27,7 +27,10 @@ void main() {
         home: Scaffold(body: MediaQuery(data: const MediaQueryData(size: Size(320,800),textScaler: TextScaler.linear(1.5)),
           child: LiveMarketplace(api: SocialRepository(client),kind:'sale')))));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text('No matching listings yet'), 250, scrollable: find.byType(Scrollable).first);
       expect(find.text('No matching listings yet'),findsOneWidget);
+      await tester.drag(find.byType(ListView), const Offset(0, 700));
+      await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first,'Civic');
       await tester.pump(const Duration(milliseconds:500));
       await tester.pumpAndSettle();

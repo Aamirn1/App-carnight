@@ -452,7 +452,7 @@ class _PublishListingPageState extends State<PublishListingPage> {
         'listing_currency': _currency,
         'listing_price': parseMarketPrice(_price.text, _currency),
       });
-      if (context.mounted) Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) setState(() => _error = serviceError(e));
     } finally {
