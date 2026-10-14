@@ -86,7 +86,8 @@ alter table public.cn_rental_enquiries enable row level security;
 revoke all on public.cn_rental_enquiries from public,anon,authenticated;
 grant select on public.cn_rental_enquiries to authenticated;
 grant all on public.cn_rental_enquiries to service_role;
-create policy cn_enquiry_participant on public.cn_rental_enquiries for select to authenticated using(exists(select 1 from public.cn_conversations c where c.id=conversation_id));
+create policy cn_enquiry_participant on public.cn_rental_enquiries for select to authenticated using(exists(select 1 from public.cn_conversations c where c.id=conversation_id and (select auth.uid()) in(c.requester_id,c.recipient_id) and public.cn_can_interact(case when c.requester_id=auth.uid() then c.recipient_id else c.requester_id end)));
+
 create function public.cn_request_rental(target_listing uuid,pickup_day date,dropoff_day date,request_id uuid) returns uuid
 language plpgsql security definer set search_path='' as $$
 declare seller uuid; chat uuid; previous public.cn_rental_enquiries; begin
