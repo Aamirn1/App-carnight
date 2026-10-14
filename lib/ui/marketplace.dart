@@ -531,8 +531,14 @@ class MarketplaceHub extends StatelessWidget {
         Expanded(
           child: TabBarView(
             children: [
-              if (BackendScope.of(context)?.social case final api?) LiveMarketplace(api: api, kind: 'sale') else MarketplacePage(kind: ListingKind.sale, session: session),
-              if (BackendScope.of(context)?.social case final api?) LiveMarketplace(api: api, kind: 'rental') else MarketplacePage(kind: ListingKind.rental, session: session),
+              if (BackendScope.of(context)?.social case final api?)
+                LiveMarketplace(api: api, kind: 'sale')
+              else
+                MarketplacePage(kind: ListingKind.sale, session: session),
+              if (BackendScope.of(context)?.social case final api?)
+                LiveMarketplace(api: api, kind: 'rental')
+              else
+                MarketplacePage(kind: ListingKind.rental, session: session),
             ],
           ),
         ),

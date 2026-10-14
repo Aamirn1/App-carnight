@@ -60,13 +60,19 @@ class _InboxState extends State<_Inbox> with WidgetsBindingObserver {
     if (!mounted) return;
     _refreshTimer?.cancel();
     _refreshTimer = Timer(const Duration(milliseconds: 350), () {
-      if (_busy) { _pendingRefresh = true; } else { _load(); }
+      if (_busy) {
+        _pendingRefresh = true;
+      } else {
+        _load();
+      }
     });
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) _scheduleRefresh();
   }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -74,6 +80,7 @@ class _InboxState extends State<_Inbox> with WidgetsBindingObserver {
     if (_channel != null) unawaited(widget.api.stopWatching(_channel!));
     super.dispose();
   }
+
   final List<Conversation> _rows = [];
   Map<String, String> _names = {};
   int _tab = 0;
@@ -110,7 +117,10 @@ class _InboxState extends State<_Inbox> with WidgetsBindingObserver {
     } finally {
       if (mounted) {
         setState(() => _busy = false);
-        if (_pendingRefresh) { _pendingRefresh = false; _scheduleRefresh(); }
+        if (_pendingRefresh) {
+          _pendingRefresh = false;
+          _scheduleRefresh();
+        }
       }
     }
   }
@@ -218,7 +228,12 @@ class _InboxState extends State<_Inbox> with WidgetsBindingObserver {
                       ? 'Wants to connect'
                       : 'Request sent',
                 ),
-                trailing: c.unread > 0 ? Badge(label: Text('${c.unread}'), child: const Icon(Icons.chat_bubble_outline)) : const Icon(Icons.chevron_right),
+                trailing: c.unread > 0
+                    ? Badge(
+                        label: Text('${c.unread}'),
+                        child: const Icon(Icons.chat_bubble_outline),
+                      )
+                    : const Icon(Icons.chevron_right),
                 onTap: () async {
                   await pushPage<void>(
                     context,
@@ -422,7 +437,8 @@ class ConversationPage extends StatefulWidget {
   State<ConversationPage> createState() => _ConversationPageState();
 }
 
-class _ConversationPageState extends State<ConversationPage> with WidgetsBindingObserver {
+class _ConversationPageState extends State<ConversationPage>
+    with WidgetsBindingObserver {
   RealtimeChannel? _channel;
   SocialRepository? _watchApi;
   Timer? _refreshTimer;
@@ -431,9 +447,14 @@ class _ConversationPageState extends State<ConversationPage> with WidgetsBinding
     if (!mounted) return;
     _refreshTimer?.cancel();
     _refreshTimer = Timer(const Duration(milliseconds: 350), () {
-      if (_loading) { _pendingRefresh = true; } else { _load(); }
+      if (_loading) {
+        _pendingRefresh = true;
+      } else {
+        _load();
+      }
     });
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) _scheduleRefresh();
@@ -451,14 +472,20 @@ class _ConversationPageState extends State<ConversationPage> with WidgetsBinding
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_authorized) {
-      if (_channel != null) { unawaited(_watchApi!.stopWatching(_channel!)); _channel = null; }
+      if (_channel != null) {
+        unawaited(_watchApi!.stopWatching(_channel!));
+        _channel = null;
+      }
       return;
     }
     if (!_started) {
       _started = true;
       WidgetsBinding.instance.addObserver(this);
       _watchApi = _api;
-      _channel = _api.watchMessages(_scheduleRefresh, conversation: widget.conversation.id);
+      _channel = _api.watchMessages(
+        _scheduleRefresh,
+        conversation: widget.conversation.id,
+      );
       _load();
     }
   }
@@ -494,7 +521,10 @@ class _ConversationPageState extends State<ConversationPage> with WidgetsBinding
         _rows.addAll(rows.where((r) => !ids.contains(r.id)));
         _more = rows.length == 30;
       });
-      if ((ModalRoute.of(context)?.isCurrent ?? false) && (WidgetsBinding.instance.lifecycleState == null || WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed)) {
+      if ((ModalRoute.of(context)?.isCurrent ?? false) &&
+          (WidgetsBinding.instance.lifecycleState == null ||
+              WidgetsBinding.instance.lifecycleState ==
+                  AppLifecycleState.resumed)) {
         await api.markRead(rows.map((r) => r.id).toList());
       }
     } catch (e) {
@@ -502,7 +532,10 @@ class _ConversationPageState extends State<ConversationPage> with WidgetsBinding
     } finally {
       if (mounted) {
         setState(() => _loading = false);
-        if (_pendingRefresh) { _pendingRefresh = false; _scheduleRefresh(); }
+        if (_pendingRefresh) {
+          _pendingRefresh = false;
+          _scheduleRefresh();
+        }
       }
     }
   }

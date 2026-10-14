@@ -141,7 +141,7 @@ class SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Cars Night · Testing build 0.11.0',
+          'Cars Night · Testing build 0.12.0',
           style: TextStyle(color: NightTheme.secondaryText(context)),
         ),
       ],

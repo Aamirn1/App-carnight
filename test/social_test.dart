@@ -24,16 +24,29 @@ class FakeChannel implements RealtimeChannel {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
 class FakeSocial implements SocialRepository {
   void Function()? refresh;
   final readIds = <String>[];
   bool stopped = false;
   @override
-  RealtimeChannel watchMessages(void Function() callback, {String? conversation}) { refresh = callback; return FakeChannel(); }
+  RealtimeChannel watchMessages(
+    void Function() callback, {
+    String? conversation,
+  }) {
+    refresh = callback;
+    return FakeChannel();
+  }
+
   @override
-  Future<void> stopWatching(RealtimeChannel channel) async { stopped = true; }
+  Future<void> stopWatching(RealtimeChannel channel) async {
+    stopped = true;
+  }
+
   @override
-  Future<void> markRead(List<String> ids) async { readIds.addAll(ids); }
+  Future<void> markRead(List<String> ids) async {
+    readIds.addAll(ids);
+  }
 
   @override
   Future<void> ensureProfile(String name) async {}
