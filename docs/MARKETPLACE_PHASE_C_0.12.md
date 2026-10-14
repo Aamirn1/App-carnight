@@ -30,3 +30,11 @@ Database tests cover third-party unread isolation, idempotent reads, later arriv
 Security advisors retain the earlier reviewed service-only RLS and intentional checked RPC findings. Website search-path and leaked-password protection findings remain release review items, documented in COMMUNITY_PHASE_B_0.11.md.
 
 Expanded validation run 38528616475 found two new narrow-screen test assertions failing and one remaining analyzer notice. The earlier 53-test baseline passed; the expanded 55-test run is being corrected and rerun. No APK was generated.
+
+Performance advisor follow-up: three existing foreign keys on cn_comments.user_id and cn_reports.reporter_id/reported_user_id lack covering indexes. Address before load testing. Unused-index notices on this low-traffic project are not evidence that the indexes should be removed.
+
+## Verified final checkpoint
+
+Source `1f9c2a84babc6c376d43f6c031d36bbd7bfb6146` passed https://github.com/Aamirn1/App-carnight/actions/runs/38529480729 on 14 October 2026: **55 Flutter tests, clean static analysis, 12 backend/media tests and database ownership checks**. Both new 320px/1.5× text theme tests passed after using an injected fake repository. The earlier expanded test failures are superseded by this successful run. No APK was built.
+
+The existing 12 fixture renders also passed; populated live-listing visual and physical-device acceptance remain open. Live smoke checks confirmed guest browsing works, guest inbox/read-marker/publication access is denied, and authenticated publication is granted through the ownership-checking RPC.

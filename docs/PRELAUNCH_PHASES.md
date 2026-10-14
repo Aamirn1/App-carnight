@@ -24,9 +24,7 @@ remains explicitly part of the full beta in D. Original light-mode logo restored
 and colours, changing only bright near-neutral lettering to black at rendering time.
 Light gradient controls use black ink for readability. No layout redesign is part
 of this fix. See UI_PHASE_A_0.10.md for the tested build and APK.
-B has existing working implementations, including deployed moderation/cleanup;
-full account deletion and physical-device acceptance remain open. C is partly
-implemented with sample marketplace inventory and basic consent-based messaging.
+B implementation now includes deployed account deletion, profiles, saved posts and media efficiency; physical-device and operator acceptance remain open. C now includes live app inventory publication, enquiries, realtime and unread state; remaining marketplace features and website identity linking are tracked in MARKETPLACE_PHASE_C_0.12.md.
 D has CI checks but is not a completed public beta.
 
 ## Whole-app test matrix
@@ -51,7 +49,7 @@ launch unless explicitly added to scope.
 
 ## Actual decisions needed before public release
 
-Moderator account identity, shared-login account-deletion scope, selected launch
+Moderator account identity, verified website seller linking, selected launch
 regions/languages, monthly hosting budget, public privacy/support details and
 production store/signing ownership must be settled. Work that does not depend on
 these proceeds normally; they are not grounds to pause UI and source work.
