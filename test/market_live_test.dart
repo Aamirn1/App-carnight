@@ -1,3 +1,7 @@
+import 'package:cars_night/backend/session.dart';
+import 'package:cars_night/backend/repositories.dart';
+import 'package:cars_night/ui/listing_edit.dart';
+import 'backend_test.dart' as fixtures;
 import 'package:flutter/material.dart';
 import 'package:cars_night/backend/social.dart';
 import 'package:cars_night/ui/live_market.dart';
@@ -7,13 +11,28 @@ import 'package:cars_night/backend/market.dart';
 
 class FakeMarket implements SocialRepository {
  final requests = <Map<String,dynamic>>[];
+ Map<String,dynamic>? edited;
+ @override Future<void> editListing(Map<String,dynamic> row) async { edited=row; throw StateError('conflict'); }
  @override
- Future<List<Map<String,dynamic>>> market({required String kind,String country='',String city='',String query='',String category='All',Map<String,dynamic>? before}) async {
+ Future<List<Map<String,dynamic>>> market({required String kind,String country='',String city='',String query='',String category='All',bool savedOnly=false,Map<String,dynamic>? before}) async {
   requests.add({'listing_kind':kind,'query_text':query});return [];
  }
  @override dynamic noSuchMethod(Invocation invocation)=>throw UnimplementedError();
 }
 void main() {
+ testWidgets('seller editor preserves entered fields after a revision conflict', (tester) async {
+  final accounts=fixtures.FakeAccounts();accounts.restored.complete(const AccountSummary(id:fixtures.owner,displayName:'Seller'));
+  final api=FakeMarket();final backend=BackendSession(accounts:accounts,drafts:fixtures.FakeDrafts(),social:api);
+  await tester.pumpWidget(BackendScope(session:backend,child:MaterialApp(theme:NightTheme.light,home:EditListingPage(api:api,row:{'id':'offer','owner_id':fixtures.owner,'title':'Car','description':'Details','city':'Dubai','currency':'AED','price_minor':10000,'revision':3,'kind':'sale'}))));
+  await tester.pumpAndSettle();
+  await tester.enterText(find.byType(TextFormField).first,'Updated car');
+  await tester.ensureVisible(find.text('Save changes'));await tester.tap(find.text('Save changes'));await tester.pumpAndSettle();
+  expect(api.edited?['revision'],3);expect(api.edited?['title'],'Updated car');
+  expect(find.textContaining('The offer may have changed'),findsOneWidget);
+  expect(find.text('Updated car'),findsOneWidget);
+  await tester.pumpWidget(const SizedBox());backend.dispose();await accounts.dispose();
+ });
+
   for (final dark in [false, true]) {
     testWidgets('live marketplace filters on narrow ${dark ? 'dark' : 'light'} screen', (tester) async {
       final api = FakeMarket();

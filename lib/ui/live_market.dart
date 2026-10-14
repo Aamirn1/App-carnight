@@ -10,6 +10,7 @@ import 'components.dart';
 import 'remote_photo.dart';
 import 'auth.dart';
 import 'messages.dart';
+import 'listing_edit.dart';
 
 class LiveMarketplace extends StatefulWidget {
   const LiveMarketplace({super.key, required this.api, required this.kind});
@@ -22,6 +23,7 @@ class LiveMarketplace extends StatefulWidget {
 class _LiveMarketplaceState extends State<LiveMarketplace> {
   final _search = TextEditingController(), _city = TextEditingController();
   String _country = '', _category = 'All';
+  bool _savedOnly = false;
   List<Map<String, dynamic>> _rows = [];
   bool _busy = false, _more = true, _started = false;
   int _generation = 0;
@@ -70,6 +72,7 @@ class _LiveMarketplaceState extends State<LiveMarketplace> {
         city: _city.text,
         query: _search.text,
         category: _category,
+        savedOnly: _savedOnly,
         before: more && _rows.isNotEmpty ? _rows.last : null,
       );
       if (!mounted || generation != _generation) return;
@@ -176,6 +179,9 @@ class _LiveMarketplaceState extends State<LiveMarketplace> {
             ],
           ),
         ),
+        if (BackendScope.of(context)?.account != null)
+          FilterChip(label: const Text('Saved cars'), selected: _savedOnly,
+            onSelected: (value) { _savedOnly=value; _changed(); }),
         Align(
           alignment: Alignment.centerRight,
           child: TextButton.icon(
@@ -269,6 +275,22 @@ class LiveListingDetail extends StatefulWidget {
 class _LiveListingDetailState extends State<LiveListingDetail> {
   bool _busy = false;
   String? _error;
+  DateTimeRange? _dates;
+  String _enquiryRequest = const Uuid().v4();
+  Future<void> _save() async {
+    if(BackendScope.of(context)?.account==null){await pushPage<void>(context,const AuthPage());return;}
+    setState(()=>_busy=true);
+    try{final value=widget.row['saved']!=true;await widget.api.saveListing(widget.row['id'] as String,value);if(mounted)setState(()=>widget.row['saved']=value);}
+    catch(e){if(mounted)setState(()=>_error=serviceError(e));}finally{if(mounted)setState(()=>_busy=false);}
+  }
+  Future<void> _report() async {
+    if(BackendScope.of(context)?.account==null){await pushPage<void>(context,const AuthPage());return;}
+    var enteredReason = '';
+    final reason=await showDialog<String>(context:context,builder:(c)=>AlertDialog(title:const Text('Report listing'),content:TextField(onChanged:(value)=>enteredReason=value,maxLength:500,maxLines:3,decoration:const InputDecoration(labelText:'Reason')),actions:[TextButton(onPressed:()=>Navigator.pop(c),child:const Text('Cancel')),TextButton(onPressed:()=>Navigator.pop(c,enteredReason.trim()),child:const Text('Submit'))]));
+    if(!mounted||reason==null||reason.isEmpty)return;
+    setState(()=>_busy=true);try{await widget.api.reportListing(widget.row['id'] as String,reason);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Report submitted for review.')));}
+    catch(e){if(mounted)setState(()=>_error=serviceError(e));}finally{if(mounted)setState(()=>_busy=false);}
+  }
   Future<void> _contact() async {
     final owner = BackendScope.of(context)?.account?.id;
     if (owner == null) {
@@ -277,10 +299,9 @@ class _LiveListingDetailState extends State<LiveListingDetail> {
     }
     setState(() => _busy = true);
     try {
-      final id = await widget.api.request(
-        widget.row['owner_id'] as String,
-        listingId: widget.row['id'] as String,
-      );
+      final id = _dates == null ? await widget.api.request(
+        widget.row['owner_id'] as String, listingId: widget.row['id'] as String,
+      ) : await widget.api.requestRental(widget.row['id'] as String,_dates!.start,_dates!.end,_enquiryRequest);
       final chat = await widget.api.conversation(id);
       if (!mounted || BackendScope.of(context)?.account?.id != owner) return;
       await pushPage<void>(
@@ -323,6 +344,20 @@ class _LiveListingDetailState extends State<LiveListingDetail> {
           const InfoNote(
             'Daily asking price. Agree dates, availability, deposit and any fees directly with the seller. Sending an enquiry does not reserve a car.',
           ),
+        TextButton.icon(onPressed:_busy?null:_save,icon:Icon(row['saved']==true?Icons.bookmark:Icons.bookmark_outline),label:Text(row['saved']==true?'Saved car':'Save car')),
+        if(!mine&&row['kind']=='rental') OutlinedButton.icon(icon:const Icon(Icons.calendar_month),label:Text(_dates==null?'Choose enquiry dates':'${_dates!.start.toIso8601String().substring(0,10)} → ${_dates!.end.toIso8601String().substring(0,10)}'),onPressed:_busy?null:()async{
+          final now=DateTime.now();final start=DateTime(now.year,now.month,now.day);
+          final dates=await showDateRangePicker(context:context,firstDate:start,lastDate:start.add(const Duration(days:730)),initialDateRange:_dates);
+          if(!mounted||dates==null)return;
+          final days=DateTime.utc(dates.end.year,dates.end.month,dates.end.day).difference(DateTime.utc(dates.start.year,dates.start.month,dates.start.day)).inDays;
+          if(days<1||days>365){setState(()=>_error='Choose a rental period of 1–365 days.');return;}
+          setState((){_dates=dates;_enquiryRequest=const Uuid().v4();});
+        }),
+        if(!mine) TextButton(onPressed:_busy?null:_report,child:const Text('Report listing')),
+        if(mine) OutlinedButton.icon(icon:const Icon(Icons.edit_outlined),label:const Text('Edit listing'),onPressed:_busy?null:()async{
+          final result=await pushPage<Map<String,dynamic>>(context,EditListingPage(api:widget.api,row:row));
+          if(mounted&&result!=null)setState(()=>widget.row.addAll(result));
+        }),
         if (_error != null) InfoNote(_error!),
         const SizedBox(height: 20),
         if (!mine)

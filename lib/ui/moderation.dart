@@ -39,7 +39,7 @@ class _ModerationPageState extends State<ModerationPage> {
     final note = await showDialog<String>(
       context: context,
       builder: (dialog) => AlertDialog(
-        title: Text(remove ? 'Remove reported post?' : 'Dismiss report?'),
+        title: Text(remove ? 'Remove reported content?' : 'Dismiss report?'),
         content: TextField(
           controller: controller,
           maxLength: 500,
@@ -59,7 +59,7 @@ class _ModerationPageState extends State<ModerationPage> {
               if (controller.text.trim().isNotEmpty)
                 Navigator.pop(dialog, controller.text.trim());
             },
-            child: Text(remove ? 'Remove post' : 'Dismiss'),
+            child: Text(remove ? 'Remove content' : 'Dismiss'),
           ),
         ],
       ),
@@ -147,10 +147,10 @@ class _ModerationPageState extends State<ModerationPage> {
                               onPressed: () => _review(report, false),
                               child: const Text('Dismiss'),
                             ),
-                            if (report['target_post_id'] != null)
+                            if (report['target_post_id'] != null || report['target_listing_id'] != null)
                               TextButton(
                                 onPressed: () => _review(report, true),
-                                child: const Text('Remove post'),
+                                child: const Text('Remove content'),
                               ),
                           ],
                         ),

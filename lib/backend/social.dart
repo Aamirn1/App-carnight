@@ -261,6 +261,8 @@ class SocialRepository {
         callback: (_) => refresh(),
       );
     }
+    channel.onPostgresChanges(event: PostgresChangeEvent.insert,schema:'public',table:'cn_rental_enquiries',
+      filter: conversation==null?null:PostgresChangeFilter(type:PostgresChangeFilterType.eq,column:'conversation_id',value:conversation),callback:(_)=>refresh());
     channel.subscribe((status, error) {
       if (status == RealtimeSubscribeStatus.subscribed) refresh();
     });
@@ -393,6 +395,7 @@ class SocialRepository {
     String city = '',
     String query = '',
     String category = 'All',
+    bool savedOnly = false,
     Map<String, dynamic>? before,
   }) async {
     final rows = await client.rpc<List<dynamic>>(
@@ -403,6 +406,7 @@ class SocialRepository {
         'city_filter': city.trim(),
         'query_text': query.trim(),
         'category_filter': category,
+        'saved_only': savedOnly,
         'before_time': before?['created_at'],
         'before_id': before?['id'],
       },
@@ -422,4 +426,15 @@ class SocialRepository {
         .eq('owner_id', me);
   }
 
+
+  Future<void> saveListing(String id, bool saved) async {
+    if(saved) { await client.from('cn_saved_listings').upsert({'user_id':me,'listing_id':id},ignoreDuplicates:true); }
+    else { await client.from('cn_saved_listings').delete().eq('user_id',me).eq('listing_id',id); }
+  }
+  Future<void> editListing(Map<String,dynamic> row) async {
+    await client.rpc<void>('cn_edit_listing',params:{'target':row['id'],'expected_revision':row['revision'],'new_title':row['title'],'new_description':row['description'],'new_city':row['city'],'new_price':row['price_minor']});
+  }
+  Future<void> reportListing(String id,String reason) async { await client.rpc<void>('cn_report_listing',params:{'target':id,'reason_text':reason.trim()}); }
+  Future<String> requestRental(String listing,DateTime pickup,DateTime dropoff,String request) async => await client.rpc<String>('cn_request_rental',params:{'target_listing':listing,'pickup_day':pickup.toIso8601String().substring(0,10),'dropoff_day':dropoff.toIso8601String().substring(0,10),'request_id':request});
+  Future<List<Map<String,dynamic>>> rentalEnquiries(String chat) => client.from('cn_rental_enquiries').select('pickup,dropoff,user_id,created_at').eq('conversation_id',chat).order('created_at',ascending:false).limit(5);
 }

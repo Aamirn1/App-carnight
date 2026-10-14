@@ -462,6 +462,7 @@ class _ConversationPageState extends State<ConversationPage>
 
   final _body = TextEditingController();
   final List<ChatMessage> _rows = [];
+  List<Map<String,dynamic>> _enquiries=[];
   late String _status = widget.conversation.status;
   String? _error;
   String _requestId = const Uuid().v4();
@@ -509,6 +510,7 @@ class _ConversationPageState extends State<ConversationPage>
     });
     try {
       final conversation = await api.conversation(widget.conversation.id);
+      final enquiries = conversation.listingId == null ? <Map<String,dynamic>>[] : await api.rentalEnquiries(conversation.id);
       final rows = await api.messages(
         widget.conversation.id,
         offset: more ? _rows.length : 0,
@@ -516,6 +518,7 @@ class _ConversationPageState extends State<ConversationPage>
       if (!mounted || !_authorized) return;
       setState(() {
         _status = conversation.status;
+        _enquiries = enquiries;
         if (!more) _rows.clear();
         final ids = _rows.map((r) => r.id).toSet();
         _rows.addAll(rows.where((r) => !ids.contains(r.id)));
@@ -658,6 +661,7 @@ class _ConversationPageState extends State<ConversationPage>
                 child: InfoNote(_error!),
               ),
             if (_loading) const LinearProgressIndicator(),
+            if (_enquiries.isNotEmpty) ExpansionTile(title: const Text('Rental date enquiries'), children: [for(final e in _enquiries) ListTile(title:Text('${e['pickup']} → ${e['dropoff']}'),subtitle:const Text('Requested dates · not a reservation'))]),
             if (_status == 'pending')
               Padding(
                 padding: const EdgeInsets.all(16),

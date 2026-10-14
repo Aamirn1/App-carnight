@@ -37,13 +37,13 @@ void main() {
     final api = ReviewApi();
     await tester.pumpWidget(MaterialApp(home: ModerationPage(api: api)));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Remove post'));
+    await tester.tap(find.text('Remove content'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Remove post').last);
+    await tester.tap(find.widgetWithText(TextButton, 'Remove content').last);
     await tester.pumpAndSettle();
     expect(api.decisions, isEmpty);
     await tester.enterText(find.byType(TextField), 'Confirmed scam');
-    await tester.tap(find.widgetWithText(TextButton, 'Remove post').last);
+    await tester.tap(find.widgetWithText(TextButton, 'Remove content').last);
     await tester.pumpAndSettle();
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
@@ -54,7 +54,7 @@ void main() {
     final api = ReviewApi();
     await tester.pumpWidget(MaterialApp(home: ModerationPage(api: api)));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Remove post'));
+    await tester.tap(find.text('Remove content'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
