@@ -1,31 +1,29 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cars_night/backend/social.dart';
 import 'package:cars_night/ui/live_market.dart';
 import 'package:cars_night/core/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cars_night/backend/market.dart';
 
+class FakeMarket implements SocialRepository {
+ final requests = <Map<String,dynamic>>[];
+ @override
+ Future<List<Map<String,dynamic>>> market({required String kind,String country='',String city='',String query='',String category='All',Map<String,dynamic>? before}) async {
+  requests.add({'listing_kind':kind,'query_text':query});return [];
+ }
+ @override dynamic noSuchMethod(Invocation invocation)=>throw UnimplementedError();
+}
 void main() {
   for (final dark in [false, true]) {
     testWidgets('live marketplace filters on narrow ${dark ? 'dark' : 'light'} screen', (tester) async {
-      final requests = <Map<String,dynamic>>[];
-      final client = SupabaseClient('https://example.supabase.co', 'public-test',
-        authOptions: const AuthClientOptions(autoRefreshToken: false),
-        httpClient: MockClient((request) async {
-          requests.add(jsonDecode(request.body) as Map<String,dynamic>);
-          return http.Response('[]', 200, headers: {'content-type':'application/json'});
-        }));
+      final api = FakeMarket();
       tester.view.physicalSize = const Size(320,800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(MaterialApp(theme: dark ? NightTheme.data : NightTheme.light,
         home: Scaffold(body: MediaQuery(data: const MediaQueryData(size: Size(320,800),textScaler: TextScaler.linear(1.5)),
-          child: LiveMarketplace(api: SocialRepository(client),kind:'sale')))));
+          child: LiveMarketplace(api: api,kind:'sale')))));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(find.text('No matching listings yet'), 250, scrollable: find.byType(Scrollable).first);
       expect(find.text('No matching listings yet'),findsOneWidget);
@@ -34,11 +32,10 @@ void main() {
       await tester.enterText(find.byType(TextField).first,'Civic');
       await tester.pump(const Duration(milliseconds:500));
       await tester.pumpAndSettle();
-      expect(requests.last['query_text'],'Civic');
-      expect(requests.last['listing_kind'],'sale');
+      expect(api.requests.last['query_text'],'Civic');
+      expect(api.requests.last['listing_kind'],'sale');
       expect(tester.takeException(),isNull);
       await tester.pumpWidget(const SizedBox());
-      await tester.runAsync(client.dispose);
     });
   }
 

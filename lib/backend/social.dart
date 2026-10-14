@@ -386,4 +386,40 @@ class SocialRepository {
       params: {'report': id, 'decision': decision, 'review_note': note.trim()},
     );
   }
+
+  Future<List<Map<String, dynamic>>> market({
+    required String kind,
+    String country = '',
+    String city = '',
+    String query = '',
+    String category = 'All',
+    Map<String, dynamic>? before,
+  }) async {
+    final rows = await client.rpc<List<dynamic>>(
+      'cn_market',
+      params: {
+        'listing_kind': kind,
+        'country_filter': country,
+        'city_filter': city.trim(),
+        'query_text': query.trim(),
+        'category_filter': category,
+        'before_time': before?['created_at'],
+        'before_id': before?['id'],
+      },
+    );
+    return rows.cast<Map<String, dynamic>>();
+  }
+
+  Future<void> publishListing(Map<String, dynamic> params) async {
+    await client.rpc<String>('cn_publish_listing', params: params);
+  }
+
+  Future<void> archiveListing(String id) async {
+    await client
+        .from('cn_listings')
+        .update({'status': 'archived'})
+        .eq('id', id)
+        .eq('owner_id', me);
+  }
+
 }
