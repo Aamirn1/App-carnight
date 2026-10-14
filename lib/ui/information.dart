@@ -253,8 +253,8 @@ class AboutPage extends StatelessWidget {
         ),
       ),
       const InfoNote(
-        'Development preview. Marketplace offers and the sample feed are illustrative. '
-        'Public photo posting is not enabled yet.',
+        'Testing release. Connected photo posts and marketplace listings are user content. '
+        'The separate sample feed uses illustrative content. Verify offers with the seller.',
       ),
     ],
   );
@@ -265,15 +265,15 @@ const _articles = [
     'A community built around the drive',
     'Cars Night is designed around photographs '
         'and conversations: the car you love, the road you remember and the details '
-        'that make every journey yours.\n\nThis demo lets you explore image posts, '
-        'local comments and saved collections. Public posting arrives with the connected service.',
+        'that make every journey yours.\n\nSign in to publish photos, comment, save posts '
+        'and start consent-based conversations with fellow car lovers.',
   ),
   (
     'Find your next car, your way',
     'The marketplace separates cars for sale from '
         'rental listings. Search by a make, model or city and narrow results by category.\n\n'
-        'Rental dates in this prototype demonstrate a base-price estimate. Actual '
-        'availability, seller contact and rental terms are not connected yet.',
+        'Contact a seller through an enquiry request. Agree rental dates, availability, '
+        'fees and terms directly; the app does not make reservations or collect payment.',
   ),
 ];
 
