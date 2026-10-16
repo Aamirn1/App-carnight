@@ -169,6 +169,7 @@ void main() {
         body: MarketplacePage(kind: ListingKind.rental, session: session),
       ),
       const PlanPage(),
+      const NotificationsPage(),
       Scaffold(body: MarketplaceHub(session: session)),
       const Scaffold(body: MessagesPage()),
     ]) {

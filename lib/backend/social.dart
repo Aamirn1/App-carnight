@@ -437,4 +437,14 @@ class SocialRepository {
   Future<void> reportListing(String id,String reason) async { await client.rpc<void>('cn_report_listing',params:{'target':id,'reason_text':reason.trim()}); }
   Future<String> requestRental(String listing,DateTime pickup,DateTime dropoff,String request) async => await client.rpc<String>('cn_request_rental',params:{'target_listing':listing,'pickup_day':pickup.toIso8601String().substring(0,10),'dropoff_day':dropoff.toIso8601String().substring(0,10),'request_id':request});
   Future<List<Map<String,dynamic>>> rentalEnquiries(String chat) => client.from('cn_rental_enquiries').select('pickup,dropoff,user_id,created_at').eq('conversation_id',chat).order('created_at',ascending:false).limit(5);
+
+  Future<List<Map<String,dynamic>>> activity() async {
+    final rows=await client.rpc<List<dynamic>>('cn_activity');return rows.cast<Map<String,dynamic>>();
+  }
+  Future<void> readActivity(List<String> keys) async { await client.rpc<void>('cn_read_activity',params:{'keys':keys}); }
+  Future<CommunityPost> activityPost(String id) async {
+    final rows=await client.rpc<List<dynamic>>('cn_activity_post',params:{'target':id});
+    if(rows.isEmpty)throw const AuthException('Post unavailable');
+    return CommunityPost.fromJson(rows.first as Map<String,dynamic>);
+  }
 }

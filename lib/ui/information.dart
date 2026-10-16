@@ -7,6 +7,7 @@ import 'components.dart';
 import '../backend/session.dart';
 import 'moderation.dart';
 import 'delete_account.dart';
+import 'notifications.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key, required this.session});
@@ -141,7 +142,7 @@ class SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Cars Night · Testing build 0.12.0',
+          'Cars Night · Testing build 0.13.0',
           style: TextStyle(color: NightTheme.secondaryText(context)),
         ),
       ],
@@ -152,18 +153,7 @@ class SettingsPage extends StatelessWidget {
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage({super.key});
   @override
-  Widget build(BuildContext context) => const PageFrame(
-    title: 'Notifications',
-    children: [
-      EmptyState(
-        title: 'No demo notifications',
-        message:
-            'Replies, activity and listing '
-            'updates will appear here once notifications are connected.',
-        icon: Icons.notifications_none,
-      ),
-    ],
-  );
+  Widget build(BuildContext context) => const ActivityPage();
 }
 
 class PlanPage extends StatelessWidget {
